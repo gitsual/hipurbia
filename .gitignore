@@ -1,3 +1,7 @@
+# Machine-specific generated state; hardware-facts.example is the committed one
+hardware-facts
+hardware-facts.override
+
 # Local test and audit output
 .audit/
 .vm-test/
