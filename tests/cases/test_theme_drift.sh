@@ -58,7 +58,8 @@ grep -rq 'E1777D\|225, 119, 125' "$sandbox/dotfiles" && fail 'the old accent val
 
 # The terminal pair is intentionally separate: changing the palette accent
 # must not touch it.
-grep -q '^background #1e1e1e$' "$sandbox/dotfiles/kitty/.config/kitty/kitty.conf" ||
+terminal_bg="$(sed -nE 's/^TERMINAL_BG=(.*)$/\1/p' "$sandbox/theme.conf" | tr 'A-F' 'a-f')"
+grep -q "^background #$terminal_bg\$" "$sandbox/dotfiles/kitty/.config/kitty/kitty.conf" ||
 	fail 'the terminal background changed with the palette accent'
 
 printf 'theme drift: hand edit, orphan template, unknown token refused; accent reached %d consumers\n' "$consumers"
