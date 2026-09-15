@@ -20,7 +20,7 @@ af1bc3ab6d57ffe3680bf863df466968ed583d03ee683d40edb4e4b229835ed3  dotfiles/hypr/
 11a7e1ee987f7cb673270bd45ff34e29398821ba3662ad0fe409ea4a6fc67936  dotfiles/hypr/.config/hypr/scripts/wallpaper.sh
 17add001d26a2437abc21ac2a90c9b716fa7d52b4d4a69c2bd18f7041b96b91b  dotfiles/hypr/.local/share/wallpapers/warm-night.png
 d8f156ea6199d20c27a00a6840b0b385e28437dd6e65be9e1143a42ed8128957  dotfiles/hypr/.local/share/wallpapers/warm-night.svg
-d08abcb761f2d7d95b9c17b574e6c6a63f8243b1c0908a7a7fd23f9721bd471c  dotfiles/kitty/.config/kitty/kitty.conf
+da2bd4e135e304b68ce0d70d074eba9afc476a17c77d5e1c34806735421066bb  dotfiles/kitty/.config/kitty/kitty.conf
 29a57c607a4e1415422b6fdc4f1be89dcc7dc30af840a3921933f4bbc1236c8d  dotfiles/nvim/.config/nvim/.stylua.toml
 087c5fa638f8f9fa84ffdc1f74e55e1ffafa35e5ce44c04943555d75e91ce9de  dotfiles/nvim/.config/nvim/init.lua
 ba2874b1aaff006e2fb1a45ef743f8f9071c6cba273e3d3e67fb8381fb309123  dotfiles/nvim/.config/nvim/lazy-lock.json
