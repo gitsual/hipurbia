@@ -5,7 +5,8 @@ set -Eeuo pipefail
 # after the guest has passed tests/guest-acceptance.sh. It turns a provisioned
 # test guest into something a stranger can safely boot.
 #
-# IMAGE_LOCALE, IMAGE_KEYMAP and IMAGE_LAYOUT are exported by the caller.
+# IMAGE_LOCALE, IMAGE_KEYMAP, IMAGE_LAYOUT and IMAGE_USER are exported by the
+# caller.
 
 cd "$HOME/archlinux-portfolio"
 
@@ -40,23 +41,33 @@ sudo rm -rf -- /var/lib/cloud/*
 
 sudo fstrim -av >/dev/null 2>&1 || true
 
-# One root transaction, because each step below destroys the means to run the
-# next one over SSH. Dropping cloud-init's NOPASSWD rule makes sudo ask for a
-# password this session has no terminal to type, and `chage -d 0` expires the
-# account outright, after which PAM refuses even to open a new session. So the
-# shutdown is scheduled from inside, the bridges are burned in order, and the
-# expiry is the last thing that happens with privileges.
-sudo bash -euc '
+# One root transaction, because the first step below destroys the means to run
+# the next one over SSH: dropping cloud-init's NOPASSWD rule makes sudo ask for
+# a password this session has no terminal to type. So the shutdown is scheduled
+# from inside and the bridges are burned in order.
+#
+# The credentials are a published convention rather than something to keep.
+# Both accounts use their own name as the password, and root uses the usual
+# reversal of it — the README prints both — so a stranger who downloads the
+# image can log in without hunting for them. That is only defensible because the image
+# does not listen on the network — sshd is installed and disabled, and turning
+# it on is a deliberate act by whoever owns the copy. An image that shipped
+# with a known root password AND an open port would be a liability, not a demo.
+sudo bash -euc "
 	# Deferred so this SSH session closes cleanly and the caller can read the
 	# marker below; powering off inline would drop the connection mid-stream.
 	systemd-run --on-active=20 --unit=seal-poweroff systemctl poweroff >/dev/null
-	printf "portfolio:portfolio\n" | chpasswd
+	printf '$IMAGE_USER:$IMAGE_USER\n' | chpasswd
+	printf 'root:toor\n' | chpasswd
 	rm -f -- /etc/sudoers.d/90-cloud-init-users
-	printf "%%wheel ALL=(ALL:ALL) ALL\n" >/etc/sudoers.d/10-wheel
+	printf '%%wheel ALL=(ALL:ALL) ALL\n' >/etc/sudoers.d/10-wheel
 	chmod 0440 /etc/sudoers.d/10-wheel
 	visudo -c -q
-	chage -d 0 portfolio
-'
+	# Installed, reachable, off. The console stays available so the image can
+	# be driven headlessly without a network at all.
+	systemctl disable sshd.service >/dev/null
+	systemctl enable serial-getty@ttyS0.service >/dev/null
+"
 # The build key is the last thing to go, and it needs no privileges.
 shred -u -- "$HOME/.ssh/authorized_keys" 2>/dev/null || rm -f -- "$HOME/.ssh/authorized_keys"
 

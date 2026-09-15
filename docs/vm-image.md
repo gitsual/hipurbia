@@ -20,18 +20,28 @@ download is caught before it is ever booted.
 
 ## First boot
 
-The image logs in as `portfolio` with the password `portfolio`, and the
-account is expired: the first login demands a new password before it gives you
-a shell. Sudo asks for that password; the build's passwordless rule does not
+Two accounts, by convention rather than by secret: `user` with the password
+`user`, and `root` with `toor`. They are printed here because a demo image
+whose credentials have to be guessed is a worse demo, and nothing expires
+them. Sudo asks for the password; the build's passwordless rule does not
 survive the seal.
+
+That is only defensible because **the image does not listen on the network**.
+`sshd` ships installed and disabled, so a published root password is not a
+door standing open; enabling it is a deliberate act by whoever owns the copy,
+and whoever does it should change both passwords first.
 
 Nothing about the build host survives either. The machine id is blank and
 systemd writes a fresh one, cloud-init is disabled so the guest does not stall
-waiting for a datasource it will never see, and the SSH host keys are absent
-so `sshdgenkeys.service` generates a new identity on first boot. Two copies of
-the same file therefore have different host keys, which is asserted rather
-than assumed: `scripts/test-vm-image.sh` boots the artifact twice and rejects
-it if the fingerprints match.
+waiting for a datasource it will never see, and the SSH host keys are absent —
+`sshdgenkeys.service` will mint a new identity the first time anyone starts
+sshd, so two downloads can never share one.
+
+All of this is asserted rather than assumed. `scripts/test-vm-image.sh` boots
+the artifact twice with no network device attached at all, logs in over the
+serial console with the credentials above, and rejects the image if sshd is
+enabled, if a host key from the build survived, or if the two instances report
+the same machine id.
 
 ## Language
 

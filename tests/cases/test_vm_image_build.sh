@@ -41,7 +41,12 @@ declare -A removals=(
 for needle in "${!removals[@]}"; do
 	grep -Fq "$needle" "$seal" || fail "the seal does not deal with ${removals[$needle]}"
 done
-grep -Fq 'chage -d 0 portfolio' "$seal" || fail 'the seal does not force the first password change'
+# The credentials are a published convention rather than a secret, so nothing
+# expires them; what makes that defensible is the closed door, and the seal has
+# to close it.
+grep -Fq 'systemctl disable sshd.service' "$seal" || fail 'the seal ships a known root password with sshd enabled'
+grep -Fq 'serial-getty@ttyS0.service' "$seal" || fail 'the seal leaves no console to drive the image from'
+grep -Fq 'chage' "$seal" && fail 'the seal expires an account whose password is published on purpose'
 
 # Ordering is load-bearing: the seal drops passwordless sudo and its own key
 # at the very end, so every privileged step above must already have run.
@@ -51,12 +56,22 @@ for earlier in 'fstrim' 'ssh_host_' 'machine-id' 'systemd-run'; do
 	((line < key_line)) || fail "the seal removes its key before it finishes with $earlier"
 done
 
-# Expiring the account is irreversible over SSH: PAM then refuses to open a
-# session at all, so nothing privileged may follow it. This cost one build.
-chage_line="$(grep -n 'chage -d 0' "$seal" | tail -1 | cut -d: -f1)"
-[[ -n "$chage_line" ]] || fail 'the seal never expires the password'
+# Dropping cloud-init's NOPASSWD rule is irreversible over SSH: sudo then wants
+# a password this session has no terminal to type. Nothing privileged may come
+# after it, and only the one root transaction that performs it may contain it.
+# This cost one build.
+drop_line="$(grep -n '90-cloud-init-users' "$seal" | tail -1 | cut -d: -f1)"
+[[ -n "$drop_line" ]] || fail 'the seal never drops the build sudoers rule'
 last_sudo="$(grep -nE '(^|\|[[:space:]]*)sudo ' "$seal" | tail -1 | cut -d: -f1)"
-((last_sudo < chage_line)) || fail 'the seal invokes sudo after expiring the account, which cannot work without a terminal'
+((last_sudo < drop_line)) || fail 'the seal invokes sudo after dropping passwordless sudo, which cannot work without a terminal'
+
+# The acceptance meets the image the way its owner will: no network device at
+# all, driven from the console with the credentials the README prints.
+accept="$repo_root/scripts/test-vm-image.sh"
+grep -Fq -- '-nic none' "$accept" || fail 'the acceptance still attaches a network device'
+grep -Fq 'SSHD=' "$accept" || fail 'the acceptance does not check that sshd is off'
+grep -Fq 'MACHINE_ID=' "$accept" || fail 'the acceptance does not compare machine ids'
+grep -Fq 'ssh-keyscan' "$accept" && fail 'the acceptance still expects the image to serve ssh'
 
 grep -Fxq 'dist/' "$repo_root/.gitignore" || fail 'built artifacts are not ignored'
 

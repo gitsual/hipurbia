@@ -100,6 +100,11 @@ actual="$(sha256sum "$base" | cut -d' ' -f1)"
 	exit 1
 }
 
+# The account a stranger logs into. It is named for what it is, because the
+# credentials are a convention (user:user, root:toor) rather than a secret, and
+# a demo image whose username has to be looked up is a worse demo.
+image_user='user'
+
 # The build key never reaches the artifact: the seal removes it before the
 # guest powers off, and a test asserts the removal on the flattened image.
 ssh-keygen -q -t ed25519 -N '' -f "$run/id_ed25519"
@@ -111,7 +116,7 @@ META
 cat >"$run/user-data" <<USERDATA
 #cloud-config
 users:
-  - name: portfolio
+  - name: $image_user
     groups: [wheel]
     shell: /bin/bash
     sudo: ALL=(ALL) NOPASSWD:ALL
@@ -163,7 +168,7 @@ trap cleanup EXIT
 ssh_opts=(-i "$run/id_ed25519" -p "$port" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5)
 ready=false
 for _ in {1..90}; do
-	if ssh "${ssh_opts[@]}" "portfolio@$host_address" true >/dev/null 2>&1; then
+	if ssh "${ssh_opts[@]}" "$image_user@$host_address" true >/dev/null 2>&1; then
 		ready=true
 		break
 	fi
@@ -178,7 +183,7 @@ printf '%s\n' 'Provisioning and accepting the guest...'
 # The keymap the acceptance seeds is a test value, distinguishable from the
 # other two axes; the seal below replaces all three.
 # shellcheck disable=SC2029
-ssh "${ssh_opts[@]}" "portfolio@$host_address" "CONSOLE_KEYMAP='es' bash -s" \
+ssh "${ssh_opts[@]}" "$image_user@$host_address" "CONSOLE_KEYMAP='es' bash -s" \
 	>"$run/guest-accept.log" 2>&1 <"$repo_root/tests/guest-acceptance.sh" || {
 	tail -n 60 "$run/guest-accept.log" >&2
 	printf '%s\n' 'Guest acceptance failed; nothing was sealed' >&2
@@ -189,7 +194,7 @@ printf '%s\n' 'Guest acceptance: passed'
 
 printf '%s\n' 'Sealing...'
 # shellcheck disable=SC2029
-ssh "${ssh_opts[@]}" "portfolio@$host_address" \
+ssh "${ssh_opts[@]}" "$image_user@$host_address" \
 	"IMAGE_LOCALE='$image_locale' IMAGE_KEYMAP='$image_keymap' IMAGE_LAYOUT='$image_layout' bash -s" \
 	>"$run/guest-seal.log" 2>&1 <"$repo_root/scripts/seal-vm-image.sh" || {
 	tail -n 60 "$run/guest-seal.log" >&2
@@ -198,7 +203,7 @@ ssh "${ssh_opts[@]}" "portfolio@$host_address" \
 }
 grep -Fq 'IMAGE_SEAL: DONE' "$run/guest-seal.log"
 
-ssh "${ssh_opts[@]}" "portfolio@$host_address" 'sudo systemctl poweroff' >/dev/null 2>&1 || true
+ssh "${ssh_opts[@]}" "$image_user@$host_address" 'sudo systemctl poweroff' >/dev/null 2>&1 || true
 for _ in {1..60}; do
 	kill -0 "$qemu_pid" 2>/dev/null || break
 	sleep 2

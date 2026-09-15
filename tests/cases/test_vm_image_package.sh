@@ -39,7 +39,12 @@ grep -Fq 'format=$image_format' "$accepter" || fail 'the accepter hardcodes a di
 
 grep -Fq 'cat archlinux-portfolio.qcow2.part*' "$doc" || fail 'the page does not show how to reassemble'
 grep -Fq 'sha256sum -c SHA256SUMS' "$doc" || fail 'the page does not show how to verify'
-grep -Fq 'expired' "$doc" || fail 'the page does not say the first login must change the password'
+# Credentials that are published have to be published in full, and the reason
+# they are safe has to be published with them: the page states both accounts
+# and that the image does not listen.
+grep -Fq 'toor' "$doc" || fail 'the page does not print the root password it ships'
+grep -Fq 'does not listen on the network' "$doc" ||
+	fail 'the page prints a known root password without saying why that is safe'
 grep -Fq 'docs/vm-image.md' "$repo_root/README.md" || fail 'the README does not link the image page'
 grep -Fq 'Downloadable image' "$repo_root/docs/destination-tests.md" ||
 	fail 'the destination matrix has no section for the image'
