@@ -16,8 +16,8 @@
 
 FACTS_SCHEMA=1
 
-# The allowlist. Graphics, kernel and display keys arrive with the graphics
-# detectors in a later unit and are added here at that point.
+# The allowlist. `gpu_families` (catalogue family ids such as nvidia_open) is
+# derived from gpu_devices by the GPU catalogue and joins this list with it.
 FACTS_ALLOWED_KEYS=(
 	FACTS_SCHEMA
 	chassis
@@ -27,6 +27,14 @@ FACTS_ALLOWED_KEYS=(
 	has_touchpad
 	has_wifi
 	has_bluetooth
+	gpu_vendors
+	gpu_devices
+	gpu_hybrid
+	kernels
+	needs_dkms
+	secure_boot
+	monitor_count
+	max_scale
 )
 
 # facts_key_allowed KEY

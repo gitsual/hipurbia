@@ -17,7 +17,7 @@ repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "$repo_root/lib/kv.sh"
 # shellcheck source=lib/facts.sh
 source "$repo_root/lib/facts.sh"
-for detector in chassis power input net; do
+for detector in chassis power input net graphics kernels display; do
 	# shellcheck source=/dev/null
 	source "$repo_root/lib/detect/$detector.sh"
 done
@@ -97,6 +97,14 @@ collect() {
 	out['has_touchpad']="$(detect_has_touchpad)"
 	out['has_wifi']="$(detect_has_wifi)"
 	out['has_bluetooth']="$(detect_has_bluetooth)"
+	out['gpu_vendors']="$(detect_gpu_vendors)"
+	out['gpu_devices']="$(detect_gpu_devices)"
+	out['gpu_hybrid']="$(detect_gpu_hybrid)"
+	out['kernels']="$(detect_kernels)"
+	out['needs_dkms']="$(detect_needs_dkms)"
+	out['secure_boot']="$(detect_secure_boot)"
+	out['monitor_count']="$(detect_monitor_count)"
+	out['max_scale']="$(detect_max_scale)"
 }
 
 case "$action" in

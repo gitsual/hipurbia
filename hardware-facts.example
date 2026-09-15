@@ -13,9 +13,17 @@
 # of a file that ends up attached to bug reports.
 FACTS_SCHEMA=1
 chassis=laptop
+gpu_devices=8086:a7a0 10de:28e0
+gpu_hybrid=yes
+gpu_vendors=intel nvidia
 has_backlight=yes
 has_battery=yes
 has_bluetooth=yes
 has_touchpad=yes
 has_wifi=yes
+kernels=linux linux-lts
+max_scale=2
+monitor_count=1
+needs_dkms=no
+secure_boot=disabled
 virt=none
