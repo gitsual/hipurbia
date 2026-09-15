@@ -105,9 +105,16 @@ if $locale_axis; then
 fi
 if $keymap_axis; then
 	keymap="$(settings_get keymap)"
-	# vconsole.conf may carry a FONT line; only the KEYMAP line is ours.
-	mapfile -t kept < <(sudo cat /etc/vconsole.conf 2>/dev/null | grep -v '^KEYMAP=' || true)
-	write_axis /etc/vconsole.conf "KEYMAP=$keymap" "${kept[@]}"
+	if $dry_run; then
+		printf 'would write /etc/vconsole.conf: KEYMAP=%s (other lines kept)\n' "$keymap"
+	else
+		# vconsole.conf may carry FONT or XKB lines; only KEYMAP is ours.
+		kept=()
+		if [[ -r /etc/vconsole.conf ]]; then
+			mapfile -t kept < <(grep -v '^KEYMAP=' /etc/vconsole.conf || true)
+		fi
+		write_axis /etc/vconsole.conf "KEYMAP=$keymap" "${kept[@]}"
+	fi
 fi
 
 services=()

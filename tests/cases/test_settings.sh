@@ -58,7 +58,7 @@ grep -rq 'C.UTF-8\|KEYMAP\|LANG' "$home/.config" && fail 'a system axis leaked i
 output="$(SETTINGS_FILE="$sandbox/settings" bash "$repo_root/scripts/apply-system.sh" --dry-run --locale --keymap)" ||
 	fail 'apply-system dry run failed'
 grep -Fxq 'would write /etc/locale.conf: LANG=C.UTF-8' <<<"$output" || fail "locale axis not previewed: $output"
-grep -Fxq 'would write /etc/vconsole.conf: KEYMAP=us' <<<"$output" || fail "keymap axis not previewed: $output"
+grep -q '^would write /etc/vconsole.conf: KEYMAP=us' <<<"$output" || fail "keymap axis not previewed: $output"
 grep -q 'would install\|would enable services' <<<"$output" && fail 'the axes enabled an unrelated profile'
 printf 'keymap=bad name\n' >"$sandbox/settings"
 SETTINGS_FILE="$sandbox/settings" bash "$repo_root/scripts/apply-system.sh" --dry-run --keymap >/dev/null 2>&1 &&
