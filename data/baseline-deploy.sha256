@@ -11,7 +11,7 @@ d41c8a7443dca0a4871539a652020666549f453c6d6c10f10e49661e132d687b  dotfiles/audio
 48bf41bedb732183af62dd480869cb0df58b835218ecc2d9902c48d50904845d  dotfiles/automation/.config/systemd/user/workstation-task@.timer
 153439fa8e31f1565fadb2fe4b5bf5bd33a064619e2354bfe2c6c720d459b3cc  dotfiles/automation/.local/bin/workstation-task-runner
 0f37a2c826a582041b95bbc4d7391cd306512556875c3c4b93bbff15cf5e9f79  dotfiles/dunst/.config/dunst/dunstrc
-8fc4fcb150a5f7f34f212ad77255de557915cdcad0c8e47a45a0720e60e55717  dotfiles/hypr/.config/hypr/hyprland.conf
+e1b4d1f7c92032ceb81efaa900238db88cf15aadca29a37dcdf61d0005f8ae16  dotfiles/hypr/.config/hypr/hyprland.conf
 af1bc3ab6d57ffe3680bf863df466968ed583d03ee683d40edb4e4b229835ed3  dotfiles/hypr/.config/hypr/hyprlock.conf
 163f61548eb88b3eb707121db7f12583ef7ee5e0a832f2c894c1000320c69cd6  dotfiles/hypr/.config/hypr/hyprpaper.conf
 c4e0d9f453fe2d4b1f273d1b4bbfb36f0acd225bea06d3adaab13cff4b53822e  dotfiles/hypr/.config/hypr/scripts/keybindings.sh
@@ -47,5 +47,5 @@ a7f6d6e31fa8111b724b1b06d46311866ea490845b7377797fca481072550e6d  dotfiles/secur
 497102907be39a6e82346d1f24ab4f7b34c36cab1fd3eb2a271d812066414993  dotfiles/theme/.config/gtk-3.0/settings.ini
 497102907be39a6e82346d1f24ab4f7b34c36cab1fd3eb2a271d812066414993  dotfiles/theme/.config/gtk-4.0/settings.ini
 7120b38f5a9ec3b00e22fac420218c406c8fddd8c62ff5359a275102a70e303c  dotfiles/theme/.config/kdeglobals
-8a51e348f3236fd500015e5ea6f60b219130ae173f1a4d15cf1a3d7aac78991a  dotfiles/waybar/.config/waybar/style.css
+03639129781cfa410b6cacfe453a5cb0c430300aa9fda54e2dec66425a52169e  dotfiles/waybar/.config/waybar/style.css
 16e0f8c1f5ed428ec0c8da4e8775f7c3ae967171ab62f337dc365c076514a411  dotfiles/wofi/.config/wofi/style.css

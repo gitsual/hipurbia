@@ -4,6 +4,8 @@ window#waybar { background: rgba(@COLOR_BG:rgb@, 0.95); border-radius: 12px; bor
 #workspaces button { padding: 0 8px; color: #@COLOR_FG@; border-radius: 8px; }
 #workspaces button:hover { background: rgba(@COLOR_ACCENT:rgb@, 0.3); color: #@COLOR_ACCENT@; }
 #workspaces button.active { background: #@COLOR_ACCENT@; color: #@COLOR_BG@; }
+#workspaces button.empty { color: #@COLOR_FG_DIM@; }
+#workspaces button.urgent { background: #@COLOR_URGENT@; color: #@COLOR_BG@; }
 #custom-updates { color: #@COLOR_MUTED@; }
 #network { color: #@COLOR_INFO@; }
 #bluetooth.connected { color: #@COLOR_OK@; }

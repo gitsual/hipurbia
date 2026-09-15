@@ -20,7 +20,7 @@
     "pulseaudio",
     "custom/power"
   ],
-  "hyprland/workspaces": {"format": "{icon}", "format-icons": {"active": "", "default": "", "urgent": ""}, "persistent-workspaces": {"*": 5}},
+  "hyprland/workspaces": {"format": "{id}", "all-outputs": true, "sort-by": "number", "persistent-workspaces": {"*": 10}},
   "clock": {"format": "󰥔 {:%H:%M  %a %d %b %Y}", "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"},
   "cpu": {"format": "󰻠 {usage}%", "interval": 2},
   "memory": {"format": "󰍛 {percentage}%", "interval": 5},

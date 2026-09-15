@@ -129,6 +129,10 @@ A hybrid machine gets both families plus `nvidia-prime`; a DKMS stack gets the h
 
 The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop starts it with `swaybg`, including on virtual GPUs without accelerated rendering. The header SVG is a stylized preview, not a real desktop capture.
 
+## Workspaces
+
+Ten numbered workspaces, `Super+1` to `Super+9` and `Super+0` for the tenth, `Super+Shift` to move a window there, and `Super+[` / `Super+]` to walk them with wraparound. Special workspaces are never part of that sequence. Waybar shows all ten by number on every output, persistent even when empty, with active, urgent and empty told apart by the stylesheet.
+
 ## Language axes
 
 Locale, console keymap and Hyprland keyboard layout are three separate choices, and each has exactly one writer. They are read from `~/.config/archlinux-portfolio/settings` (see `settings.example`; a missing file means the source workstation's values):
