@@ -48,8 +48,10 @@ done
 
 for manifest in "$packages_dir"/gpu-*.txt; do
 	name="packages/$(basename -- "$manifest")"
+	[[ "$name" == "$GPU_PRIME_MANIFEST" ]] && continue # reached by lib/gpu.sh on hybrids
 	[[ -v referenced["$name"] ]] || problem "$name is not named by any catalogue row"
 done
+[[ -f "$repo_root/$GPU_PRIME_MANIFEST" ]] || problem "the PRIME offload manifest $GPU_PRIME_MANIFEST is missing"
 
 last="${GPU_IDS[-1]}"
 [[ "${GPU_VENDOR["$last"]}" == '*' && "${GPU_RANGES["$last"]}" == '*' ]] || problem "the last row ($last) must be the catch-all (* *)"

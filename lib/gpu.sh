@@ -152,3 +152,70 @@ gpu_status() {
 		printf 'observed'
 	fi
 }
+
+# gpu_stack_families FACTS_ARRAY_NAME — every family the machine carries, in
+# device order. A hybrid machine gets both: the integrated GPU drives the
+# displays and the NVIDIA one is used per application through PRIME offload.
+gpu_stack_families() {
+	local -n __gpu_facts="$1"
+	gpu_families "${__gpu_facts[gpu_devices]:-}"
+}
+
+# gpu_stack_manifests FACTS_ARRAY_NAME — the manifests to install, one per
+# family, plus the PRIME offload manifest on a hybrid with NVIDIA.
+gpu_stack_manifests() {
+	local -n __gpu_facts="$1"
+	local family
+	for family in $(gpu_families "${__gpu_facts[gpu_devices]:-}"); do
+		printf '%s\n' "${GPU_MANIFEST["$family"]}"
+	done
+	if [[ "${__gpu_facts[gpu_hybrid]:-no}" == yes ]] && gpu_stack_has_nvidia "$1"; then
+		printf '%s\n' "$GPU_PRIME_MANIFEST"
+	fi
+}
+GPU_PRIME_MANIFEST='packages/gpu-prime-offload.txt'
+
+# gpu_stack_has_nvidia FACTS_ARRAY_NAME — 0 when any family is an NVIDIA one.
+gpu_stack_has_nvidia() {
+	local -n __gpu_facts="$1"
+	[[ " $(gpu_families "${__gpu_facts[gpu_devices]:-}") " == *' nvidia_'* ]]
+}
+
+# gpu_stack_packages FACTS_ARRAY_NAME REPO_ROOT — the packages to install:
+# every manifest's entries, and, when any of them is a DKMS module, the
+# headers of every installed kernel, since DKMS builds against each one.
+gpu_stack_packages() {
+	local facts_name="$1" root="$2" manifest package kernel dkms=no
+	local -a packages=()
+	while IFS= read -r manifest; do
+		while IFS= read -r package; do
+			[[ -n "$package" && "$package" != '#'* ]] || continue
+			packages+=("$package")
+			[[ "$package" == *-dkms ]] && dkms=yes
+		done <"$root/$manifest"
+	done < <(gpu_stack_manifests "$facts_name")
+	if [[ "$dkms" == yes ]]; then
+		local -n __gpu_facts_k="$facts_name"
+		for kernel in ${__gpu_facts_k[kernels]:-}; do
+			packages+=("$kernel-headers")
+		done
+	fi
+	printf '%s\n' "${packages[@]}" | LC_ALL=C sort -u
+}
+
+# gpu_stack_warnings FACTS_ARRAY_NAME REPO_ROOT — conditions the owner must
+# know about before installing. Printed, never acted on: Secure Boot with an
+# unsigned DKMS module is a boot with no driver, and hiding that behind a
+# silent install or a silent refusal are both worse than saying it.
+gpu_stack_warnings() {
+	local facts_name="$1" root="$2"
+	local -n __gpu_facts_w="$facts_name"
+	if [[ "${__gpu_facts_w[secure_boot]:-unknown}" == enabled ]] &&
+		gpu_stack_packages "$facts_name" "$root" | grep -q -- '-dkms$'; then
+		printf 'Secure Boot is enabled and this stack builds out-of-tree modules with DKMS; unsigned modules will not load. Enrol a signing key (sbctl) or disable Secure Boot before rebooting.\n'
+	fi
+	if [[ "${__gpu_facts_w[gpu_hybrid]:-no}" == yes ]] && gpu_stack_has_nvidia "$facts_name"; then
+		printf 'Hybrid graphics: the integrated GPU drives the displays; run a program on the NVIDIA GPU with prime-run.\n'
+	fi
+	return 0
+}
