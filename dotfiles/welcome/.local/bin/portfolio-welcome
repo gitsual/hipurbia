@@ -270,7 +270,13 @@ wait_for() {
 	return 0
 }
 
-window_count() { hyprctl clients -j 2>/dev/null | grep -c '"class"' || printf '0'; }
+# hyprctl pretty-prints its JSON, so every reading below flattens it first: a
+# pattern written as if `"workspace": {"id": 3}` were one line matches nothing
+# at all, silently, and a tour step that can never succeed is worse than no
+# tour step — it waits two minutes and then pretends the user skipped it.
+clients_flat() { hyprctl clients -j 2>/dev/null | tr -d ' \n'; }
+
+window_count() { clients_flat | grep -o '"class":' | grep -c . || printf '0'; }
 more_windows_than() { (($(window_count) > $1)); }
 fewer_windows_than() { (($(window_count) < $1)); }
 current_workspace() {
@@ -287,11 +293,15 @@ window_moved_away() {
 	local current
 	current="$(current_workspace)"
 	[[ -n "$current" ]] || return 1
-	hyprctl clients -j 2>/dev/null |
-		sed -nE 's/.*"workspace": ?\{ ?"id": ?(-?[0-9]+).*/\1/p' |
+	clients_flat |
+		grep -oE '"workspace":\{"id":-?[0-9]+' |
+		sed -E 's/.*://' |
 		grep -qvx -e "$current" -e '-.*'
 }
-help_pane_open() { hyprctl clients -j 2>/dev/null | grep -q help-pane; }
+# The help pane is rofi, and rofi on Wayland draws a layer-shell surface, not a
+# window: it never appears in `hyprctl clients` no matter what is grepped for.
+# The process is the thing that exists, so the process is what is asked about.
+help_pane_open() { pgrep -x rofi >/dev/null 2>&1; }
 help_pane_closed() { ! help_pane_open; }
 package_installed() { pacman -Qq "$1" >/dev/null 2>&1; }
 package_removed() { ! package_installed "$1"; }

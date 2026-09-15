@@ -122,5 +122,96 @@ for taught in '$SUPER + Q' '$SUPER + Shift + 3' 'Escape para cerrar' 'pacman -S 
 	grep -Fq "$taught" "$wizard" || fail "the tour never teaches: $taught"
 done
 
+# And the detectors are RUN, not grepped for.
+#
+# Two of them were broken in ways no pattern match could have shown. hyprctl
+# pretty-prints its JSON, so a regex written as if `"workspace": {"id": 3}`
+# were one line matched nothing — the step that carries a window to another
+# desktop could never succeed. And rofi on Wayland draws a layer-shell
+# surface, so the help pane never appears in `hyprctl clients` at all, whatever
+# is grepped for. Both failed silently, waiting out their timeout and then
+# behaving exactly as if the user had skipped the step.
+stub="$sandbox/bin"
+mkdir -p -- "$stub"
+cat >"$stub/hyprctl" <<'STUB'
+#!/usr/bin/env bash
+case "$1" in
+clients) cat "$HYPR_CLIENTS" ;;
+activeworkspace) printf '{
+    "id": %s,
+    "name": "%s"
+}
+' "$HYPR_ACTIVE" "$HYPR_ACTIVE" ;;
+esac
+STUB
+cat >"$stub/pgrep" <<'STUB'
+#!/usr/bin/env bash
+[[ "${ROFI_RUNNING:-no}" == yes ]] && { printf '4242
+'; exit 0; }
+exit 1
+STUB
+chmod +x -- "$stub/hyprctl" "$stub/pgrep"
+
+# Exactly the shape hyprctl emits: one key per line, the workspace object
+# opened on its own line.
+client() {
+	printf '    {
+        "address": "0x%s",
+        "class": "kitty",
+        "title": "t",
+        "workspace": {
+            "id": %s,
+            "name": "%s"
+        }
+    }' "$1" "$2" "$2"
+}
+{
+	printf '[
+'
+	client aaa 1
+	printf ',
+'
+	client bbb 3
+	printf '
+]
+'
+} >"$sandbox/clients-split.json"
+{
+	printf '[
+'
+	client aaa 1
+	printf '
+]
+'
+} >"$sandbox/clients-together.json"
+
+detectors="$sandbox/detectors.sh"
+sed -n '/^clients_flat()/,/^step_tour()/p' "$wizard" | sed '$d' >"$detectors"
+grep -q '^help_pane_open()' "$detectors" || fail 'the detectors could not be extracted from the wizard'
+
+# probe EXPECT ACTIVE CLIENTS ROFI PREDICATE [ARG...]
+probe() {
+	local expect="$1" active="$2" clients="$3" rofi="$4"
+	shift 4
+	local got=yes
+	PATH="$stub:$PATH" HYPR_ACTIVE="$active" HYPR_CLIENTS="$clients" ROFI_RUNNING="$rofi" 		bash -c 'source "$1"; shift; "$@"' _ "$detectors" "$@" >/dev/null 2>&1 || got=no
+	[[ "$got" == "$expect" ]] || fail "$* on workspace $active said $got, expected $expect"
+}
+
+split="$sandbox/clients-split.json"
+together="$sandbox/clients-together.json"
+probe yes 1 "$split" no more_windows_than 1
+probe no 1 "$split" no more_windows_than 2
+probe yes 1 "$split" no fewer_windows_than 3
+probe no 1 "$split" no left_first_workspace
+probe yes 2 "$split" no left_first_workspace
+# The one the pretty-printing broke: a client sits on 3 while we watch 1.
+probe yes 1 "$split" no window_moved_away
+probe no 1 "$together" no window_moved_away
+# The one the layer-shell broke: rofi is a process, never a client.
+probe yes 1 "$together" yes help_pane_open
+probe no 1 "$together" no help_pane_open
+probe yes 1 "$together" no help_pane_closed
+
 printf 'welcome: silent once taken, %d keyboards the settings accept, %s tour steps that detect themselves\n' \
 	"${#offered[@]}" "$declared"
