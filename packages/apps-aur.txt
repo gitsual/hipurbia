@@ -1,1 +1,13 @@
-stremio
+# Built from their AUR recipes by scripts/aur-install.sh. See docs/vm-image.md.
+#
+# NOT `stremio`, which is the one with the votes: its 4.4 series is a Qt5 shell
+# that depends on qt5-webengine, and Arch dropped qt5-webengine from the
+# official repositories. Installing it now means compiling Chromium from
+# source, which is hours of build time and more RAM than the image is given —
+# to ship a client whose upstream has already replaced it.
+#
+# stremio-linux-shell is that replacement, from the Stremio organisation's own
+# repository, and every one of its dependencies is an official package: gtk4,
+# libadwaita, webkitgtk-6.0, mpv, nodejs. It builds against the system it is
+# installed on instead of carrying a browser engine of its own.
+stremio-linux-shell
