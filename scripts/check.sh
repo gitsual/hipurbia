@@ -78,6 +78,9 @@ stage 'default profile baseline'
 stage 'selector registry'
 "$repo_root/scripts/check-selectors.sh"
 
+stage 'gpu catalogue'
+"$repo_root/scripts/check-gpu-catalogue.sh"
+
 stage 'i18n coverage'
 "$repo_root/scripts/check-i18n-coverage.sh"
 

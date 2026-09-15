@@ -1,0 +1,15 @@
+# id	vendor_id	device_ranges	manifest	verified_on	label_key
+# The GPU catalogue: one row per driver family, in match order (first row
+# whose vendor and device range contain a detected PCI id wins). Ranges are
+# hex device ids min-max, several separated by commas, * for any. verified_on
+# is workstation, vm or - : only a family someone has run is Observed; every
+# other row is a recommendation, and docs/coverage-matrix.md says so in the
+# same words. Gate: scripts/check-gpu-catalogue.sh.
+nvidia_open	10de	1e00-ffff	packages/gpu-nvidia_open.txt	workstation	gpu.nvidia_open
+nvidia_proprietary	10de	1340-1dff	packages/gpu-nvidia_proprietary.txt	-	gpu.nvidia_proprietary
+nvidia_legacy_470	10de	0f00-133f	packages/gpu-nvidia_legacy_470.txt	-	gpu.nvidia_legacy_470
+intel_xe	8086	6400-64ff,b000-b0ff,e200-e2ff	packages/gpu-intel_xe.txt	-	gpu.intel_xe
+intel_i915	8086	*	packages/gpu-intel_i915.txt	-	gpu.intel_i915
+amd_amdgpu	1002	*	packages/gpu-amd_amdgpu.txt	-	gpu.amd_amdgpu
+virtio	1af4	*	packages/gpu-virtio.txt	vm	gpu.virtio
+generic	*	*	packages/gpu-generic.txt	-	gpu.generic

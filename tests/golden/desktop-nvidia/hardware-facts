@@ -2,6 +2,7 @@
 FACTS_SCHEMA=1
 chassis=desktop
 gpu_devices=10de:2504
+gpu_families=nvidia_open
 gpu_hybrid=no
 gpu_vendors=nvidia
 has_backlight=no

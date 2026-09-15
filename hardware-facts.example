@@ -14,6 +14,7 @@
 FACTS_SCHEMA=1
 chassis=laptop
 gpu_devices=8086:a7a0 10de:28e0
+gpu_families=intel_i915 nvidia_open
 gpu_hybrid=yes
 gpu_vendors=intel nvidia
 has_backlight=yes

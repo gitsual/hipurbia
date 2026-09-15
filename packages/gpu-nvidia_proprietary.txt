@@ -1,0 +1,4 @@
+egl-wayland
+libva-nvidia-driver
+nvidia-dkms
+nvidia-utils

@@ -17,6 +17,8 @@ repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "$repo_root/lib/kv.sh"
 # shellcheck source=lib/facts.sh
 source "$repo_root/lib/facts.sh"
+# shellcheck source=lib/gpu.sh
+source "$repo_root/lib/gpu.sh"
 for detector in chassis power input net graphics kernels display; do
 	# shellcheck source=/dev/null
 	source "$repo_root/lib/detect/$detector.sh"
@@ -100,6 +102,9 @@ collect() {
 	out['gpu_vendors']="$(detect_gpu_vendors)"
 	out['gpu_devices']="$(detect_gpu_devices)"
 	out['gpu_hybrid']="$(detect_gpu_hybrid)"
+	# Not detected: joined from the catalogue, so a new family is one row.
+	gpu_load_catalogue "${GPU_CATALOGUE_FILE:-$repo_root/data/gpu-catalogue.tsv}"
+	out['gpu_families']="$(gpu_families "${out['gpu_devices']}")"
 	out['kernels']="$(detect_kernels)"
 	out['needs_dkms']="$(detect_needs_dkms)"
 	out['secure_boot']="$(detect_secure_boot)"

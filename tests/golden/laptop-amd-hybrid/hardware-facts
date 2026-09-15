@@ -2,6 +2,7 @@
 FACTS_SCHEMA=1
 chassis=laptop
 gpu_devices=1002:15bf 10de:28a0
+gpu_families=amd_amdgpu nvidia_open
 gpu_hybrid=yes
 gpu_vendors=amd nvidia
 has_backlight=yes

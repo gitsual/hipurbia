@@ -31,6 +31,8 @@ done
 for manifest in "$repo_root"/packages/*.txt; do
 	name="$(basename -- "$manifest")"
 	[[ "$name" == pacman.txt || "$name" == aur.txt || "$name" == *.local.txt ]] && continue
+	# GPU manifests are reached through the catalogue; check-gpu-catalogue.sh owns them.
+	[[ "$name" == gpu-*.txt ]] && continue
 	referenced=no
 	for id in "${SELECTOR_IDS[@]}"; do
 		[[ "${SELECTOR_MANIFEST["$id"]}" == "packages/$name" ]] && referenced=yes
