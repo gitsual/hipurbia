@@ -29,6 +29,28 @@ grep -Fxq "    kb_layout = $IMAGE_LAYOUT" "$HOME/.config/hypr/generated/input.co
 sudo ./scripts/apply-system.sh --greeter
 grep -Fq 'cage -s -- regreet' /etc/greetd/config.toml
 
+# Draw every wallpaper in the catalogue now, while there is a rasterizer and
+# time to spare. The wallpaper is the only themed file that is rendered at
+# RUN time rather than committed, so without this the first preview of each
+# theme stops to rasterize a 4K image and the desktop sits bare while it does
+# — during the one minute the wizard is asking someone to judge the theme by
+# looking at it.
+# The catalogue only: the default's PNG is committed, and Stow has put a
+# symlink to it at exactly this path. Redrawing it would replace that link with
+# a regular file and leave Stow's bookkeeping wrong for a file that was already
+# correct.
+catalogue=()
+while IFS= read -r conf; do catalogue+=(--theme "$(basename -- "$conf" .conf)"); done \
+	< <(find data/themes -type f -name '*.conf' | LC_ALL=C sort)
+./scripts/make-wallpaper.sh "${catalogue[@]}" --out "$HOME/.local/share/wallpapers"
+drawn="$(find "$HOME/.local/share/wallpapers" -type f -name '*.png' | wc -l)"
+wanted="$((${#catalogue[@]} / 2))"
+((drawn >= wanted)) || {
+	printf 'only %s of %s catalogue wallpapers were drawn; themes would fall back to the default\n' \
+		"$drawn" "$wanted" >&2
+	exit 1
+}
+
 # Nothing that identifies the build host or the build run may survive.
 sudo pacman -Scc --noconfirm >/dev/null
 sudo journalctl --rotate >/dev/null 2>&1 || true

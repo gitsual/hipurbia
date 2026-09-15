@@ -22,6 +22,7 @@ jq
 keepassxc
 kitty
 libnotify
+librsvg
 lynis
 neovim
 networkmanager

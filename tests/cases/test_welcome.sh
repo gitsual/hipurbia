@@ -78,6 +78,29 @@ paper="$repo_root/dotfiles/hypr/.config/hypr/scripts/wallpaper.sh"
 grep -Fq 'archlinux-portfolio/settings' "$paper" || fail 'the wallpaper ignores the chosen theme'
 grep -Fq 'make-wallpaper.sh' "$paper" || fail 'a theme without a committed image would have no wallpaper'
 grep -Fq 'warm-night.png' "$paper" || fail 'the wallpaper has no fallback when nothing can be drawn'
+
+# ...and the fallback must stay a fallback. The wallpaper is the ONLY themed
+# file drawn at run time rather than committed, so the base profile has to
+# install something that can turn an SVG into the PNG swaybg is handed. It did
+# not, and the symptom was the worst kind: every other themed file changed
+# colour and the largest thing on screen did not.
+declare -A provides=(
+	[rsvg-convert]=librsvg [magick]=imagemagick
+	[convert]=imagemagick [inkscape]=inkscape
+)
+rasterizers=0
+for binary in "${!provides[@]}"; do
+	grep -Fq "$binary" "$repo_root/scripts/make-wallpaper.sh" || continue
+	grep -Fxq "${provides[$binary]}" "$repo_root/packages/pacman.txt" && rasterizers=$((rasterizers + 1))
+done
+((rasterizers > 0)) ||
+	fail 'no package in the base profile can rasterize a wallpaper, so every theme would show the default'
+
+# And the published image draws them all up front: the wizard asks someone to
+# judge a theme by looking at it, which does not work while the desktop sits
+# bare rasterizing 4K.
+grep -Fq 'make-wallpaper.sh' "$repo_root/scripts/seal-vm-image.sh" ||
+	fail 'the sealed image ships no drawn wallpapers, so the first preview of each theme stalls'
 # Choosing a theme has to change the room, not a line in a file. The wizard
 # does not know how to do that and must not learn: it delegates to the one
 # script that applies a palette everywhere, so there is a single answer to

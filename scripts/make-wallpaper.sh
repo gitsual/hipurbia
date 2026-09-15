@@ -156,6 +156,7 @@ for theme in "${themes[@]}"; do
 	RENDER_TOKENS[THEME_ESSENCE]="$essence"
 
 	svg="$out_dir/$theme.svg"
+	rm -f -- "$svg"
 	render_file "$repo_root/templates/wallpaper/base.svg.in" "$svg"
 	if [[ -n "$ornament" ]]; then
 		fragment="$repo_root/templates/wallpaper/ornament-$ornament.svg.in"
@@ -169,6 +170,11 @@ for theme in "${themes[@]}"; do
 	fi
 	printf '</svg>\n' >>"$svg"
 
+	# Unlinked first, never written through. The default theme's PNG is
+	# committed and Stow puts a SYMLINK INTO THE CHECKOUT at exactly this
+	# path, so opening it for writing would edit the repository from a script
+	# whose whole job is to write into a home directory.
+	rm -f -- "$out_dir/$theme.png"
 	case "$rasterizer" in
 	rsvg-convert) rsvg-convert -w 3840 -h 2160 -o "$out_dir/$theme.png" "$svg" ;;
 	magick) magick -background none "$svg" -resize 3840x2160 "$out_dir/$theme.png" ;;
