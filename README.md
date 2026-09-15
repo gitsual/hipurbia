@@ -129,6 +129,10 @@ A hybrid machine gets both families plus `nvidia-prime`; a DKMS stack gets the h
 
 The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop starts it with `swaybg`, including on virtual GPUs without accelerated rendering. The header SVG is a stylized preview, not a real desktop capture.
 
+## Optional selectors
+
+`bootstrap.sh --list-selectors` prints the optional package sets and whether each applies to this machine; `--desktop` adds the everyday applications (`packages/desktop.txt`: browser, file manager, image and PDF viewers, media player, office suite) on top of the base profile, which a test keeps byte-identical without the flag.
+
 ## Workspaces
 
 Ten numbered workspaces, `Super+1` to `Super+9` and `Super+0` for the tenth, `Super+Shift` to move a window there, and `Super+[` / `Super+]` to walk them with wraparound. Special workspaces are never part of that sequence. Waybar shows all ten by number, each occupied one followed by a glyph per window (`dotfiles/waybar/.config/waybar/workspace-icons.json`: class first, then a class prefix, then a title fragment, then a default), the active one underlined and an urgent one in italics. The strip is a `custom/ws` module fed by `ws-refresh.sh`, a `socat` listener on Hyprland's event socket that debounces a burst, takes one `hyprctl` snapshot and signals Waybar; nothing polls.

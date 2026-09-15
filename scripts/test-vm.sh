@@ -163,7 +163,7 @@ cd "$HOME/archlinux-portfolio"
 # below can only be satisfied by its own writer.
 mkdir -p "$HOME/.config/archlinux-portfolio"
 printf 'locale=es_ES.UTF-8\nkeymap=%s\nxkb_layout=fr\n' "$CONSOLE_KEYMAP" >"$HOME/.config/archlinux-portfolio/settings"
-./scripts/bootstrap.sh --noconfirm --desktop-login --vm
+./scripts/bootstrap.sh --noconfirm --desktop-login --vm --desktop
 ./scripts/apply-system.sh --locale --keymap
 grep -Fxq 'LANG=es_ES.UTF-8' /etc/locale.conf
 LC_ALL=C locale -a | grep -Fxq 'es_ES.utf8'
@@ -192,7 +192,9 @@ printf '# local edit\n' >>"$HOME/.config/hypr/generated/hardware.conf"
 ./scripts/render-config.sh --deploy >/dev/null
 gpu_restore="$(./scripts/gpu-setup.sh --restore-config --dry-run)"
 grep -q '^would restore' <<<"$gpu_restore"
-for executable in Hyprland waybar kitty dunst rofi dmenu_run wofi nvim clamscan ufw greetd tuigreet; do
+# Every package the desktop selector promises is installed.
+pacman -Qq $(grep -Ev '^[[:space:]]*(#|$)' packages/desktop.txt) >/dev/null
+for executable in Hyprland waybar kitty dunst rofi dmenu_run wofi nvim clamscan ufw greetd tuigreet firefox thunar mpv; do
   command -v "$executable" >/dev/null
  done
 printf '%s\n' 'VM_ACCEPTANCE: PASS'

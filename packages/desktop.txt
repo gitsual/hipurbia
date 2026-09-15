@@ -1,0 +1,9 @@
+file-roller
+firefox
+imv
+libreoffice-fresh
+mpv
+thunar
+thunar-archive-plugin
+zathura
+zathura-pdf-mupdf

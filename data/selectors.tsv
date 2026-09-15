@@ -8,3 +8,4 @@
 # it exits 3 with the reason — never a silent no-op.
 desktop-login	packages/desktop-login.txt		--desktop-login	selector.desktop_login
 vm	packages/vm.txt	chassis=vm	--vm	selector.vm
+desktop	packages/desktop.txt		--desktop	selector.desktop

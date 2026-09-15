@@ -130,14 +130,12 @@ source /etc/os-release
 
 mapfile -t official < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/packages/pacman.txt")
 mapfile -t aur < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/packages/aur.txt")
-if $desktop_login; then
-	mapfile -t optional < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/packages/desktop-login.txt")
+# Every requested selector contributes its manifest from the registry; the
+# registry is the only place a selector and its packages are tied together.
+for id in "${requested_selectors[@]}"; do
+	mapfile -t optional < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/${SELECTOR_MANIFEST["$id"]}")
 	official+=("${optional[@]}")
-fi
-if $vm_profile; then
-	mapfile -t optional < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/packages/vm.txt")
-	official+=("${optional[@]}")
-fi
+done
 mapfile -t official < <(printf '%s\n' "${official[@]}" | LC_ALL=C sort -u)
 
 system_args=()
