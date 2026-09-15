@@ -29,7 +29,6 @@ stage 'structured configuration'
 python -c 'import ast, pathlib; ast.parse(pathlib.Path("scripts/privacy-scan.py").read_text())'
 python -c 'import ast, pathlib; ast.parse(pathlib.Path("scripts/configure-audio.py").read_text())'
 python -c 'import ast, pathlib; ast.parse(pathlib.Path("dotfiles/automation/.local/bin/workstation-task-runner").read_text())'
-python -m json.tool dotfiles/waybar/.config/waybar/config >/dev/null
 python -m json.tool profiles/automation/example.json >/dev/null
 while IFS= read -r -d '' file; do
 	nvim --headless --clean -u NONE -c "lua assert(loadfile([[${file}]]))" -c qa
@@ -89,6 +88,8 @@ stage 'deployment script dry run'
 dry_home="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-dry-run.XXXXXX")"
 trap 'rm -rf -- "$dry_home"' EXIT
 HOME="$dry_home" XDG_STATE_HOME="$dry_home/.local/state" "$repo_root/scripts/deploy.sh" --all --dry-run
+HOME="$dry_home" XDG_STATE_HOME="$dry_home/.local/state" FACTS_FILE="$repo_root/tests/golden/vm-virtio/hardware-facts" \
+	"$repo_root/scripts/render-config.sh" --dry-run
 rm -rf -- "$dry_home"
 trap - EXIT
 

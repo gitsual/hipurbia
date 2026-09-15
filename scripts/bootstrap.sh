@@ -141,6 +141,10 @@ if $dry_run; then
 	printf 'would install official packages (%d): %s\n' "${#official[@]}" "${official[*]}"
 	((${#aur[@]})) && printf 'would install AUR packages (%d): %s\n' "${#aur[@]}" "${aur[*]}"
 	HOME="${HOME}" "$repo_root/scripts/deploy.sh" --all --dry-run
+	facts_preview="$(mktemp "${TMPDIR:-/tmp}/archportfolio-facts.XXXXXX")"
+	"$repo_root/scripts/hardware-facts.sh" --dry-run >"$facts_preview"
+	FACTS_FILE="$facts_preview" "$repo_root/scripts/render-config.sh" --dry-run
+	rm -f -- "$facts_preview"
 	if $system_profile; then
 		"$repo_root/scripts/apply-system.sh" --dry-run "${system_args[@]}"
 	fi
@@ -166,6 +170,11 @@ if ! $no_install; then
 fi
 
 "$repo_root/scripts/deploy.sh" --all
+# The machine-specific fragments are rendered after Stow so that the escape
+# gate sees the final directory layout, and before check.sh so a render
+# failure stops the bootstrap here rather than surfacing as a broken session.
+"$repo_root/scripts/hardware-facts.sh" --emit
+"$repo_root/scripts/render-config.sh" --deploy
 "$repo_root/scripts/check.sh"
 if $system_profile; then
 	"$repo_root/scripts/apply-system.sh" "${system_args[@]}"

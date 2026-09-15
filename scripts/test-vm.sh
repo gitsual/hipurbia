@@ -160,6 +160,12 @@ cd "$HOME/archlinux-portfolio"
 mkdir -p /tmp/portfolio-runtime
 chmod 700 /tmp/portfolio-runtime
 XDG_RUNTIME_DIR=/tmp/portfolio-runtime Hyprland --verify-config -c "$HOME/.config/hypr/hyprland.conf"
+for fragment in hardware monitors input; do
+  test -f "$HOME/.config/hypr/generated/$fragment.conf"
+  test ! -L "$HOME/.config/hypr/generated/$fragment.conf"
+done
+python -m json.tool "$HOME/.config/waybar/config" >/dev/null
+./scripts/render-config.sh --check-drift
 for executable in Hyprland waybar kitty dunst rofi dmenu_run wofi nvim clamscan ufw greetd tuigreet; do
   command -v "$executable" >/dev/null
  done

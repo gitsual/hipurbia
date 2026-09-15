@@ -14,9 +14,22 @@
 # An unknown token or filter is an error, never an empty string: a placeholder
 # silently rendered as nothing would ship a broken stylesheet.
 #
-# Sourced, not executed. Requires lib/kv.sh.
+# Deploy-time templates under render/ additionally see hardware facts, loaded
+# with render_load_facts: each fact is a token named FACT_<KEY> in upper case
+# (@FACT_MAX_SCALE@), and a line may start with a guard
+#
+#   @?predicate@rest of the line
+#
+# which keeps the line (without the guard) when the predicate holds over the
+# facts and drops it otherwise. The predicate grammar is lib/selectors.sh's:
+# key=value, key!=value, key~word, joined by && and ||. A guard in a template
+# rendered without facts is an error, so a committed theme template can never
+# depend on the machine it is rendered on.
+#
+# Sourced, not executed. Requires lib/kv.sh; guards require lib/facts.sh and
+# lib/selectors.sh as well.
 
-declare -gA RENDER_TOKENS=()
+declare -gA RENDER_TOKENS=() RENDER_FACTS=()
 
 # render_load_tokens FILE — load the palette. Values must be bare 6-digit hex;
 # anything else is refused here so a template never has to guess.
@@ -33,6 +46,36 @@ render_load_tokens() {
 			return 1
 		}
 	done
+}
+
+# render_load_facts FILE... — load hardware facts for a deploy-time render.
+# Later files win (the user's override). Every fact becomes a token
+# FACT_<KEY>; values are words, not colours, so no hex check applies. Facts
+# never enter RENDER_FACTS through any other path, which is what lets a guard
+# trust that array.
+render_load_facts() {
+	local key
+	RENDER_FACTS=()
+	facts_load RENDER_FACTS "$@" || {
+		printf 'render: no readable facts file among: %s\n' "$*" >&2
+		return 1
+	}
+	for key in "${!RENDER_FACTS[@]}"; do
+		RENDER_TOKENS["FACT_${key^^}"]="${RENDER_FACTS["$key"]}"
+	done
+}
+
+# render_guard_holds PREDICATE — 0 when the guarded line stays. Facts must be
+# loaded; a template that guards on a machine no facts describe is a bug in
+# how it was invoked, not a line to drop quietly.
+render_guard_holds() {
+	local predicate="$1"
+	[[ -v RENDER_FACTS[FACTS_SCHEMA] ]] || {
+		printf 'render: guard %q used without hardware facts\n' "$predicate" >&2
+		return 2
+	}
+	selectors_validate_predicate "$predicate" || return 2
+	selector_predicate_holds "$predicate" RENDER_FACTS
 }
 
 # render_apply_filter VALUE FILTER
@@ -71,7 +114,7 @@ render_string() {
 # render_file TEMPLATE OUTPUT — render line by line so a template of any size
 # costs no more than its length, then write atomically.
 render_file() {
-	local template="$1" output="$2" line rendered tmp lineno=0
+	local template="$1" output="$2" line rendered tmp lineno=0 guard
 	[[ -r "$template" ]] || {
 		printf 'render: no template at %s\n' "$template" >&2
 		return 1
@@ -80,6 +123,20 @@ render_file() {
 	local failed=0
 	while IFS= read -r line || [[ -n "$line" ]]; do
 		lineno=$((lineno + 1))
+		if [[ "$line" =~ ^@\?([^@]*)@(.*)$ ]]; then
+			line="${BASH_REMATCH[2]}"
+			guard=0
+			render_guard_holds "${BASH_REMATCH[1]}" || guard=$?
+			case "$guard" in
+			0) ;;
+			1) continue ;;
+			*)
+				printf 'render: %s line %d\n' "$template" "$lineno" >&2
+				failed=1
+				break
+				;;
+			esac
+		fi
 		if rendered="$(render_string "$line")"; then
 			printf '%s\n' "$rendered"
 		else
@@ -103,4 +160,14 @@ render_output_path() {
 	local template="$1"
 	template="${template#templates/}"
 	printf 'dotfiles/%s' "${template%.in}"
+}
+
+# render_deploy_output_path TEMPLATE — where a deploy-time template renders
+# to: the same path under the user's config directory, never the checkout.
+#   render/hypr/generated/monitors.conf.in
+#   -> $XDG_CONFIG_HOME/hypr/generated/monitors.conf
+render_deploy_output_path() {
+	local template="$1"
+	template="${template#render/}"
+	printf '%s/%s' "${XDG_CONFIG_HOME:-$HOME/.config}" "${template%.in}"
 }

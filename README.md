@@ -67,6 +67,16 @@ Deploy selected packages:
 
 Existing files are never deleted. Conflicts move to a timestamped backup under `${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio/backups/`. Stow runs with `--no-folding`, so local hardware overlays cannot write through a linked directory into the repository.
 
+Two things are not stowed because they differ per machine: the Waybar config and the Hyprland fragments for monitors, input devices and the GPU. They are rendered from detected hardware facts into `$XDG_CONFIG_HOME`, never into the checkout, and replaced files go to the same backup location:
+
+```bash
+./scripts/hardware-facts.sh --emit     # detect once; correct with the override file
+./scripts/render-config.sh --deploy    # or --dry-run to see what would change
+./scripts/render-config.sh --check-drift
+```
+
+`scripts/bootstrap.sh` runs both steps after Stow.
+
 ## Repository map
 
 ```text
@@ -80,7 +90,9 @@ dotfiles/              User-level Stow packages
   security/            User malware timer and audit command
   automation/          Generic local service and timer framework
 system/                Reviewed system-level templates, including optional login
-profiles/              Optional GPU, audio, automation and VM package profiles
+profiles/              Optional audio, automation and VM package profiles
+render/                Deploy-time templates rendered from hardware facts into $XDG_CONFIG_HOME
+templates/             Themed templates rendered from data/theme.conf into dotfiles/
 packages/              Base and composable official/AUR manifests
 docs/                  Architecture, coverage, VM validation and publication copy
 scripts/               Bootstrap, deploy, render, audit and real-VM test tools
@@ -101,7 +113,7 @@ scripts/               Bootstrap, deploy, render, audit and real-VM test tools
 
 ## Hardware profiles
 
-The portable Hyprland baseline does not force a GPU. To reproduce the NVIDIA branch used by the source workstation, replace the deployed `hardware.conf` symlink with a local copy of `profiles/hardware/nvidia-hyprland.conf`. Audio device node names are rendered locally by `scripts/configure-audio.py` and are never committed.
+The portable Hyprland baseline does not force a GPU. `render/hypr/generated/hardware.conf.in` emits the NVIDIA Wayland environment only when the detected facts say NVIDIA is the sole GPU, and a software cursor on NVIDIA and virtual machines; every other machine gets an empty fragment. To change what was detected, write the corrected fact to `~/.config/archlinux-portfolio/hardware-facts.override` and re-run `scripts/render-config.sh --deploy`. Audio device node names are rendered locally by `scripts/configure-audio.py` and are never committed.
 
 The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop starts it with `swaybg`, including on virtual GPUs without accelerated rendering. The header SVG is a stylized preview, not a real desktop capture.
 
