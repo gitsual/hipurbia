@@ -102,7 +102,13 @@ done
 # tagged so a line of boot noise cannot be mistaken for one.
 report() {
 	python - "$1" "$2" "$3" <<'DRIVER'
-import socket, sys, time
+import os, re, socket, sys, time
+
+# The guest's shell announces every command with OSC semantic-prompt sequences
+# and paints its prompt with CSI colour. Neither ends in a newline, so the
+# answer we asked for arrives welded to the tail of an escape sequence. Strip
+# them and the console reads like a console again.
+ESCAPES = re.compile(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b\[[0-9;?]*[A-Za-z]|\x1b[()][B0]|[\x07\r]")
 
 path, user, deadline = sys.argv[1], sys.argv[2], float(sys.argv[3])
 end = time.time() + deadline
@@ -142,29 +148,85 @@ def send(line):
     connection.sendall((line + "\n").encode())
 
 
+def dump():
+    """Keep a verbatim copy of the console when asked. A verdict built from a
+    transcript is only as trustworthy as the transcript, and the last four
+    failures here were all in the reading, never in the image."""
+    target = os.environ.get("VM_CONSOLE_DUMP")
+    if target:
+        with open(target + "." + os.path.basename(path), "w") as handle:
+            handle.write(buffer)
+
+
+def answered(tag, shape):
+    """The VALUE of tag, or None.
+
+    A line that merely contains the tag is not an answer: the terminal echoes
+    the command that asks the question, and that echo arrives first, so only a
+    line that STARTS with the tag counts. Neither is an EMPTY value an answer —
+    a question typed into a getty that has not finished handing over to the
+    shell comes back with nothing in it, and taking that as the reply would
+    freeze the first stumble into the verdict. The last answer wins, because a
+    console is a transcript and the most recent line is the current truth."""
+    found = None
+    for line in ESCAPES.sub("", buffer).splitlines():
+        line = line.strip()
+        if not line.startswith(tag + "="):
+            continue
+        value = line[len(tag) + 1:]
+        if value and shape.fullmatch(value):
+            found = value
+    return found
+
+
+def ask(tag, command, what, shape):
+    """Ask until the guest answers something of the RIGHT SHAPE.
+
+    Four verdicts in a row were harness bugs, and every one of them was the
+    same mistake wearing a new hat: a half-arrived value read as a whole one,
+    so that `disabled` became `d`, then `dis`, then `disa`. The cure is not one
+    more guess about where the console splits. It is to state what an answer
+    looks like and refuse everything else — a fragment of a word is not a
+    systemd state, and a machine id is thirty-two hex digits or it is noise."""
+    global buffer
+
+    def settled_answer():
+        return answered(tag, shape)
+
+    while settled_answer() is None:
+        if time.time() > end:
+            sys.exit("timed out waiting for %s\n--- console tail ---\n%s" % (what, buffer[-2000:]))
+        send(command)
+        deadline = time.time() + 5
+        while settled_answer() is None and time.time() < deadline:
+            try:
+                chunk = connection.recv(4096)
+            except socket.timeout:
+                break
+            if not chunk:
+                sys.exit("console closed")
+            buffer += chunk.decode("utf-8", "replace")
+            dump()
+    return settled_answer()
+
+
 expect("login:", "the login prompt")
 send(user)
 expect("assword:", "the password prompt")
 send(user)
-expect("$", "a shell prompt")
+# Once, rather than on every question: a shell that echoes what it is asked
+# answers twice, and the first copy is not an answer.
+send("stty -echo 2>/dev/null")
 
 # One tagged line per fact, so an answer cannot be confused with the motd, the
 # prompt, or another answer.
-send("""printf 'MACHINE_ID=%s\\n' "$(cat /etc/machine-id)" """)
-expect("MACHINE_ID=", "the machine id")
-send("""printf 'SSHD=%s\\n' "$(systemctl is-enabled sshd.service 2>&1)" """)
-expect("SSHD=", "the sshd state")
-send("""printf 'HOSTKEYS=%s\\n' "$(ls /etc/ssh/ssh_host_* 2>/dev/null | wc -l)" """)
-expect("HOSTKEYS=", "the host key count")
-
-for line in buffer.splitlines():
-    line = line.strip()
-    # The echo of the command that produced a tag also contains it, and that
-    # echo is the one carrying a quote.
-    if '"' in line or "=" not in line:
-        continue
-    if line.split("=")[0] in ("MACHINE_ID", "SSHD", "HOSTKEYS"):
-        print(line)
+print("MACHINE_ID=" + ask("MACHINE_ID", """printf 'MACHINE_ID=%s\\n' "$(cat /etc/machine-id)" """,
+                          "the machine id", re.compile(r"[0-9a-f]{32}")))
+print("SSHD=" + ask("SSHD", """printf 'SSHD=%s\\n' "$(systemctl is-enabled sshd.service 2>&1)" """,
+                    "the sshd state",
+                    re.compile(r"enabled|disabled|masked|static|indirect|generated|alias|linked|.*[Nn]o such file.*")))
+print("HOSTKEYS=" + ask("HOSTKEYS", """printf 'HOSTKEYS=%s\\n' "$(ls /etc/ssh/ssh_host_* 2>/dev/null | wc -l)" """,
+                        "the host key count", re.compile(r"[0-9]+")))
 DRIVER
 }
 
@@ -180,7 +242,7 @@ for index in 0 1; do
 	host_keys="$(sed -nE 's/^HOSTKEYS=(.+)$/\1/p' <<<"$answers" | tail -1)"
 
 	[[ -n "$machine_id" ]] || {
-		printf 'Instance %d reported no machine id\n' "$instance" >&2
+		printf 'Instance %d reported no machine id; it said:\n%s\n' "$instance" "$answers" >&2
 		exit 1
 	}
 	[[ "$sshd" == disabled ]] || {
