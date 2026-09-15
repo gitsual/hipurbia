@@ -73,6 +73,9 @@ fi
 stage 'default profile baseline'
 "$repo_root/scripts/freeze-baseline.sh"
 
+stage 'selector registry'
+"$repo_root/scripts/check-selectors.sh"
+
 stage 'unit and fixture tests'
 "$repo_root/tests/run.sh"
 
