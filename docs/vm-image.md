@@ -65,7 +65,20 @@ the same machine id.
 
 The image is provisioned by `scripts/bootstrap.sh` with every selector the
 repository offers, including `--apps`: Obsidian from the official repositories
-and Stremio from the AUR. Stremio is the reason `scripts/aur-install.sh`
+and Stremio from the AUR.
+
+The Stremio package is `stremio-linux-shell`, not `stremio` — which is the one
+with the votes and cannot be installed. Its 4.4 series is a Qt5 shell
+depending on `qt5-webengine`, and Arch has dropped `qt5-webengine` from the
+official repositories, so installing it now means compiling Chromium from
+source: hours of build time and more RAM than the image is given, to ship a
+client its own upstream has already replaced. `stremio-linux-shell` is that
+replacement, from the Stremio organisation's own repository, and every
+dependency it names is an official package — gtk4, libadwaita, webkitgtk-6.0,
+mpv, nodejs. It builds against the system it is installed on rather than
+carrying a browser engine of its own.
+
+Stremio is the reason `scripts/aur-install.sh`
 exists — the AUR is a collection of build recipes rather than a repository, so
 using it means compiling here, and that decision is made in one place instead
 of being assumed by every caller.
