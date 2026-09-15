@@ -87,6 +87,8 @@ render_load_facts "$facts_file" "$facts_override"
 settings_load "$settings_file"
 for key in "${!SETTINGS[@]}"; do
 	RENDER_TOKENS["SETTING_${key^^}"]="${SETTINGS["$key"]}"
+	# ...and as setting_<key> for line guards, next to the facts.
+	RENDER_FACTS["setting_$key"]="${SETTINGS["$key"]}"
 done
 
 # inside_checkout PATH — 0 when PATH, or the nearest ancestor that exists,

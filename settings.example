@@ -9,6 +9,9 @@
 #   locale      scripts/apply-system.sh --locale   -> /etc/locale.conf, /etc/locale.gen
 #   keymap      scripts/apply-system.sh --keymap   -> /etc/vconsole.conf
 #   xkb_layout  scripts/render-config.sh --deploy  -> ~/.config/hypr/generated/input.conf
+#   ime         scripts/render-config.sh --deploy  -> ~/.config/hypr/generated/input.conf
+#               (none or fcitx5; the packages come from bootstrap.sh --ime)
 locale=es_ES.UTF-8
 keymap=es
 xkb_layout=es
+ime=none

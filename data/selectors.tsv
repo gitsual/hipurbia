@@ -9,3 +9,4 @@
 desktop-login	packages/desktop-login.txt		--desktop-login	selector.desktop_login
 vm	packages/vm.txt	chassis=vm	--vm	selector.vm
 desktop	packages/desktop.txt		--desktop	selector.desktop
+ime	packages/ime.txt		--ime	selector.ime

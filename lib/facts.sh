@@ -44,6 +44,14 @@ facts_key_allowed() {
 	for key in "${FACTS_ALLOWED_KEYS[@]}"; do
 		[[ "$key" == "$candidate" ]] && return 0
 	done
+	# A deploy-time guard may also test a setting, as setting_<key>, when
+	# lib/settings.sh is loaded. Such a key never enters a facts file:
+	# facts_emit writes the allowlist above and nothing else.
+	if [[ "$candidate" == setting_* && -v SETTINGS_ALLOWED_KEYS ]]; then
+		for key in "${SETTINGS_ALLOWED_KEYS[@]}"; do
+			[[ "setting_$key" == "$candidate" ]] && return 0
+		done
+	fi
 	return 1
 }
 

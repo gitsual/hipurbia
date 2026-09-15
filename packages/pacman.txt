@@ -24,6 +24,8 @@ libnotify
 lynis
 neovim
 networkmanager
+noto-fonts
+noto-fonts-cjk
 noto-fonts-emoji
 pacman-contrib
 papirus-icon-theme

@@ -162,8 +162,8 @@ cd "$HOME/archlinux-portfolio"
 # Three language axes with three distinguishable values, so each assertion
 # below can only be satisfied by its own writer.
 mkdir -p "$HOME/.config/archlinux-portfolio"
-printf 'locale=es_ES.UTF-8\nkeymap=%s\nxkb_layout=fr\n' "$CONSOLE_KEYMAP" >"$HOME/.config/archlinux-portfolio/settings"
-./scripts/bootstrap.sh --noconfirm --desktop-login --vm --desktop
+printf 'locale=es_ES.UTF-8\nkeymap=%s\nxkb_layout=fr\nime=fcitx5\n' "$CONSOLE_KEYMAP" >"$HOME/.config/archlinux-portfolio/settings"
+./scripts/bootstrap.sh --noconfirm --desktop-login --vm --desktop --ime
 ./scripts/apply-system.sh --locale --keymap
 grep -Fxq 'LANG=es_ES.UTF-8' /etc/locale.conf
 LC_ALL=C locale -a | grep -Fxq 'es_ES.utf8'
@@ -192,6 +192,15 @@ printf '# local edit\n' >>"$HOME/.config/hypr/generated/hardware.conf"
 ./scripts/render-config.sh --deploy >/dev/null
 gpu_restore="$(./scripts/gpu-setup.sh --restore-config --dry-run)"
 grep -q '^would restore' <<<"$gpu_restore"
+# The input method reaches the compositor through the input fragment only,
+# and CJK and emoji resolve by code point to installed fonts.
+grep -Fxq 'env = QT_IM_MODULE,fcitx' "$HOME/.config/hypr/generated/input.conf"
+grep -Fxq 'exec-once = fcitx5 -d' "$HOME/.config/hypr/generated/input.conf"
+! grep -rq fcitx "$HOME/.config/hypr/generated/hardware.conf" "$HOME/.config/hypr/generated/monitors.conf" "$HOME/.config/waybar/config"
+command -v fcitx5 >/dev/null
+fc-match -f '%{family}\n' ':charset=4e2d' | grep -q CJK
+fc-match -f '%{family}\n' ':charset=3042' | grep -q CJK
+fc-match -f '%{family}\n' ':charset=1f600' | grep -qi emoji
 # Every package the desktop selector promises is installed.
 pacman -Qq $(grep -Ev '^[[:space:]]*(#|$)' packages/desktop.txt) >/dev/null
 for executable in Hyprland waybar kitty dunst rofi dmenu_run wofi nvim clamscan ufw greetd tuigreet firefox thunar mpv; do

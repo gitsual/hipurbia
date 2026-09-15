@@ -12,7 +12,7 @@
 #
 # Sourced, not executed. Requires lib/kv.sh.
 
-SETTINGS_ALLOWED_KEYS=(locale keymap xkb_layout)
+SETTINGS_ALLOWED_KEYS=(locale keymap xkb_layout ime)
 declare -gA SETTINGS=()
 
 # settings_defaults — reset SETTINGS to the values the source workstation uses.
@@ -21,6 +21,7 @@ settings_defaults() {
 		[locale]=es_ES.UTF-8
 		[keymap]=es
 		[xkb_layout]=es
+		[ime]=none
 	)
 }
 
@@ -34,6 +35,7 @@ settings_valid() {
 	locale) [[ "$value" == 'C.UTF-8' || "$value" =~ ^[a-z]{2,3}(_[A-Z]{2})?(@[a-z]+)?\.UTF-8$ ]] ;;
 	keymap) [[ "$value" =~ ^[A-Za-z0-9_.-]+$ ]] ;;
 	xkb_layout) [[ "$value" =~ ^[a-z]{2,8}(,[a-z]{2,8})*$ ]] ;;
+	ime) [[ "$value" == none || "$value" == fcitx5 ]] ;;
 	*) return 1 ;;
 	esac
 }

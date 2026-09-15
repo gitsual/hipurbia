@@ -8,3 +8,10 @@ input {
 @?has_touchpad=yes@        tap-to-click = true
 @?has_touchpad=yes@    }
 }
+# Input method (settings: ime). fcitx5 on Wayland: the environment tells Qt
+# and X11 clients to use it, GTK clients use the text-input protocol on
+# their own, and the daemon starts with the session. Nothing else changes.
+@?setting_ime=fcitx5@env = QT_IM_MODULE,fcitx
+@?setting_ime=fcitx5@env = XMODIFIERS,@im=fcitx
+@?setting_ime=fcitx5@env = SDL_IM_MODULE,fcitx
+@?setting_ime=fcitx5@exec-once = fcitx5 -d
