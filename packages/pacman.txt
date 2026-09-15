@@ -41,6 +41,7 @@ seahorse
 shellcheck
 shfmt
 slurp
+socat
 sof-firmware
 stow
 swaybg

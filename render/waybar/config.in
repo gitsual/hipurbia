@@ -6,7 +6,7 @@
   "margin-top": 6,
   "margin-left": 8,
   "margin-right": 8,
-  "modules-left": ["hyprland/workspaces", "custom/updates"],
+  "modules-left": ["custom/ws", "custom/updates"],
   "modules-center": ["clock"],
   "modules-right": [
     "network",
@@ -20,7 +20,7 @@
     "pulseaudio",
     "custom/power"
   ],
-  "hyprland/workspaces": {"format": "{id}", "all-outputs": true, "sort-by": "number", "persistent-workspaces": {"*": 10}},
+  "custom/ws": {"exec": "$HOME/.config/waybar/scripts/ws-render.sh", "return-type": "json", "signal": 1, "format": "{}", "on-scroll-up": "hyprctl dispatch workspace e-1", "on-scroll-down": "hyprctl dispatch workspace e+1"},
   "clock": {"format": "󰥔 {:%H:%M  %a %d %b %Y}", "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"},
   "cpu": {"format": "󰻠 {usage}%", "interval": 2},
   "memory": {"format": "󰍛 {percentage}%", "interval": 5},

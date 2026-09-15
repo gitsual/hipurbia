@@ -1,0 +1,11 @@
+[
+  {"address": "0x1a", "mapped": true, "workspace": {"id": 1, "name": "1"}, "class": "kitty", "initialClass": "kitty", "title": "~ <shell>"},
+  {"address": "0x1b", "mapped": true, "workspace": {"id": 1, "name": "1"}, "class": "firefox", "initialClass": "firefox", "title": "Arch Wiki & friends"},
+  {"address": "0x2a", "mapped": true, "workspace": {"id": 2, "name": "2"}, "class": "org.kde.okular", "initialClass": "org.kde.okular", "title": "paper.pdf"},
+  {"address": "0x3a", "mapped": true, "workspace": {"id": 3, "name": "3"}, "class": "", "initialClass": "", "title": "no class at all"},
+  {"address": "0x3b", "mapped": true, "workspace": {"id": 3, "name": "3"}, "class": "", "initialClass": "", "title": "Draft - Mozilla Firefox"},
+  {"address": "0x4a", "mapped": true, "workspace": {"id": 4, "name": "4"}, "class": "Spotify", "initialClass": "kitty", "title": "spotify launched from a terminal wrapper"},
+  {"address": "0x4b", "mapped": false, "workspace": {"id": 4, "name": "4"}, "class": "mpv", "initialClass": "mpv", "title": "unmapped, must not show"},
+  {"address": "0x5a", "mapped": true, "workspace": {"id": 5, "name": "5"}, "class": "jetbrains-idea", "initialClass": "jetbrains-idea", "title": "project"},
+  {"address": "0xfa", "mapped": true, "workspace": {"id": -99, "name": "special:scratch"}, "class": "kitty", "initialClass": "kitty", "title": "scratchpad"}
+]

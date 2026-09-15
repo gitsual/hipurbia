@@ -3,8 +3,8 @@ set -Eeuo pipefail
 
 # Workspaces are numbered 1 to 10, bound to the digit keys with 0 as 10, in
 # numeric order, with a wraparound pair and no special workspace in the
-# sequence. Waybar shows every one of the ten by its number on every output,
-# and the stylesheet tells active, urgent and empty apart.
+# sequence. Waybar shows all ten through custom/ws (signal-driven, never
+# polled) on one or two monitors alike, and the strip is never blank.
 
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 template="$repo_root/templates/hypr/.config/hypr/hyprland.conf.in"
@@ -25,8 +25,9 @@ done
 grep -Eq '^bind = SUPER, bracketright, workspace, e\+1$' "$template" || fail 'no wraparound forward bind'
 grep -Eq '^bind = SUPER, bracketleft, workspace, e-1$' "$template" || fail 'no wraparound backward bind'
 grep -E '^bind = SUPER( SHIFT)?, [0-9], (move)?(to)?workspace, special' "$template" && fail 'a digit key targets a special workspace'
+grep -q '^exec-once = ~/.config/waybar/scripts/ws-refresh.sh$' "$template" || fail 'the workspace listener is not started with the session'
 
-# --- Waybar: ten numbered, persistent buttons on every output, on 1 and 2 monitors alike ------
+# --- Waybar: custom/ws replaces the built-in module, on 1 and 2 monitors alike --------------------
 for archetype in vm-virtio laptop-amd-hybrid; do
 	home="$sandbox/$archetype"
 	mkdir -p -- "$home"
@@ -36,25 +37,30 @@ for archetype in vm-virtio laptop-amd-hybrid; do
 	python3 - "$home/.config/waybar/config" "$archetype" <<'PY' || exit 1
 import json, sys
 config = json.load(open(sys.argv[1]))
-ws = config["hyprland/workspaces"]
 problems = []
-if ws.get("format") != "{id}": problems.append("format is not the workspace number")
-if ws.get("persistent-workspaces") != {"*": 10}: problems.append("not ten persistent workspaces on every output")
-if ws.get("sort-by") != "number": problems.append("not sorted by number")
-if ws.get("all-outputs") is not True: problems.append("a second monitor would hide workspaces of the first")
-if "format-icons" in ws: problems.append("icons would replace the numbers")
+if "hyprland/workspaces" in config or "hyprland/workspaces" in config["modules-left"]: problems.append("the built-in workspaces module is still there")
+ws = config.get("custom/ws")
+if ws is None or "custom/ws" not in config["modules-left"]: problems.append("custom/ws is not on the bar")
+elif ws.get("return-type") != "json" or "signal" not in ws or "interval" in ws: problems.append("custom/ws would poll or ignore the signal")
 if problems:
     print(sys.argv[2] + ": " + "; ".join(problems), file=sys.stderr); sys.exit(1)
 PY
 done
 
-# --- the stylesheet distinguishes the three states ---------------------------------------------------
-css="$repo_root/dotfiles/waybar/.config/waybar/style.css"
-for state in active urgent empty; do
-	grep -q "^#workspaces button\.$state " "$css" || fail "no style for a $state workspace"
-done
-active="$(grep '^#workspaces button\.active ' "$css")"
-urgent="$(grep '^#workspaces button\.urgent ' "$css")"
-[[ "$active" != "$urgent" ]] || fail 'active and urgent look the same'
+# --- the strip is never blank: ten numbers with no cache, ten with an empty one ---------------------------
+render="$repo_root/dotfiles/waybar/.config/waybar/scripts/ws-render.sh"
+icons="$repo_root/dotfiles/waybar/.config/waybar/workspace-icons.json"
+text="$(WS_CACHE="$sandbox/no-cache" WS_ICONS="$icons" bash "$render" | jq -r .text)"
+[[ "$text" == '1  2  3  4  5  6  7  8  9  10' ]] || fail "empty strip is not ten numbers: $text"
+printf '{"active": 7, "workspaces": []}\n' >"$sandbox/cache"
+# shellcheck disable=SC2001
+text="$(WS_CACHE="$sandbox/cache" WS_ICONS="$icons" bash "$render" | jq -r .text | sed 's/<[^>]*>//g')"
+[[ "$text" == '1  2  3  4  5  6  7  8  9  10' ]] || fail "strip with a cache is not ten numbers: $text"
 
-printf 'workspace numbering: 1..10 with 0 as 10, wraparound, ten numbered buttons on 1 and 2 monitors\n'
+# --- active and urgent are told apart without relying on colour --------------------------------------
+css="$repo_root/dotfiles/waybar/.config/waybar/style.css"
+grep -q '^#custom-ws\.urgent ' "$css" || fail 'no style for an urgent strip'
+grep -q 'underline=' "$render" || fail 'the active workspace is not marked independently of colour'
+grep -q 'italic' "$render" || fail 'an urgent workspace is not marked independently of colour'
+
+printf 'workspace numbering: 1..10 with 0 as 10, wraparound, custom/ws on 1 and 2 monitors, never blank\n'
