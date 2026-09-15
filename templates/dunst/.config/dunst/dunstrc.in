@@ -1,0 +1,28 @@
+[global]
+    width = 300
+    height = 100
+    offset = 10x50
+    origin = top-right
+    transparency = 10
+    corner_radius = 10
+    frame_width = 2
+    gap_size = 5
+    font = JetBrains Mono Nerd Font 10
+    icon_theme = Papirus
+    icon_position = left
+    min_icon_size = 32
+    max_icon_size = 64
+    frame_color = "#@COLOR_ACCENT@"
+    separator_color = "#@COLOR_MUTED@"
+    background = "#@COLOR_BG@"
+    foreground = "#@COLOR_FG@"
+[urgency_low]
+    frame_color = "#@COLOR_MUTED@"
+    timeout = 5
+[urgency_normal]
+    frame_color = "#@COLOR_ACCENT@"
+    timeout = 10
+[urgency_critical]
+    foreground = "#@COLOR_ACCENT@"
+    frame_color = "#@COLOR_URGENT@"
+    timeout = 0

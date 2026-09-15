@@ -1,0 +1,25 @@
+general { hide_cursor = true }
+background { monitor =; color = rgb(@COLOR_BG@) }
+input-field {
+    monitor =
+    size = 300, 52
+    outline_thickness = 3
+    dots_size = 0.25
+    outer_color = rgb(@COLOR_ACCENT@)
+    inner_color = rgb(@COLOR_SURFACE@)
+    font_color = rgb(@COLOR_FG@)
+    fade_on_empty = false
+    placeholder_text = <i>Enter password</i>
+    position = 0, -30
+    halign = center
+    valign = center
+}
+label {
+    monitor =
+    text = cmd[update:1000] date +"%H:%M"
+    color = rgb(@COLOR_FG@)
+    font_size = 72
+    position = 0, 90
+    halign = center
+    valign = center
+}

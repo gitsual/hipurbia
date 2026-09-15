@@ -57,9 +57,12 @@ if find . \( -path ./.git -o -path ./.vm-test -o -path ./.audit \) -prune -o -ty
 	exit 1
 fi
 
-# NOTE: this stage must run after the committed-render stage introduced in the
-# rendering phase, so hashes are taken over post-render bytes rather than stale
-# ones. The ordering assertion itself lands with that stage.
+# Renders are checked before the asset manifest on purpose: the manifest hashes
+# rendered bytes, and hashing before rendering would pass on stale output.
+# tests/cases/test_stage_order.sh asserts this ordering.
+stage 'committed renders and theme drift'
+"$repo_root/scripts/check-theme-drift.sh"
+
 stage 'asset manifest'
 "$repo_root/scripts/check-asset-manifest.sh"
 stage 'privacy and secret scan'

@@ -1,0 +1,12 @@
+* { border: none; border-radius: 0; font-family: "JetBrains Mono Nerd Font", "Font Awesome 6 Free"; font-size: 13px; min-height: 0; }
+window#waybar { background: rgba(@COLOR_BG:rgb@, 0.95); border-radius: 12px; border-bottom: 3px solid #@COLOR_ACCENT@; color: #@COLOR_FG@; }
+#workspaces, #clock, #cpu, #memory, #disk, #network, #pulseaudio, #custom-updates, #custom-gpu, #bluetooth { background: rgba(@COLOR_SURFACE:rgb@, 0.7); padding: 0 12px; margin: 5px 2px; border-radius: 10px; border-bottom: 2px solid #@COLOR_MUTED@; }
+#workspaces button { padding: 0 8px; color: #@COLOR_FG@; border-radius: 8px; }
+#workspaces button:hover { background: rgba(@COLOR_ACCENT:rgb@, 0.3); color: #@COLOR_ACCENT@; }
+#workspaces button.active { background: #@COLOR_ACCENT@; color: #@COLOR_BG@; }
+#custom-updates { color: #@COLOR_MUTED@; }
+#network { color: #@COLOR_INFO@; }
+#bluetooth.connected { color: #@COLOR_OK@; }
+#custom-power { background: #@COLOR_ACCENT@; color: #@COLOR_BG@; border-radius: 10px; margin: 5px; padding: 0 10px; }
+tooltip { background: rgba(@COLOR_BG:rgb@, 0.98); border: 2px solid #@COLOR_ACCENT@; border-radius: 8px; }
+tooltip label { color: #@COLOR_FG@; }

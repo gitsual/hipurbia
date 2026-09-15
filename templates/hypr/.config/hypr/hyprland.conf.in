@@ -1,0 +1,116 @@
+# Portable baseline distilled from the live workstation.
+monitor = , preferred, auto, 1
+
+$terminal = kitty
+$menu = rofi -show drun
+$scripts = $HOME/.config/hypr/scripts
+
+env = XDG_CURRENT_DESKTOP,Hyprland
+env = XDG_SESSION_TYPE,wayland
+env = XDG_SESSION_DESKTOP,Hyprland
+env = GDK_BACKEND,wayland
+env = XCURSOR_THEME,Adwaita
+env = XCURSOR_SIZE,24
+
+# Empty by default; replace the symlinked file with a local hardware profile.
+source = ~/.config/hypr/hardware.conf
+
+input {
+    kb_layout = es
+    follow_mouse = 1
+}
+
+general {
+    gaps_in = 8
+    gaps_out = 15
+    border_size = 3
+    col.active_border = rgb(@COLOR_ACCENT@) rgb(@COLOR_MUTED@) 45deg
+    col.inactive_border = rgb(@COLOR_BORDER_INACTIVE@)
+    layout = dwindle
+}
+
+decoration {
+    rounding = 10
+    active_opacity = 1.0
+    inactive_opacity = 0.95
+    dim_inactive = true
+    dim_strength = 0.2
+}
+
+animations {
+    enabled = true
+    bezier = warmEase, 0.05, 0.9, 0.1, 1.05
+    bezier = overshot, 0.13, 0.99, 0.29, 1.1
+    animation = windows, 1, 4, overshot, slide
+    animation = windowsIn, 1, 7, warmEase
+    animation = windowsOut, 1, 7, default, popin 80%
+    animation = windowsMove, 1, 7, default
+    animation = border, 1, 10, default
+    animation = fade, 1, 10, default
+    animation = workspaces, 1, 6, overshot, slidevert
+}
+
+dwindle { preserve_split = true }
+master { new_on_top = true }
+
+bind = SUPER, Return, exec, $terminal
+bind = SUPER, R, exec, $menu
+bind = SUPER, D, exec, dmenu_run -fn 'JetBrains Mono Nerd Font-12' -nb '#@COLOR_BG@' -nf '#@COLOR_FG@' -sb '#@COLOR_ACCENT@' -sf '#@COLOR_BG@'
+bind = SUPER ALT, R, exec, wofi --show drun
+bind = SUPER, E, exec, $terminal -e nvim
+bind = SUPER, Q, killactive
+bind = SUPER, M, exit
+bind = SUPER, Space, togglefloating
+bind = SUPER, F, fullscreen
+bind = SUPER, J, layoutmsg, togglesplit
+bind = SUPER, L, exec, hyprlock
+bind = SUPER SHIFT, S, exec, $scripts/screenshot.sh
+bind = , F1, exec, $scripts/keybindings.sh
+bind = SUPER SHIFT, E, exec, $HOME/.config/rofi/power/powermenu.sh
+bind = SUPER SHIFT, R, exec, hyprctl reload
+
+bind = SUPER, left, movefocus, l
+bind = SUPER, right, movefocus, r
+bind = SUPER, up, movefocus, u
+bind = SUPER, down, movefocus, d
+bind = SUPER SHIFT, left, movewindow, l
+bind = SUPER SHIFT, right, movewindow, r
+bind = SUPER SHIFT, up, movewindow, u
+bind = SUPER SHIFT, down, movewindow, d
+bind = SUPER ALT, left, resizeactive, -10 0
+bind = SUPER ALT, right, resizeactive, 10 0
+bind = SUPER ALT, up, resizeactive, 0 -10
+bind = SUPER ALT, down, resizeactive, 0 10
+
+bind = SUPER, 1, workspace, 1
+bind = SUPER, 2, workspace, 2
+bind = SUPER, 3, workspace, 3
+bind = SUPER, 4, workspace, 4
+bind = SUPER, 5, workspace, 5
+bind = SUPER, 6, workspace, 6
+bind = SUPER, 7, workspace, 7
+bind = SUPER, 8, workspace, 8
+bind = SUPER, 9, workspace, 9
+bind = SUPER, 0, workspace, 10
+bind = SUPER SHIFT, 1, movetoworkspace, 1
+bind = SUPER SHIFT, 2, movetoworkspace, 2
+bind = SUPER SHIFT, 3, movetoworkspace, 3
+bind = SUPER SHIFT, 4, movetoworkspace, 4
+bind = SUPER SHIFT, 5, movetoworkspace, 5
+bind = SUPER SHIFT, 6, movetoworkspace, 6
+bind = SUPER SHIFT, 7, movetoworkspace, 7
+bind = SUPER SHIFT, 8, movetoworkspace, 8
+bind = SUPER SHIFT, 9, movetoworkspace, 9
+bind = SUPER SHIFT, 0, movetoworkspace, 10
+
+windowrule = float on, match:class ^(pavucontrol)$
+windowrule = center on, match:class ^(pavucontrol)$
+windowrule = animation slide, match:class ^(rofi)$
+windowrule = float on, match:class ^(nm-connection-editor)$
+
+exec-once = waybar
+exec-once = dunst
+exec-once = bash $scripts/wallpaper.sh
+exec-once = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec-once = /usr/bin/gnome-keyring-daemon --start --components=secrets,ssh,pkcs11
+exec-once = dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
