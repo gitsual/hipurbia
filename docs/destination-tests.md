@@ -52,6 +52,18 @@ hand; there is no CI re-running it.
 | typing Japanese through Mozc in a session | untested |
 | bootstrap and help panes in Spanish | VM-verified |
 
+## Downloadable image
+
+| Claim | Status |
+|-------|--------|
+| the sealed image boots and serves ssh | VM-verified |
+| two copies present different host keys | VM-verified |
+| the OVA's disk boots the same way | VM-verified |
+| the split parts reassemble to the published checksum | VM-verified |
+| VirtualBox imports the OVA | untested |
+| VMware imports the OVA | untested |
+| the first login forces a password change | untested |
+
 ## Desktop
 
 | Claim | Status |

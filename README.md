@@ -108,6 +108,7 @@ scripts/               Bootstrap, deploy, render, audit and real-VM test tools
 - [Services and maintenance](docs/services.md)
 - [Portable automations](docs/automations.md)
 - [Virtual-machine validation](docs/virtual-machine.md)
+- [The downloadable image](docs/vm-image.md)
 - [Sanitization decisions](docs/design-notes.md)
 - [Workstation coverage matrix](docs/coverage-matrix.md)
 - [Destination tests: what was verified where](docs/destination-tests.md)

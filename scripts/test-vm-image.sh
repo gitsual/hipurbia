@@ -18,6 +18,7 @@ usage() {
 Usage: scripts/test-vm-image.sh [--image PATH]
 
 Boot the published image twice and accept it from outside the guest.
+Works on any format QEMU reads, so the OVA's VMDK can be accepted too.
 Overrides: VM_IMAGE_BOOT_TIMEOUT (seconds, default 180).
 USAGE
 }
@@ -55,6 +56,9 @@ done
 	exit 1
 }
 qemu-img check -q "$image"
+# The OVA ships the same disk in another format; accepting only the qcow2
+# would leave half the release untested.
+image_format="$(qemu-img info --output=json "$image" | python -c 'import json,sys; print(json.load(sys.stdin)["format"])')"
 
 work="$(mktemp -d)"
 pids=()
@@ -79,7 +83,7 @@ for instance in 1 2; do
 	qemu-system-x86_64 \
 		-enable-kvm -machine q35,accel=kvm -cpu host \
 		-smp 2 -m 2048 -snapshot \
-		-drive "if=virtio,format=qcow2,file=$image" \
+		-drive "if=virtio,format=$image_format,file=$image" \
 		-netdev "user,id=net0,hostfwd=tcp:$host_address:$port-:22" \
 		-device virtio-net-pci,netdev=net0 \
 		-device virtio-vga -display none \
