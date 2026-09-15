@@ -107,3 +107,8 @@ cmp -s "$sandbox/stable-a.conf" "$sandbox/stable-b.conf" ||
 	fail 'stability: two writes of the same data produced different bytes'
 
 printf 'kv: %d values round-tripped, injection inert, malformed input degraded\n' "${#original[@]}"
+
+# --- dotted keys, as translation tables use them (selector.vm) ---------------------
+printf 'selector.vm=Guest\nnot a key=skipped\n' >"$sandbox/dotted.conf"
+[[ "$(kv_get "$sandbox/dotted.conf" selector.vm)" == Guest ]] || fail 'kv_get: dotted key not read'
+printf 'kv: dotted keys read\n'

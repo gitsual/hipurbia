@@ -97,7 +97,7 @@ kv_load() {
 		key="${line%%=*}"
 		# A malformed key can never become a command or a variable name: it is
 		# only ever used as an associative-array subscript.
-		[[ "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || continue
+		[[ "$key" =~ ^[A-Za-z_][A-Za-z0-9_.]*$ ]] || continue
 		# shellcheck disable=SC2034  # assigned through the nameref for the caller
 		__kv_target["$key"]="$(kv_decode "${line#*=}")"
 	done <"$file"
