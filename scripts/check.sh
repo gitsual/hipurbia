@@ -76,6 +76,9 @@ stage 'default profile baseline'
 stage 'selector registry'
 "$repo_root/scripts/check-selectors.sh"
 
+stage 'i18n coverage'
+"$repo_root/scripts/check-i18n-coverage.sh"
+
 stage 'unit and fixture tests'
 "$repo_root/tests/run.sh"
 
