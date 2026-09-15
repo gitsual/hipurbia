@@ -2,3 +2,4 @@
 assets/desktop-preview.svg	d69fa97c3d5f3c4973724cb7359a3567a567e2d61d5672880380744e2d1b41a0	image/svg+xml	1200x675
 dotfiles/hypr/.local/share/wallpapers/warm-night.png	17add001d26a2437abc21ac2a90c9b716fa7d52b4d4a69c2bd18f7041b96b91b	image/png	3840x2160
 dotfiles/hypr/.local/share/wallpapers/warm-night.svg	d8f156ea6199d20c27a00a6840b0b385e28437dd6e65be9e1143a42ed8128957	image/svg+xml	3840x2160
+templates/wallpaper/base.svg.in	e2830a766f4d8624161cbef582ab8ac57e6c82518faa01fb349b1afdda834d04	image/svg+xml	3840x2160

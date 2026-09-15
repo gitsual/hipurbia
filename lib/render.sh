@@ -78,13 +78,31 @@ render_guard_holds() {
 	selector_predicate_holds "$predicate" RENDER_FACTS
 }
 
+# render_scale_channels HEX PERCENT — scale every channel toward black.
+render_scale_channels() {
+	local value="$1" percent="$2" channel scaled out=''
+	for channel in 0 2 4; do
+		scaled=$(((0x${value:$channel:2} * percent) / 100))
+		printf -v out '%s%02X' "$out" "$scaled"
+	done
+	printf '%s' "$out"
+}
+
 # render_apply_filter VALUE FILTER
 render_apply_filter() {
 	local value="$1" filter="$2"
 	case "$filter" in
 	'') printf '%s' "$value" ;;
 	lower) printf '%s' "${value,,}" ;;
+	upper) printf '%s' "${value^^}" ;;
 	rgb) printf '%d, %d, %d' "0x${value:0:2}" "0x${value:2:2}" "0x${value:4:2}" ;;
+	# Derived shades, for gradients that need depth without adding colours to
+	# the palette. A derivation is a transformation of a corpus colour, not a
+	# new one: the wallpaper needs a floor under its background and a rim over
+	# it, and inventing two hexes per theme would break the corpus rule.
+	dark) render_scale_channels "$value" 70 ;;
+	darker) render_scale_channels "$value" 45 ;;
+	dim) render_scale_channels "$value" 78 ;;
 	*)
 		printf 'render: unknown filter %q\n' "$filter" >&2
 		return 1

@@ -6,6 +6,12 @@ set -Eeuo pipefail
 # config that was edited by hand, or a palette change that was not re-rendered,
 # fails check.sh instead of quietly diverging from the palette.
 #
+# templates/wallpaper/ is the exception, and deliberately: a wallpaper has no
+# single committed twin. It is rendered once per theme into dist/, by
+# scripts/make-wallpaper.sh, and tests/cases/test_theme_ornament.sh is what
+# checks those renders resolve. A dotfile has one palette; a wallpaper has as
+# many as the catalogue offers.
+#
 # --render writes the renders into the checkout. It is the sanctioned way to
 # regenerate after editing data/theme.conf or a template; its output belongs
 # in the same commit as the edit that caused it.
@@ -66,7 +72,7 @@ while IFS= read -r template; do
 		diff -u --label 'rendered' "$rendered" --label 'committed' "$target" | head -n 20 >&2 || true
 		status=1
 	fi
-done < <(find "$templates_dir" -type f -name '*.in' | LC_ALL=C sort)
+done < <(find "$templates_dir" -path "$templates_dir/wallpaper" -prune -o -type f -name '*.in' -print | LC_ALL=C sort)
 
 ((count > 0)) || {
 	printf 'no templates found under %s\n' "$templates_dir" >&2
