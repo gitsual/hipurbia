@@ -172,23 +172,16 @@ for name in "${themes[@]}"; do
 	printf -v "labels[$name]" '%-18s ·  %s' "$title" "$essence"
 done
 
-# The preview is the point: selecting a theme dresses the whole desktop before
-# you commit to it, so the choice is made by looking rather than by reading a
-# name. Failures are swallowed on purpose — a compositor that is not running
-# yet must not stop the wizard.
+# The preview is the point: selecting a theme dresses the WHOLE desktop before
+# you commit to it — wallpaper, bar, borders, notifications — so the choice is
+# made by looking at the room rather than by reading a name. Everything that
+# knows how to do that lives in one script; the wizard only picks the name.
+# Failures are swallowed on purpose: a compositor that is not up yet must not
+# stop the wizard.
 theme_preview() {
 	local name="$1"
 	palette_load "$name" || return 0
-	setting_write theme "$name"
-	(cd "$repo" && ./scripts/render-config.sh --deploy) >/dev/null 2>&1 || return 0
-	hyprctl reload >/dev/null 2>&1 || true
-	pkill -SIGUSR2 waybar >/dev/null 2>&1 || true
-	# swaybg holds one image for its whole life, so the preview replaces the
-	# process rather than talking to it.
-	if [[ -x "$HOME/.config/hypr/scripts/wallpaper.sh" ]]; then
-		pkill -x swaybg >/dev/null 2>&1 || true
-		setsid bash "$HOME/.config/hypr/scripts/wallpaper.sh" >/dev/null 2>&1 &
-	fi
+	(cd "$repo" && ./scripts/apply-theme.sh --theme "$name") >/dev/null 2>&1 || true
 	return 0
 }
 
@@ -214,17 +207,52 @@ step_theme() {
 	printf '%s' "$chosen"
 }
 
-# wait_for TITLE INSTRUCTION PREDICATE [ARG...] — a tour step that ends when
+# The key marked with the Windows logo is what every guide calls SUPER. Nobody
+# looking at their keyboard for the first time knows that, and a tour that opens
+# with a name the hardware does not use has already lost the reader.
+SUPER='Windows'
+
+tour_total=10
+tour_step=0
+
+# stage TITLE — the frame every tour step shares, with its place in the queue.
+stage() {
+	tour_step=$((tour_step + 1))
+	frame "Paso $tour_step de $tour_total" "$1"
+}
+
+# note TITLE LINE... — a step that only has to be read. Some of what a desktop
+# offers is not a keystroke to practise but a place to look, and pretending
+# otherwise would mean inventing a gesture to detect.
+note() {
+	local title="$1"
+	shift
+	{
+		stage "$title"
+		fg "${palette[COLOR_FG]}"
+		local line
+		for line in "$@"; do centre "$line"; done
+		footer 'Enter para continuar'
+		reset
+	} >/dev/tty
+	IFS= read -rsn1 </dev/tty || true
+}
+
+# wait_for TITLE INSTRUCTION TIMEOUT PREDICATE [ARG...] — a step that ends when
 # the user actually does the thing. Asking someone to read a keybinding teaches
 # nothing; asking them to press it and then noticing that they did is the whole
 # difference. The predicate is a function name, never a string to eval.
 wait_for() {
-	local title="$1" instruction="$2" deadline=$((SECONDS + 120)) key
-	shift 2
+	local title="$1" instruction="$2" timeout="$3" key
+	shift 3
+	local deadline=$((SECONDS + timeout))
 	{
-		frame 'Tour' "$title"
+		stage "$title"
 		fg "${palette[COLOR_FG]}"
-		centre "$instruction"
+		local line
+		IFS='|' read -ra line <<<"$instruction"
+		local part
+		for part in "${line[@]}"; do centre "$part"; done
 		footer 'Enter para saltar este paso'
 	} >/dev/tty
 	while ((SECONDS < deadline)); do
@@ -244,33 +272,100 @@ wait_for() {
 
 window_count() { hyprctl clients -j 2>/dev/null | grep -c '"class"' || printf '0'; }
 more_windows_than() { (($(window_count) > $1)); }
+fewer_windows_than() { (($(window_count) < $1)); }
+current_workspace() {
+	hyprctl activeworkspace -j 2>/dev/null | sed -nE 's/.*"id": ?([0-9]+).*/\1/p' | head -1
+}
 left_first_workspace() {
 	local current
-	current="$(hyprctl activeworkspace -j 2>/dev/null | sed -nE 's/.*"id": ?([0-9]+).*/\1/p' | head -1)"
+	current="$(current_workspace)"
 	[[ -n "$current" && "$current" != 1 ]]
 }
+# A window carried to another desktop, rather than merely opened there: some
+# client reports a workspace that is not the one we are looking at.
+window_moved_away() {
+	local current
+	current="$(current_workspace)"
+	[[ -n "$current" ]] || return 1
+	hyprctl clients -j 2>/dev/null |
+		sed -nE 's/.*"workspace": ?\{ ?"id": ?(-?[0-9]+).*/\1/p' |
+		grep -qvx -e "$current" -e '-.*'
+}
 help_pane_open() { hyprctl clients -j 2>/dev/null | grep -q help-pane; }
+help_pane_closed() { ! help_pane_open; }
+package_installed() { pacman -Qq "$1" >/dev/null 2>&1; }
+package_removed() { ! package_installed "$1"; }
+volume_changed() {
+	local now
+	now="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)" || return 1
+	[[ -n "$now" && "$now" != "$1" ]]
+}
 
 step_tour() {
-	local before
+	local before volume_before
 	before="$(window_count)"
+
 	wait_for 'Abrir una terminal' \
-		'Pulsa SUPER + Enter. Aparecerá otra ventana junto a esta.' \
-		more_windows_than "$before"
+		"Pulsa $SUPER + Enter.|Aparecerá otra ventana junto a esta: el escritorio|coloca las ventanas solo, sin que las arrastres." \
+		120 more_windows_than "$before"
+
+	before="$(window_count)"
+	wait_for 'Cerrar una ventana' \
+		"Pulsa $SUPER + Q sobre la terminal que acabas de abrir.|Cierra SIEMPRE la ventana que tiene el foco." \
+		120 fewer_windows_than "$before"
+
 	wait_for 'Cambiar de escritorio' \
-		'Pulsa SUPER + 2. La barra de arriba te dirá dónde estás.' \
-		left_first_workspace
+		"Pulsa $SUPER + 2.|Tienes diez escritorios numerados; la barra de arriba|te dice en cuál estás." \
+		120 left_first_workspace
+
+	wait_for 'Llevarte una ventana contigo' \
+		"Con $SUPER + Enter abre una terminal aquí,|y luego pulsa $SUPER + Shift + 3.|La ventana se va al escritorio 3 y tú te quedas." \
+		180 window_moved_away
+
 	wait_for 'La ayuda siempre está ahí' \
-		'Pulsa F1 para el panel de atajos. Ciérralo con SUPER + Q.' \
-		help_pane_open
+		'Pulsa F1: los atajos de Hyprland, en tu idioma.|F2 el navegador, F3 la consola, F4 el editor, F5 el sistema.' \
+		120 help_pane_open
+
+	wait_for 'Y se cierra con Escape' \
+		'Pulsa Escape para cerrar el panel de ayuda.|Escape cierra el panel; no lo confundas con cerrar la ventana.' \
+		120 help_pane_closed
+
+	note 'La barra de arriba' \
+		'A la izquierda: los escritorios y el título de la ventana.' \
+		'En el centro: la hora y el tiempo de tu ciudad.' \
+		'A la derecha: red, sonido, bluetooth, CPU, memoria, disco.' \
+		'' \
+		'Pincha el módulo de red y te enseña tu dirección IP' \
+		'y el nombre de la interfaz. Pásale el ratón por encima' \
+		'para ver además cuánto sube y cuánto baja.'
+
+	volume_before="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null || printf 'none')"
+	wait_for 'El sonido' \
+		'Sube o baja el volumen con las teclas de tu teclado,|o pincha el altavoz de la barra para abrir el mezclador|y elegir por qué salida suena cada programa.' \
+		120 volume_changed "$volume_before"
+
+	# The part no desktop tour usually teaches, and the only part that makes
+	# this a distribution rather than a wallpaper: the package manager. It is
+	# taught in both directions on purpose — installing is easy to try and
+	# frightening to undo, so the removal is the step that actually lands.
+	wait_for 'Instalar un programa' \
+		'Escribe en una terminal:|  sudo pacman -S chromium|La contraseña es la misma con la que has entrado.|pacman baja el navegador y sus dependencias.' \
+		1200 package_installed chromium
+
+	wait_for 'Y desinstalarlo' \
+		'Ahora:|  sudo pacman -Rns chromium|-R lo quita, -n borra sus ficheros de configuración|y -s se lleva las dependencias que ya no usa nadie.' \
+		600 package_removed chromium
+
 	{
 		frame 'Listo' 'Ya sabes lo suficiente para romper cosas con criterio.'
 		fg "${palette[COLOR_FG]}"
-		centre 'F1 a F5 abren los paneles de ayuda.'
-		centre 'SUPER + R abre el lanzador. SUPER + Q cierra.'
+		centre "F1 a F5 abren los paneles de ayuda; Escape los cierra."
+		centre "$SUPER + R abre el lanzador. $SUPER + Q cierra la ventana."
+		centre "$SUPER + Shift + E apaga, reinicia o cierra la sesión."
 		centre ''
 		fg "${palette[COLOR_FG_DIM]}"
 		centre 'Vuelve a este asistente cuando quieras: portfolio-welcome'
+		centre 'Cambia de tema sin él: scripts/apply-theme.sh --theme NOMBRE'
 		footer 'Enter para empezar'
 		reset
 	} >/dev/tty

@@ -78,7 +78,49 @@ paper="$repo_root/dotfiles/hypr/.config/hypr/scripts/wallpaper.sh"
 grep -Fq 'archlinux-portfolio/settings' "$paper" || fail 'the wallpaper ignores the chosen theme'
 grep -Fq 'make-wallpaper.sh' "$paper" || fail 'a theme without a committed image would have no wallpaper'
 grep -Fq 'warm-night.png' "$paper" || fail 'the wallpaper has no fallback when nothing can be drawn'
-grep -Fq 'pkill -x swaybg' "$wizard" || fail 'the theme preview cannot replace the running wallpaper'
+# Choosing a theme has to change the room, not a line in a file. The wizard
+# does not know how to do that and must not learn: it delegates to the one
+# script that applies a palette everywhere, so there is a single answer to
+# "what does picking a theme actually do".
+grep -Fq 'apply-theme.sh --theme' "$wizard" ||
+	fail 'the theme preview does not apply the theme, so choosing one shows nothing'
+grep -Fq 'pkill -x swaybg' "$repo_root/scripts/apply-theme.sh" ||
+	fail 'applying a theme cannot replace the running wallpaper'
 
-printf 'welcome: silent once taken, %d keyboards the settings accept, answers the loader reads\n' \
-	"${#offered[@]}"
+# The key with the Windows logo on it is what the tour must call it. "SUPER" is
+# what the documentation calls it and what nobody can find on their keyboard,
+# and a first tour that opens with a name the hardware does not use has already
+# lost its reader.
+grep -qE '(^|[^$])SUPER \+ ' "$wizard" && fail 'the tour names a key that is not written on the keyboard'
+grep -Fq "SUPER='Windows'" "$wizard" || fail 'the tour has no name for the modifier key'
+
+# Every step is a step the reader can be told apart from the others, and the
+# counter it prints is the number of steps there actually are: a tour that says
+# "paso 4 de 9" and stops at six is worse than one that counts nothing.
+declared="$(sed -nE 's/^tour_total=([0-9]+)$/\1/p' "$wizard")"
+tour="$(sed -n '/^step_tour()/,/^}/p' "$wizard")"
+actual="$(grep -cE "^$(printf '\t')(wait_for|note) " <<<"$tour")"
+[[ "$declared" == "$actual" ]] ||
+	fail "the tour announces $declared steps and takes $actual"
+
+# Each detector is a function this file defines, never a string handed to eval:
+# the tour runs whatever it is given, on every tick, in the user's session.
+while IFS= read -r predicate; do
+	grep -qE "^$predicate\(\) \{" "$wizard" ||
+		fail "the tour waits on $predicate, which is not a function it defines"
+done < <(sed -nE "s/^$(printf '\t\t')[0-9]+ ([a-z_]+).*/\1/p" <<<"$tour" | LC_ALL=C sort -u)
+
+# The things the user asked to be taught, and the things a desktop is useless
+# without: closing a window, carrying one to another desktop, the panels and
+# the key that dismisses them, the bar, the volume, and the package manager in
+# both directions. A tour that only opens things teaches half a system.
+# Matched against the source, where the modifier is still the variable, so the
+# literal below is not a shell expansion waiting to happen.
+# shellcheck disable=SC2016
+for taught in '$SUPER + Q' '$SUPER + Shift + 3' 'Escape para cerrar' 'pacman -S chromium' \
+	'pacman -Rns chromium' 'dirección IP' 'volumen'; do
+	grep -Fq "$taught" "$wizard" || fail "the tour never teaches: $taught"
+done
+
+printf 'welcome: silent once taken, %d keyboards the settings accept, %s tour steps that detect themselves\n' \
+	"${#offered[@]}" "$declared"

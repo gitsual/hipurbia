@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+# Switch the whole desktop to a palette from the catalogue, live.
+#
+# The palette-dependent files are committed renders: templates/ is rendered
+# into dotfiles/ from data/theme.conf and Stow symlinks the result into $HOME.
+# That is right for the default and useless for a choice — a stranger who picks
+# another theme would change a setting and see nothing move, because the
+# stylesheets on disk were rendered from a palette they did not pick.
+#
+# So a non-default theme is deployed the same way a machine-specific render is:
+# rendered from the chosen palette and written OVER the stowed symlink, with
+# the symlink recorded so choosing the default again restores it exactly.
+# Nothing in the checkout is touched, which is what keeps check-theme-drift.sh
+# meaningful.
+#
+#   --theme NAME   write the setting first (default: whatever is set)
+#   --list         print the catalogue and exit
+#   --no-reload    render only; do not tell anything to re-read its config
+#
+# What the caller sees change: the wallpaper, the bar, the window borders, the
+# notifications, the launcher. Programs that read their colours once at start
+# (kitty, hyprlock, nwg-bar) pick it up the next time they run.
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+# shellcheck source=lib/kv.sh
+source "$repo_root/lib/kv.sh"
+# shellcheck source=lib/render.sh
+source "$repo_root/lib/render.sh"
+# shellcheck source=lib/settings.sh
+source "$repo_root/lib/settings.sh"
+
+settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/settings}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio"
+manifest="$state_dir/theme-overlay"
+templates_dir="${TEMPLATES_DIR:-$repo_root/templates}"
+default_theme='warm-night'
+
+theme_file_for() {
+	if [[ "$1" == "$default_theme" ]]; then
+		printf '%s' "$repo_root/data/theme.conf"
+	else
+		printf '%s' "$repo_root/data/themes/$1.conf"
+	fi
+}
+
+catalogue() {
+	printf '%s\n' "$default_theme"
+	find "$repo_root/data/themes" -type f -name '*.conf' -printf '%f\n' |
+		sed 's/\.conf$//' | LC_ALL=C sort
+}
+
+chosen='' reload=true
+while (($#)); do
+	case "$1" in
+	--theme)
+		chosen="${2:-}"
+		shift
+		;;
+	--list)
+		catalogue
+		exit 0
+		;;
+	--no-reload) reload=false ;;
+	-h | --help)
+		sed -n '4,25p' "${BASH_SOURCE[0]}" | sed 's/^# \?//'
+		exit 0
+		;;
+	*)
+		printf 'Unknown option: %s\n' "$1" >&2
+		exit 2
+		;;
+	esac
+	shift
+done
+
+if [[ -n "$chosen" ]]; then
+	# Materialised first: under `set -o pipefail` a `grep -q` that matches the
+	# first line kills `find` with SIGPIPE, and the pipeline then reports the
+	# signal instead of the match.
+	known="$(catalogue)"
+	grep -Fxq -- "$chosen" <<<"$known" || {
+		printf 'apply-theme: no theme named %s; the catalogue holds:\n' "$chosen" >&2
+		printf '%s\n' "$known" >&2
+		exit 1
+	}
+	settings_write "$settings_file" theme "$chosen"
+fi
+settings_load "$settings_file"
+theme="${SETTINGS[theme]}"
+theme_file="$(theme_file_for "$theme")"
+[[ -f "$theme_file" ]] || {
+	printf 'apply-theme: %s names no palette\n' "$theme" >&2
+	exit 1
+}
+
+# ------------------------------------------------------------------- overlay
+
+# Undo the previous overlay before laying down a new one, so switching themes
+# five times leaves exactly as many files behind as switching once, and so the
+# Stow symlink is put back byte-for-byte rather than approximated.
+if [[ -f "$manifest" ]]; then
+	while IFS=$'\t' read -r target link; do
+		[[ -n "$target" ]] || continue
+		rm -f -- "$target"
+		[[ -n "$link" ]] && ln -s -- "$link" "$target"
+	done <"$manifest"
+	rm -f -- "$manifest"
+fi
+
+render_load_tokens "$theme_file"
+
+# The default palette is what the committed dotfiles already hold, so it needs
+# no overlay at all: restoring the symlinks above has already applied it.
+written=0
+if [[ "$theme" != "$default_theme" ]]; then
+	mkdir -p -- "$state_dir"
+	: >"$manifest"
+	while IFS= read -r template; do
+		relative="${template#"$templates_dir"/}"
+		# templates/<package>/<path under $HOME>.in — anything whose path does
+		# not start at a dotfile belongs to the system (/etc) or to no home at
+		# all (the wallpaper sources), and is not ours to write here.
+		rest="${relative#*/}"
+		[[ "$rest" == .* ]] || continue
+		target="$HOME/${rest%.in}"
+		link=''
+		[[ -L "$target" ]] && link="$(readlink -- "$target")"
+		mkdir -p -- "$(dirname -- "$target")"
+		scratch="$(mktemp)"
+		render_file "$template" "$scratch" || {
+			rm -f -- "$scratch"
+			printf 'apply-theme: %s did not render\n' "$relative" >&2
+			exit 1
+		}
+		rm -f -- "$target"
+		mv -- "$scratch" "$target"
+		printf '%s\t%s\n' "$target" "$link" >>"$manifest"
+		written=$((written + 1))
+	done < <(find "$templates_dir" -type f -name '*.in' | LC_ALL=C sort)
+fi
+
+# The machine-specific renders carry palette tokens too (the bar's colours),
+# and they read the theme straight out of the settings file written above.
+"$repo_root/scripts/render-config.sh" --deploy >/dev/null
+
+# ------------------------------------------------------------------- reloads
+
+if $reload; then
+	# The wallpaper is the largest thing on screen and the slowest to draw, so
+	# it starts first and catches up while the rest reloads.
+	if [[ -x "$HOME/.config/hypr/scripts/wallpaper.sh" ]]; then
+		pkill -x swaybg >/dev/null 2>&1 || true
+		setsid bash "$HOME/.config/hypr/scripts/wallpaper.sh" >/dev/null 2>&1 &
+	fi
+	hyprctl reload >/dev/null 2>&1 || true
+	# SIGUSR2 makes Waybar re-read both its config and its stylesheet.
+	pkill -SIGUSR2 -x waybar >/dev/null 2>&1 || true
+	dunstctl reload >/dev/null 2>&1 || true
+fi
+
+printf 'theme: %s applied (%d overlay files)\n' "$theme" "$written"

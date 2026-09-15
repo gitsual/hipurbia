@@ -168,7 +168,13 @@ The network module shows the address inline (`{ipaddr}/{cidr}`) instead of hidin
 
 ## First run
 
-The first session starts `portfolio-welcome` and no later one does: it writes a marker, and `--first-run` is a no-op afterwards. Three steps, all reversible, all applied where you can see them — the keyboard (eight layouts, each labelled in its own language, written to both the console keymap and the compositor layout), the theme (applied live as you move through the catalogue, so the wallpaper and the bar change under the cursor rather than after a confirmation), and a short guided tour that waits for you to actually press the binding and notices when you do, instead of listing it. Run `portfolio-welcome` again whenever you want; it changes only what you confirm.
+The first session starts `portfolio-welcome` and no later one does: it writes a marker, and `--first-run` is a no-op afterwards. Two questions and a ten-step tour, all reversible, all applied where you can see them.
+
+The keyboard comes first: eight layouts, each labelled in its own language, written to both the console keymap and the compositor layout. Then the theme, applied live as you move through the catalogue — `scripts/apply-theme.sh` renders the chosen palette over the stowed stylesheets and reloads the wallpaper, the bar, the borders and the notifications, so the whole room changes under the cursor instead of a setting changing in a file you cannot see. Choosing the default again restores the committed symlinks exactly, which is what keeps the theme-drift gate meaningful.
+
+Then the tour, which waits for you to actually press the binding and notices when you do, instead of listing it. It calls the modifier **Windows**, because that is what is printed on the key. It covers opening a window and closing it, moving between the ten desktops and carrying a window to another one, the F1–F5 help panels and the Escape that dismisses them, what each side of the bar is for and where your IP address is, the volume, and `pacman` in both directions — installing Chromium and then removing it with `-Rns`, because installing is easy to try and undoing it is the part that actually teaches the package manager.
+
+Run `portfolio-welcome` again whenever you want; it changes only what you confirm. To change the theme without it: `scripts/apply-theme.sh --list`, then `scripts/apply-theme.sh --theme NAME`.
 
 The published image meets you at the graphical login first: ReGreet inside a cage kiosk, in the palette, with Hyprland as its default session, so nothing has to be typed to reach the desktop.
 

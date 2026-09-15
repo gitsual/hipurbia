@@ -87,3 +87,25 @@ settings_get() {
 	}
 	printf '%s' "${SETTINGS["$1"]}"
 }
+
+# settings_write FILE KEY VALUE — set one key, in place, atomically.
+#
+# Validated first and refused if it does not hold: a settings file is read by
+# renderers that trust it, so the moment to reject a bad value is before it is
+# on disk, not when a stylesheet comes out malformed. The key is rewritten
+# rather than appended, so setting the same axis twice leaves one line.
+settings_write() {
+	local file="$1" key="$2" value="$3" temporary
+	settings_valid "$key" "$value" || {
+		printf 'settings: %s is not a valid %s\n' "$value" "$key" >&2
+		return 1
+	}
+	mkdir -p -- "$(dirname -- "$file")"
+	temporary="$(mktemp -- "$file.XXXXXX")"
+	if [[ -f "$file" ]]; then
+		grep -vE "^[[:space:]]*${key}[[:space:]]*=" "$file" >"$temporary" || true
+	fi
+	printf '%s=%s\n' "$key" "$value" >>"$temporary"
+	LC_ALL=C sort -o "$temporary" "$temporary"
+	mv -- "$temporary" "$file"
+}
