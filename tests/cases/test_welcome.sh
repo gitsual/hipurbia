@@ -71,5 +71,14 @@ grep -Fq 'windowrule = float on, match:class ^(portfolio-welcome)$' "$hypr" ||
 	fail 'the wizard would be tiled like an ordinary window'
 grep -Fq 'welcome' "$repo_root/scripts/deploy.sh" || fail 'the wizard is never deployed'
 
+# The background is part of the theme, not a constant: the session's wallpaper
+# script reads the same setting, and draws the image when the chosen theme has
+# none yet. Only the default ships as a committed PNG.
+paper="$repo_root/dotfiles/hypr/.config/hypr/scripts/wallpaper.sh"
+grep -Fq 'archlinux-portfolio/settings' "$paper" || fail 'the wallpaper ignores the chosen theme'
+grep -Fq 'make-wallpaper.sh' "$paper" || fail 'a theme without a committed image would have no wallpaper'
+grep -Fq 'warm-night.png' "$paper" || fail 'the wallpaper has no fallback when nothing can be drawn'
+grep -Fq 'pkill -x swaybg' "$wizard" || fail 'the theme preview cannot replace the running wallpaper'
+
 printf 'welcome: silent once taken, %d keyboards the settings accept, answers the loader reads\n' \
 	"${#offered[@]}"

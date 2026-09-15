@@ -183,8 +183,12 @@ theme_preview() {
 	(cd "$repo" && ./scripts/render-config.sh --deploy) >/dev/null 2>&1 || return 0
 	hyprctl reload >/dev/null 2>&1 || true
 	pkill -SIGUSR2 waybar >/dev/null 2>&1 || true
-	[[ -x "$HOME/.config/hypr/scripts/wallpaper.sh" ]] &&
-		bash "$HOME/.config/hypr/scripts/wallpaper.sh" >/dev/null 2>&1 &
+	# swaybg holds one image for its whole life, so the preview replaces the
+	# process rather than talking to it.
+	if [[ -x "$HOME/.config/hypr/scripts/wallpaper.sh" ]]; then
+		pkill -x swaybg >/dev/null 2>&1 || true
+		setsid bash "$HOME/.config/hypr/scripts/wallpaper.sh" >/dev/null 2>&1 &
+	fi
 	return 0
 }
 

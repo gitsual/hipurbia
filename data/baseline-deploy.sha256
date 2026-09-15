@@ -17,7 +17,7 @@ af1bc3ab6d57ffe3680bf863df466968ed583d03ee683d40edb4e4b229835ed3  dotfiles/hypr/
 163f61548eb88b3eb707121db7f12583ef7ee5e0a832f2c894c1000320c69cd6  dotfiles/hypr/.config/hypr/hyprpaper.conf
 a27ad37c6209ce8e54c0694c92a0dd36d50dea3a22e2d7b35dfabd26ad53ce1a  dotfiles/hypr/.config/hypr/scripts/help-pane.sh
 584b11b7333d31a8b07c2ea778646c772c8f74f8d6c5bd5660ab86073fcf6bbc  dotfiles/hypr/.config/hypr/scripts/screenshot.sh
-492b057eb259d9fe4d6510525a4ae01cbc1f49fc609fa3fe19624c9821af068a  dotfiles/hypr/.config/hypr/scripts/wallpaper.sh
+f07dc6a6ee2eb59738539a91193be90a13aa528bbb111e004c258cf1edbc81ef  dotfiles/hypr/.config/hypr/scripts/wallpaper.sh
 17add001d26a2437abc21ac2a90c9b716fa7d52b4d4a69c2bd18f7041b96b91b  dotfiles/hypr/.local/share/wallpapers/warm-night.png
 d8f156ea6199d20c27a00a6840b0b385e28437dd6e65be9e1143a42ed8128957  dotfiles/hypr/.local/share/wallpapers/warm-night.svg
 d08abcb761f2d7d95b9c17b574e6c6a63f8243b1c0908a7a7fd23f9721bd471c  dotfiles/kitty/.config/kitty/kitty.conf
@@ -54,5 +54,5 @@ ac81224fc768b751e3c5ac3b10ff1c8ef6c6f8b00ab7fd075b40d9dfbc9417ec  dotfiles/wayba
 ff8a9bc3e5ea8b4f7bed7d58b31552511db9b438b67740c233032a1b81efe63c  dotfiles/waybar/.config/waybar/scripts/ws-render.sh
 39a8549338ce6898b862da2895faae0188e419985d0e4590feb6d2f1af0466e5  dotfiles/waybar/.config/waybar/style.css
 d92b7d39cd2f0ded3acd33a61edf70a3d9d9fdef9f95c4929cf9bf4d483abc31  dotfiles/waybar/.config/waybar/workspace-icons.json
-b340addb2567310278d47e66f94c2d810900da1d64e3e829ac863122f1398b34  dotfiles/welcome/.local/bin/portfolio-welcome
+701657edcd2a88218ca2a5f1b98bbecfe291507d144cc0ea5238a2b27f8ef660  dotfiles/welcome/.local/bin/portfolio-welcome
 16e0f8c1f5ed428ec0c8da4e8775f7c3ae967171ab62f337dc365c076514a411  dotfiles/wofi/.config/wofi/style.css
