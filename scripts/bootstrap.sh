@@ -174,13 +174,12 @@ if ! $no_install; then
 	$noninteractive && pacman_args+=(--noconfirm)
 	sudo pacman "${pacman_args[@]}" -- "${official[@]}"
 	if ((${#aur[@]})); then
-		# One place owns the decision to compile from the AUR, and it builds a
-		# helper when there is none rather than failing a bootstrap that asked
-		# for packages only the AUR has.
-		helper="$("$repo_root/scripts/aur-helper.sh" --ensure)" || exit 1
-		aur_args=(-S --needed)
+		# One place owns the decision to compile from the AUR, and it neither
+		# needs nor installs a helper: every name is built from its own recipe
+		# against the pacman that is on this machine.
+		aur_args=()
 		$noninteractive && aur_args+=(--noconfirm)
-		"$helper" "${aur_args[@]}" -- "${aur[@]}"
+		"$repo_root/scripts/aur-install.sh" "${aur_args[@]}" -- "${aur[@]}"
 	fi
 fi
 

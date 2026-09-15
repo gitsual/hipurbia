@@ -11,7 +11,11 @@ sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-integrity-test.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 copy="$sandbox/repo"
 mkdir -p -- "$copy"
-tar --exclude=.git --exclude=.vm-test --exclude=.audit -cf - -C "$repo_root" . | tar -xf - -C "$copy"
+# The build workdir and the release artifacts are gitignored but still on
+# disk, and a build that failed leaves gigabytes of qcow2 behind. Copying them
+# turns this gate's verdict into "disk quota exceeded", which tells a reader
+# nothing about deployment.
+tar --exclude=.git --exclude=.vm-test --exclude=.vm-image --exclude=dist --exclude=.audit -cf - -C "$repo_root" . | tar -xf - -C "$copy"
 
 fail() {
 	printf '%s\n' "$1" >&2

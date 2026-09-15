@@ -65,12 +65,20 @@ the same machine id.
 
 The image is provisioned by `scripts/bootstrap.sh` with every selector the
 repository offers, including `--apps`: Obsidian from the official repositories
-and Stremio from the AUR. Stremio is the reason `scripts/aur-helper.sh` exists
-— the AUR is a collection of build recipes rather than a repository, so using
-it means compiling here, and that decision is made in one place instead of
-being assumed by every caller. When neither `paru` nor `yay` is present it
-builds `paru-bin`, which ships a compiled binary and therefore costs a download
-rather than a Rust toolchain.
+and Stremio from the AUR. Stremio is the reason `scripts/aur-install.sh`
+exists — the AUR is a collection of build recipes rather than a repository, so
+using it means compiling here, and that decision is made in one place instead
+of being assumed by every caller.
+
+No helper is installed to do it. The first attempt did install one, and it
+failed the way prebuilt binaries fail: `paru-bin` 2.1.0 is linked against
+`libalpm.so.15`, the guest had just upgraded to a pacman shipping
+`libalpm.so.16`, and the helper could not start. A tool that must be rebuilt
+whenever pacman moves is a poor foundation for provisioning pacman. For an
+explicit, flat list of packages, what a helper would do is clone each recipe
+and run `makepkg` — so that is what happens, with no toolchain to install and
+nothing prebuilt that can fall out of step with the local libalpm. A machine
+that already has `paru` or `yay` keeps using it.
 
 ## Language
 
