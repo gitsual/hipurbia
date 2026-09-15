@@ -15,7 +15,8 @@ fail() {
 
 writers() {
 	find scripts lib render templates dotfiles system -type f \
-		! -name 'test-*.sh' ! -name 'open-tested-vm.sh' ! -name 'vm-*.sh' -print0 |
+		! -name 'test-*.sh' ! -name 'open-tested-vm.sh' ! -name 'vm-*.sh' \
+		! -name 'seal-vm-image.sh' -print0 |
 		xargs -0 grep -lE -- "$1" | LC_ALL=C sort || true
 }
 
@@ -37,8 +38,9 @@ found="$(writers '(^|[^A-Z_])LANG=' | LC_ALL=C sort | tr '\n' ' ')"
 [[ "$found" == 'scripts/apply-system.sh system/etc/greetd/config-gui.toml.in ' ]] ||
 	fail "LANG= is written by [$found], expected apply-system.sh and the greetd template only"
 
-# Verification and interactive scripts may read an axis, never set one.
-if grep -lE 'localectl set-|locale-gen|tee .*(locale|vconsole)' scripts/test-*.sh scripts/open-tested-vm.sh scripts/vm-*.sh 2>/dev/null | grep .; then
+# Verification, interactive and sealing scripts may read an axis, and may ask
+# apply-system.sh to set one, but may never write it themselves.
+if grep -lE 'localectl set-|locale-gen|tee .*(locale|vconsole)' scripts/test-*.sh scripts/open-tested-vm.sh scripts/vm-*.sh scripts/seal-vm-image.sh 2>/dev/null | grep .; then
 	fail 'a verification script writes a language axis'
 fi
 

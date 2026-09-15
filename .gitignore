@@ -7,6 +7,9 @@ hardware-facts.override
 # Local test and audit output
 .audit/
 .vm-test/
+.vm-image/
+# Built VM artifacts are published as release assets, never committed
+dist/
 *.local.txt
 *.log
 
