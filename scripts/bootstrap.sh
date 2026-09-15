@@ -137,9 +137,18 @@ mapfile -t aur < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/packages/aur.txt")
 # registry is the only place a selector and its packages are tied together.
 for id in "${requested_selectors[@]}"; do
 	mapfile -t optional < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/${SELECTOR_MANIFEST["$id"]}")
-	official+=("${optional[@]}")
+	official+=("${optional[@]:-}")
+	# A selector may also name packages that only exist as AUR build recipes,
+	# in a sibling manifest. They are kept apart because installing them is a
+	# different act: pacman fetches a binary, the AUR compiles one here.
+	aur_manifest="$repo_root/${SELECTOR_MANIFEST["$id"]%.txt}-aur.txt"
+	if [[ -f "$aur_manifest" ]]; then
+		mapfile -t optional_aur < <(grep -Ev '^[[:space:]]*(#|$)' "$aur_manifest")
+		aur+=("${optional_aur[@]:-}")
+	fi
 done
-mapfile -t official < <(printf '%s\n' "${official[@]}" | LC_ALL=C sort -u)
+mapfile -t official < <(printf '%s\n' "${official[@]}" | grep -v '^$' | LC_ALL=C sort -u)
+mapfile -t aur < <(printf '%s\n' "${aur[@]:-}" | grep -v '^$' | LC_ALL=C sort -u)
 
 system_args=()
 $desktop_login && system_args+=(--desktop-login)
@@ -165,13 +174,10 @@ if ! $no_install; then
 	$noninteractive && pacman_args+=(--noconfirm)
 	sudo pacman "${pacman_args[@]}" -- "${official[@]}"
 	if ((${#aur[@]})); then
-		helper=""
-		command -v paru >/dev/null && helper=paru
-		command -v yay >/dev/null && helper=yay
-		[[ -n "$helper" ]] || {
-			printf 'AUR packages exist but no paru/yay helper is installed.\n' >&2
-			exit 1
-		}
+		# One place owns the decision to compile from the AUR, and it builds a
+		# helper when there is none rather than failing a bootstrap that asked
+		# for packages only the AUR has.
+		helper="$("$repo_root/scripts/aur-helper.sh" --ensure)" || exit 1
 		aur_args=(-S --needed)
 		$noninteractive && aur_args+=(--noconfirm)
 		"$helper" "${aur_args[@]}" -- "${aur[@]}"

@@ -18,6 +18,24 @@ sha256sum -c SHA256SUMS
 `SHA256SUMS` covers both the parts and the reassembled whole, so a bad
 download is caught before it is ever booted.
 
+## Running it
+
+```
+scripts/run-vm-image.sh            # a window, a greeter, changes discarded on shutdown
+scripts/run-vm-image.sh --persist  # keep what you do
+```
+
+The flags matter, and the most modern-looking ones are the ones that break.
+The launcher uses QEMU's GTK display **without** OpenGL on purpose: with
+`gl=on`, QEMU hands the guest's cursor to the host through the GL path, which
+uploads it with the framebuffer's Y convention and draws it upside down — a
+second, inverted pointer riding on top of the real one. Nothing in the guest
+causes it and nothing in the guest can fix it; the compositor already asks for
+software cursors on virtual machines (`cursor { no_hardware_cursors = true }`,
+rendered whenever the facts report virtualisation). `--gl` opts back in.
+
+For VirtualBox or VMware, import the OVA and boot it; no flags to get wrong.
+
 ## First boot
 
 Two accounts, by convention rather than by secret: `user` with the password
@@ -42,6 +60,17 @@ the artifact twice with no network device attached at all, logs in over the
 serial console with the credentials above, and rejects the image if sshd is
 enabled, if a host key from the build survived, or if the two instances report
 the same machine id.
+
+## What is installed
+
+The image is provisioned by `scripts/bootstrap.sh` with every selector the
+repository offers, including `--apps`: Obsidian from the official repositories
+and Stremio from the AUR. Stremio is the reason `scripts/aur-helper.sh` exists
+— the AUR is a collection of build recipes rather than a repository, so using
+it means compiling here, and that decision is made in one place instead of
+being assumed by every caller. When neither `paru` nor `yay` is present it
+builds `paru-bin`, which ships a compiled binary and therefore costs a download
+rather than a Rust toolchain.
 
 ## Language
 

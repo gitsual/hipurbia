@@ -31,6 +31,24 @@ done
 for manifest in "$repo_root"/packages/*.txt; do
 	name="$(basename -- "$manifest")"
 	[[ "$name" == pacman.txt || "$name" == aur.txt || "$name" == *.local.txt ]] && continue
+	# A <selector>-aur.txt is reached through its own selector's base manifest,
+	# not registered separately: the selector is one choice, and which half of
+	# it comes from a repository and which from a build recipe is an
+	# implementation detail of installing it.
+	if [[ "$name" == *-aur.txt ]]; then
+		# ...but it must belong to one, or it is a build recipe list nobody
+		# will ever read.
+		base="packages/${name%-aur.txt}.txt"
+		owned=no
+		for id in "${SELECTOR_IDS[@]}"; do
+			[[ "${SELECTOR_MANIFEST["$id"]}" == "$base" ]] && owned=yes
+		done
+		[[ "$owned" == yes ]] || {
+			printf 'packages/%s has no selector: nothing names %s\n' "$name" "$base" >&2
+			status=1
+		}
+		continue
+	fi
 	# GPU manifests are reached through the catalogue; check-gpu-catalogue.sh owns them.
 	[[ "$name" == gpu-*.txt ]] && continue
 	referenced=no
