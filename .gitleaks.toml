@@ -2,8 +2,10 @@
 useDefault = true
 
 [[allowlists]]
-description = "Ignored local VM and audit artifacts; neither path is tracked"
+description = "Ignored local VM, build and audit artifacts; none of these paths is tracked"
 paths = [
   '''^\.vm-test/''',
+  '''^\.vm-image/''',
+  '''^dist/''',
   '''^\.audit/'''
 ]

@@ -47,11 +47,11 @@ for manifest in packages/*.txt; do
 done
 
 stage 'symlinks and unexpected binaries'
-if find . \( -path ./.git -o -path ./.vm-test -o -path ./.audit \) -prune -o -type l ! -exec test -e {} \; -print -quit | grep -q .; then
+if find . \( -path ./.git -o -path ./.vm-test -o -path ./.vm-image -o -path ./dist -o -path ./.audit \) -prune -o -type l ! -exec test -e {} \; -print -quit | grep -q .; then
 	printf '%s\n' 'broken symlink found' >&2
 	exit 1
 fi
-if find . \( -path ./.git -o -path ./.vm-test -o -path ./.audit \) -prune -o -type f ! -path './dotfiles/hypr/.local/share/wallpapers/warm-night.png' -print0 | xargs -0 file | grep -Ev 'text|empty|SVG|JSON|Python script|shell script' >/dev/null; then
+if find . \( -path ./.git -o -path ./.vm-test -o -path ./.vm-image -o -path ./dist -o -path ./.audit \) -prune -o -type f ! -path './dotfiles/hypr/.local/share/wallpapers/warm-night.png' -print0 | xargs -0 file | grep -Ev 'text|empty|SVG|JSON|Python script|shell script' >/dev/null; then
 	printf '%s\n' 'unexpected binary file found' >&2
 	exit 1
 fi

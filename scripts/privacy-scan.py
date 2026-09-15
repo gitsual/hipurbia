@@ -9,7 +9,7 @@ import re
 import sys
 from pathlib import Path
 
-EXCLUDED_PARTS = {".git", ".audit", ".vm-test", "__pycache__"}
+EXCLUDED_PARTS = {".git", ".audit", ".vm-test", ".vm-image", "dist", "__pycache__"}
 TEXT_LIMIT = 2 * 1024 * 1024
 SENSITIVE_NAMES = re.compile(
     r"(?i)(^|[._-])(id_rsa|id_ed25519|credentials?|tokens?|cookies?|secrets?|\.env)([._-]|$)"

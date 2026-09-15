@@ -51,6 +51,13 @@ for earlier in 'fstrim' 'ssh_host_' 'machine-id' 'systemd-run'; do
 	((line < key_line)) || fail "the seal removes its key before it finishes with $earlier"
 done
 
+# Expiring the account is irreversible over SSH: PAM then refuses to open a
+# session at all, so nothing privileged may follow it. This cost one build.
+chage_line="$(grep -n 'chage -d 0' "$seal" | tail -1 | cut -d: -f1)"
+[[ -n "$chage_line" ]] || fail 'the seal never expires the password'
+last_sudo="$(grep -nE '(^|\|[[:space:]]*)sudo ' "$seal" | tail -1 | cut -d: -f1)"
+((last_sudo < chage_line)) || fail 'the seal invokes sudo after expiring the account, which cannot work without a terminal'
+
 grep -Fxq 'dist/' "$repo_root/.gitignore" || fail 'built artifacts are not ignored'
 
 printf 'vm image build: one shared acceptance, a flat artifact, and a seal that outlives nothing\n'

@@ -40,18 +40,24 @@ sudo rm -rf -- /var/lib/cloud/*
 
 sudo fstrim -av >/dev/null 2>&1 || true
 
-# Deferred so this SSH session can close cleanly and the caller can read the
-# marker below; powering off inline would drop the connection mid-stream.
-sudo systemd-run --on-active=8 --unit=seal-poweroff systemctl poweroff >/dev/null
-
-# Credentials last: after this the build key is gone and sudo asks for a
-# password, so nothing above could still be done.
-printf 'portfolio:portfolio\n' | sudo chpasswd
-sudo chage -d 0 portfolio
-sudo rm -f -- /etc/sudoers.d/90-cloud-init-users
-printf '%%wheel ALL=(ALL:ALL) ALL\n' | sudo tee /etc/sudoers.d/10-wheel >/dev/null
-sudo chmod 0440 /etc/sudoers.d/10-wheel
-sudo visudo -c -q
+# One root transaction, because each step below destroys the means to run the
+# next one over SSH. Dropping cloud-init's NOPASSWD rule makes sudo ask for a
+# password this session has no terminal to type, and `chage -d 0` expires the
+# account outright, after which PAM refuses even to open a new session. So the
+# shutdown is scheduled from inside, the bridges are burned in order, and the
+# expiry is the last thing that happens with privileges.
+sudo bash -euc '
+	# Deferred so this SSH session closes cleanly and the caller can read the
+	# marker below; powering off inline would drop the connection mid-stream.
+	systemd-run --on-active=20 --unit=seal-poweroff systemctl poweroff >/dev/null
+	printf "portfolio:portfolio\n" | chpasswd
+	rm -f -- /etc/sudoers.d/90-cloud-init-users
+	printf "%%wheel ALL=(ALL:ALL) ALL\n" >/etc/sudoers.d/10-wheel
+	chmod 0440 /etc/sudoers.d/10-wheel
+	visudo -c -q
+	chage -d 0 portfolio
+'
+# The build key is the last thing to go, and it needs no privileges.
 shred -u -- "$HOME/.ssh/authorized_keys" 2>/dev/null || rm -f -- "$HOME/.ssh/authorized_keys"
 
 printf '%s\n' 'IMAGE_SEAL: DONE'
