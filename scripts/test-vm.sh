@@ -100,7 +100,10 @@ if [[ -z "$port" ]]; then
 fi
 memory="${VM_MEMORY_MB:-8192}"
 cpus="${VM_CPUS:-4}"
-display_args=(-display none)
+# The guest always carries the virtio GPU, headless or not: the catalogue's
+# virtio row is "verified in the VM gate" only if the gate actually runs on
+# it (QEMU's default Bochs VGA resolves to the generic Mesa row).
+display_args=(-display none -device virtio-vga)
 $gui && display_args=(-display "gtk,full-screen=on" -device virtio-vga -device qemu-xhci -device usb-tablet)
 
 $gui && bash "$repo_root/scripts/vm-desktop.sh"
@@ -177,10 +180,18 @@ for fragment in hardware monitors input; do
 done
 python -m json.tool "$HOME/.config/waybar/config" >/dev/null
 ./scripts/render-config.sh --check-drift
-./scripts/gpu-setup.sh --dry-run | grep -q '^GPU families: virtio$'
-./scripts/gpu-setup.sh --list | grep -q '^virtio .*VM gate'
+# Captured, then grepped: under pipefail a grep -q that closes the pipe early
+# turns the producer's SIGPIPE into a failure.
+gpu_plan="$(./scripts/gpu-setup.sh --dry-run)"
+grep -q '^GPU families: virtio$' <<<"$gpu_plan"
+gpu_list="$(./scripts/gpu-setup.sh --list)"
+grep -q '^virtio .*VM gate' <<<"$gpu_list"
 ./scripts/gpu-setup.sh --apply
-./scripts/gpu-setup.sh --restore-config --dry-run | grep -q '^would restore'
+# A re-render over a changed fragment leaves a backup; the restore finds it.
+printf '# local edit\n' >>"$HOME/.config/hypr/generated/hardware.conf"
+./scripts/render-config.sh --deploy >/dev/null
+gpu_restore="$(./scripts/gpu-setup.sh --restore-config --dry-run)"
+grep -q '^would restore' <<<"$gpu_restore"
 for executable in Hyprland waybar kitty dunst rofi dmenu_run wofi nvim clamscan ufw greetd tuigreet; do
   command -v "$executable" >/dev/null
  done
