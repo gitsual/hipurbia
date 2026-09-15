@@ -114,7 +114,18 @@ scripts/               Bootstrap, deploy, render, audit and real-VM test tools
 
 ## Hardware profiles
 
-The portable Hyprland baseline does not force a GPU. `render/hypr/generated/hardware.conf.in` emits the NVIDIA Wayland environment only when the detected facts say NVIDIA is the sole GPU, and a software cursor on NVIDIA and virtual machines; every other machine gets an empty fragment. To change what was detected, write the corrected fact to `~/.config/archlinux-portfolio/hardware-facts.override` and re-run `scripts/render-config.sh --deploy`. Audio device node names are rendered locally by `scripts/configure-audio.py` and are never committed.
+The portable Hyprland baseline does not force a GPU. `render/hypr/generated/hardware.conf.in` emits the NVIDIA Wayland environment only when the detected facts say NVIDIA is the sole GPU, and a software cursor on NVIDIA and virtual machines; every other machine gets an empty fragment. To change what was detected, write the corrected fact to `~/.config/archlinux-portfolio/hardware-facts.override` and re-run `scripts/render-config.sh --deploy`.
+
+The driver stack itself comes from `data/gpu-catalogue.tsv` through `scripts/gpu-setup.sh`, which is a dry run unless told otherwise:
+
+```bash
+./scripts/gpu-setup.sh                  # families, packages, kernel headers and warnings; installs nothing
+./scripts/gpu-setup.sh --list           # every family and how it was verified
+sudo -v && ./scripts/gpu-setup.sh --apply
+./scripts/gpu-setup.sh --restore-config # put back the previous Hyprland hardware fragment
+```
+
+A hybrid machine gets both families plus `nvidia-prime`; a DKMS stack gets the headers of every installed kernel; Secure Boot with a DKMS module is warned about, not hidden. `--gpu FAMILY` overrides the detection only for a family the facts also see (or `generic`), and refuses anything else with exit 3. Audio device node names are rendered locally by `scripts/configure-audio.py` and are never committed.
 
 The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop starts it with `swaybg`, including on virtual GPUs without accelerated rendering. The header SVG is a stylized preview, not a real desktop capture.
 

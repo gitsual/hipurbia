@@ -177,6 +177,10 @@ for fragment in hardware monitors input; do
 done
 python -m json.tool "$HOME/.config/waybar/config" >/dev/null
 ./scripts/render-config.sh --check-drift
+./scripts/gpu-setup.sh --dry-run | grep -q '^GPU families: virtio$'
+./scripts/gpu-setup.sh --list | grep -q '^virtio .*VM gate'
+./scripts/gpu-setup.sh --apply
+./scripts/gpu-setup.sh --restore-config --dry-run | grep -q '^would restore'
 for executable in Hyprland waybar kitty dunst rofi dmenu_run wofi nvim clamscan ufw greetd tuigreet; do
   command -v "$executable" >/dev/null
  done

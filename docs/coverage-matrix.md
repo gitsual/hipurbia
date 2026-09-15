@@ -41,7 +41,7 @@ The catalogue (`data/gpu-catalogue.tsv`) maps PCI ids to driver families and eac
 | `virtio` | virtio GPU | `packages/gpu-virtio.txt` | VM-verified |
 | `generic` | Anything else | `packages/gpu-generic.txt` | Recommendation, untested on hardware |
 
-Hybrid machines (two families at once) install both families plus `packages/gpu-prime-offload.txt` (`nvidia-prime`): the integrated GPU drives the displays and the compositor receives no NVIDIA environment; programs run on the NVIDIA GPU through `prime-run`. Status: Recommendation, untested on hardware. When any family installs a DKMS module, the headers of every installed kernel are added (`linux-headers`, `linux-zen-headers`, ...). With Secure Boot enabled and a DKMS module in the stack, the tooling prints a warning naming the consequence and the two ways out (enrol a key with `sbctl`, or disable Secure Boot); it neither installs silently nor refuses.
+Hybrid machines (two families at once) install both families plus `packages/gpu-prime-offload.txt` (`nvidia-prime`): the integrated GPU drives the displays and the compositor receives no NVIDIA environment; programs run on the NVIDIA GPU through `prime-run`. Status: Recommendation, untested on hardware. `scripts/gpu-setup.sh` resolves and installs the stack (dry run by default; `--list` prints this table's status from the catalogue). When any family installs a DKMS module, the headers of every installed kernel are added (`linux-headers`, `linux-zen-headers`, ...). With Secure Boot enabled and a DKMS module in the stack, the tooling prints a warning naming the consequence and the two ways out (enrol a key with `sbctl`, or disable Secure Boot); it neither installs silently nor refuses.
 
 ## Release interpretation
 
