@@ -10,7 +10,7 @@ source "$repo_root/lib/facts.sh"
 source "$repo_root/lib/selectors.sh"
 # shellcheck source=lib/i18n.sh
 source "$repo_root/lib/i18n.sh"
-for detector in chassis power input net graphics kernels display; do
+for detector in chassis power input net thermal graphics kernels display; do
 	# shellcheck source=/dev/null
 	source "$repo_root/lib/detect/$detector.sh"
 done
@@ -59,6 +59,7 @@ facts['has_backlight']="$(detect_has_backlight)"
 facts['has_touchpad']="$(detect_has_touchpad)"
 facts['has_wifi']="$(detect_has_wifi)"
 facts['has_bluetooth']="$(detect_has_bluetooth)"
+facts['cpu_temp_path']="$(detect_cpu_temp_path)"
 facts['gpu_vendors']="$(detect_gpu_vendors)"
 facts['gpu_devices']="$(detect_gpu_devices)"
 facts['gpu_hybrid']="$(detect_gpu_hybrid)"

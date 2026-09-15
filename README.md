@@ -160,6 +160,12 @@ A test pins the single-writer rule and another that `LC_ALL=C` is only ever pinn
 
 The base profile installs Noto (Latin, CJK, emoji) so any script renders; the VM gate asks `fc-match` by code point, not by family name. An input method is a fourth setting, `ime=fcitx5` (default `none`): it adds the fcitx5 environment and daemon start to the input fragment and nothing else, and `bootstrap.sh --ime` installs fcitx5 with Mozc.
 
+## Status bar
+
+The bar is rendered per machine from `render/waybar/config.in`, so a module appears only when the hardware answers for it: bluetooth needs an adapter, backlight a panel, the NVIDIA temperature an NVIDIA card. CPU temperature works the same way but needs more than a yes: `cpu_temp_path` carries the `/sys` file the sensor actually lives in, chosen by driver name (`k10temp`, `zenpower`, `coretemp`, then `acpitz`) rather than by hwmon index, because that index is assigned in probe order and differs between machines. A VM reports `none` and the module is not placed at all.
+
+The network module shows the address inline (`{ipaddr}/{cidr}`) instead of hiding it in a tooltip, and click-toggles to the interface name; the bluetooth tooltip enumerates the connected devices. Weather is a fifth setting, `weather_location` (default `auto`, which lets wttr.in geolocate by IP) — set it to a place name or airport code to ask about somewhere else, and note that the module makes an outbound request every half hour either way.
+
 ## Graphical login
 
 `--desktop-login` installs greetd with tuigreet, as before. `bootstrap.sh --gui-greeter` (or `apply-system.sh --greeter`) installs ReGreet inside a cage kiosk instead, styled from the palette (`templates/system/etc/greetd/regreet.css.in`). The greeter has two language axes of its own, rendered from the settings file into greetd's command: `LANG` for the greeter process and `XKB_DEFAULT_LAYOUT` for the keyboard cage hands it. Each is written in exactly one place, pinned by the same test as the session's axes. The test VM keeps its passwordless autologin, frozen byte-for-byte.

@@ -8,7 +8,9 @@
 #      detector that learns something new cannot leak it into the file — it has
 #      to be added here first, in review. This is what keeps serials, MAC
 #      addresses, hostnames, EDID strings, PCI bus addresses and usernames out
-#      of a file that ends up in bug reports.
+#      of a file that ends up in bug reports. `cpu_temp_path` is a /sys path
+#      and therefore allowed: an hwmon index identifies a driver's probe order,
+#      not the person holding the machine.
 #   2. A schema version. Consumers call facts_require_schema and refuse a file
 #      they do not understand, rather than silently mis-reading a future format.
 #
@@ -27,6 +29,7 @@ FACTS_ALLOWED_KEYS=(
 	has_touchpad
 	has_wifi
 	has_bluetooth
+	cpu_temp_path
 	gpu_vendors
 	gpu_devices
 	gpu_families

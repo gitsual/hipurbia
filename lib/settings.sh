@@ -12,7 +12,7 @@
 #
 # Sourced, not executed. Requires lib/kv.sh.
 
-SETTINGS_ALLOWED_KEYS=(locale keymap xkb_layout ime theme)
+SETTINGS_ALLOWED_KEYS=(locale keymap xkb_layout ime theme weather_location)
 declare -gA SETTINGS=()
 
 # settings_defaults — reset SETTINGS to the values the source workstation uses.
@@ -23,6 +23,7 @@ settings_defaults() {
 		[xkb_layout]=es
 		[ime]=none
 		[theme]=warm-night
+		[weather_location]=auto
 	)
 }
 
@@ -32,6 +33,12 @@ settings_defaults() {
 #   xkb_layout  one or more XKB layouts, comma-separated (us,es)
 #   theme       a name in the catalogue; the file has to exist, which only the
 #               renderer can know, so here the shape is all that is checked
+#   weather_location
+#               what the bar asks wttr.in about: "auto" means by IP, which is
+#               what the service does with an empty path. Anything else is a
+#               place name or airport code, and is restricted to the characters
+#               a place name needs so the value cannot smuggle a second URL or
+#               a shell metacharacter into the module's command line.
 settings_valid() {
 	local key="$1" value="$2"
 	case "$key" in
@@ -40,6 +47,7 @@ settings_valid() {
 	xkb_layout) [[ "$value" =~ ^[a-z]{2,8}(,[a-z]{2,8})*$ ]] ;;
 	ime) [[ "$value" == none || "$value" == fcitx5 ]] ;;
 	theme) [[ "$value" =~ ^[a-z][a-z0-9-]*$ ]] ;;
+	weather_location) [[ "$value" =~ ^[A-Za-z0-9_.,+-]+$ ]] ;;
 	*) return 1 ;;
 	esac
 }

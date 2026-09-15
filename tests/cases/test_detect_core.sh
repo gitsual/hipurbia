@@ -7,7 +7,7 @@ set -Eeuo pipefail
 # not leak into the answer.
 
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
-for detector in chassis power input net; do
+for detector in chassis power input net thermal; do
 	# shellcheck source=/dev/null
 	source "$repo_root/lib/detect/$detector.sh"
 done

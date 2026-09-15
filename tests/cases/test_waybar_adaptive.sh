@@ -52,11 +52,30 @@ expect() {
 	return 0
 }
 
-expect vm-virtio 'network cpu memory disk pulseaudio custom/power' 'battery backlight bluetooth custom/gpu'
-expect laptop-intel 'battery backlight bluetooth' 'custom/gpu'
-expect laptop-amd-hybrid 'battery backlight custom/gpu' 'bluetooth'
-expect desktop-nvidia 'custom/gpu' 'battery backlight bluetooth'
-expect headless-unknown 'network custom/power' 'battery backlight bluetooth custom/gpu'
+expect vm-virtio 'network cpu memory disk pulseaudio custom/power custom/weather hyprland/window' 'battery backlight bluetooth custom/gpu temperature'
+expect laptop-intel 'battery backlight bluetooth temperature' 'custom/gpu'
+expect laptop-amd-hybrid 'battery backlight custom/gpu temperature' 'bluetooth'
+expect desktop-nvidia 'custom/gpu temperature' 'battery backlight bluetooth'
+expect headless-unknown 'network custom/power' 'battery backlight bluetooth custom/gpu temperature'
+
+# The temperature module reads the sensor the facts found, never a hardcoded
+# hwmon index: probe order differs between machines, and a config that names
+# hwmon2 on this one shows the wrong chip — or nothing — on the next.
+for archetype in desktop-nvidia laptop-intel laptop-amd-hybrid; do
+	declared="$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["temperature"]["hwmon-path"])' \
+		"$sandbox/$archetype/.config/waybar/config")"
+	expected="$(sed -nE 's/^cpu_temp_path=(.*)$/\1/p' "$repo_root/tests/golden/$archetype/hardware-facts")"
+	[[ "$declared" == "$expected" ]] ||
+		fail "$archetype: temperature reads $declared, the facts say $expected"
+done
+
+# Exactly one weather definition survives the guards. Both surviving would be
+# a duplicate key, and neither would place a module with no definition — the
+# two failures a pair of complementary guards can produce.
+for archetype in vm-virtio laptop-intel; do
+	count="$(grep -c '"custom/weather":' "$sandbox/$archetype/.config/waybar/config")"
+	((count == 1)) || fail "$archetype: $count weather definitions survived the guards"
+done
 
 # The last placed module is never guarded, so the JSON array never ends in a
 # comma whichever facts hold.

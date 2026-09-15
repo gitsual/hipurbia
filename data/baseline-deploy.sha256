@@ -52,6 +52,6 @@ a7f6d6e31fa8111b724b1b06d46311866ea490845b7377797fca481072550e6d  dotfiles/secur
 7120b38f5a9ec3b00e22fac420218c406c8fddd8c62ff5359a275102a70e303c  dotfiles/theme/.config/kdeglobals
 ac81224fc768b751e3c5ac3b10ff1c8ef6c6f8b00ab7fd075b40d9dfbc9417ec  dotfiles/waybar/.config/waybar/scripts/ws-refresh.sh
 ff8a9bc3e5ea8b4f7bed7d58b31552511db9b438b67740c233032a1b81efe63c  dotfiles/waybar/.config/waybar/scripts/ws-render.sh
-90137de3bfce5deb1624228da7867409586648507a1d154ab5cf644f4074a78c  dotfiles/waybar/.config/waybar/style.css
+39a8549338ce6898b862da2895faae0188e419985d0e4590feb6d2f1af0466e5  dotfiles/waybar/.config/waybar/style.css
 d92b7d39cd2f0ded3acd33a61edf70a3d9d9fdef9f95c4929cf9bf4d483abc31  dotfiles/waybar/.config/waybar/workspace-icons.json
 16e0f8c1f5ed428ec0c8da4e8775f7c3ae967171ab62f337dc365c076514a411  dotfiles/wofi/.config/wofi/style.css
