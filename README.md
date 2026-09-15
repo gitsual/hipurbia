@@ -110,6 +110,7 @@ scripts/               Bootstrap, deploy, render, audit and real-VM test tools
 - [Virtual-machine validation](docs/virtual-machine.md)
 - [Sanitization decisions](docs/design-notes.md)
 - [Workstation coverage matrix](docs/coverage-matrix.md)
+- [Destination tests: what was verified where](docs/destination-tests.md)
 - [Publication audit](docs/audit-report.md)
 
 ## Hardware profiles
@@ -166,7 +167,7 @@ The base profile installs Noto (Latin, CJK, emoji) so any script renders; the VM
 
 `scripts/check.sh` validates shell, Python, JSON, Lua, systemd units, all package manifests, symlinks, file types and privacy patterns, verifies every bundled asset against `data/asset-manifest.tsv`, runs the behaviour tests in `tests/cases/`, runs Gitleaks, performs both a dry run and a two-pass deployment regression in temporary HOMEs, and checks deployment integrity: Stow and the machine-specific renders never claim the same path, never write into the checkout, and every package and Hyprland fragment is accounted for. `scripts/test-neovim.sh` performs the separate clean editor installation without calling external AI services. `scripts/test-vm.sh` installs and exercises the current tree in an official Arch QEMU/KVM guest. Publication also requires scanning the exact staged Git objects and resulting commit before push.
 
-Every claim in this repository rests on author-run evidence, not CI: these checks are run by hand on the author's machine and in a local VM before publication. There is no hosted pipeline re-running them on each commit, and nothing here should be read as if there were.
+Every claim in this repository rests on author-run evidence, not CI: these checks are run by hand on the author's machine and in a local VM before publication. There is no hosted pipeline re-running them on each commit, and nothing here should be read as if there were. `docs/destination-tests.md` says, claim by claim, whether something was verified on the author's hardware, in the VM, or not at all; a test refuses a row without one of those three answers.
 
 ## License
 

@@ -215,6 +215,14 @@ done
 test -L "$HOME/.config/hypr/hypridle.conf"
 test -L "$HOME/.config/nwg-bar/bar.json"
 grep -Fxq 'exec-once = hypridle' "$HOME/.config/hypr/hyprland.conf"
+# The workspace strip and the help panes work through the stowed scripts
+# with no session behind them: ten numbers, and every registered key.
+strip="$(WS_CACHE=/nonexistent "$HOME/.config/waybar/scripts/ws-render.sh" | python -c 'import json,sys; print(json.load(sys.stdin)["text"])')"
+[[ "$strip" == '1  2  3  4  5  6  7  8  9  10' ]]
+pane="$(HYPRLAND_INSTANCE_SIGNATURE='' "$HOME/.config/hypr/scripts/help-pane.sh" --pane hypr --plain --lang es)"
+[[ "$(wc -l <<<"$pane")" -eq "$(grep -c $'\thypr\t' data/help-registry.tsv)" ]]
+! grep -q UNREGISTERED <<<"$pane"
+grep -q $'^SUPER+Return\tAbrir una terminal$' <<<"$pane"
 # Every package the desktop selector promises is installed.
 pacman -Qq $(grep -Ev '^[[:space:]]*(#|$)' packages/desktop.txt) >/dev/null
 for executable in Hyprland waybar kitty dunst rofi dmenu_run wofi nvim clamscan ufw greetd tuigreet firefox thunar mpv; do
