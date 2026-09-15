@@ -171,9 +171,9 @@ windowrule = animation slide, match:class ^(rofi)$
 windowrule = float on, match:class ^(nm-connection-editor)$
 # The wizard is the only thing on screen while it runs: floating, centred and
 # large enough to read without leaning in.
-windowrule = float on, match:class ^(portfolio-welcome)$
-windowrule = center on, match:class ^(portfolio-welcome)$
-windowrule = size 1100 700, match:class ^(portfolio-welcome)$
+windowrule = float on, match:class ^(hipurbia-welcome)$
+windowrule = center on, match:class ^(hipurbia-welcome)$
+windowrule = size 1100 700, match:class ^(hipurbia-welcome)$
 
 exec-once = waybar
 exec-once = hypridle
@@ -188,4 +188,4 @@ exec-once = dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CUR
 # The first session, and only the first: the wizard writes a marker and
 # --first-run is a no-op afterwards. It is started last so the bar, the
 # wallpaper and the notification daemon are already up to be previewed.
-exec-once = $terminal --class portfolio-welcome -e $HOME/.local/bin/portfolio-welcome --first-run
+exec-once = $terminal --class hipurbia-welcome -e $HOME/.local/bin/hipurbia-welcome --first-run

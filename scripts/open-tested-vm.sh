@@ -28,7 +28,7 @@ done
 # Refresh the guest's repository copy so the opened VM runs the current tree,
 # not the tree that was present when the overlay was accepted.
 tar --exclude=.git --exclude=.vm-test -czf "$run/repository.tar.gz" -C "$repo_root" .
-xorriso -as mkisofs -quiet -output "$run/repository.iso" -volid PORTFOLIO -joliet -rock "$run/repository.tar.gz"
+xorriso -as mkisofs -quiet -output "$run/repository.iso" -volid HIPURBIA -joliet -rock "$run/repository.tar.gz"
 bash "$repo_root/scripts/vm-desktop.sh"
 bash "$repo_root/scripts/vm-keyboard.sh"
 if [[ -f "$pidfile" ]] && kill -0 "$(<"$pidfile")" 2>/dev/null; then
@@ -65,7 +65,7 @@ qemu-system-x86_64 \
 ssh_opts=(-i "$run/id_ed25519" -p "$port" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5)
 ready=false
 for _ in {1..90}; do
-	if ssh "${ssh_opts[@]}" "portfolio@$host_address" true >/dev/null 2>&1; then ready=true; break; fi
+	if ssh "${ssh_opts[@]}" "hipurbia@$host_address" true >/dev/null 2>&1; then ready=true; break; fi
 	sleep 2
 done
 $ready || {
@@ -75,33 +75,33 @@ $ready || {
 
 # Validated keymap is intentionally expanded client-side.
 # shellcheck disable=SC2029
-ssh "${ssh_opts[@]}" "portfolio@$host_address" "LC_ALL=C localectl list-keymaps | grep -Fxq -- '$console_keymap'"
+ssh "${ssh_opts[@]}" "hipurbia@$host_address" "LC_ALL=C localectl list-keymaps | grep -Fxq -- '$console_keymap'"
 # The validated keymap is intentionally expanded client-side.
 # shellcheck disable=SC2029
-ssh "${ssh_opts[@]}" "portfolio@$host_address" "CONSOLE_KEYMAP='$console_keymap' bash -s" <<'GUEST'
+ssh "${ssh_opts[@]}" "hipurbia@$host_address" "CONSOLE_KEYMAP='$console_keymap' bash -s" <<'GUEST'
 set -Eeuo pipefail
-sudo mkdir -p /mnt/portfolio
-mountpoint -q /mnt/portfolio || sudo mount -L PORTFOLIO -o ro /mnt/portfolio
-mkdir -p "$HOME/archlinux-portfolio"
-tar -xzf /mnt/portfolio/repository.tar.gz -C "$HOME/archlinux-portfolio"
-cd "$HOME/archlinux-portfolio"
+sudo mkdir -p /mnt/hipurbia
+mountpoint -q /mnt/hipurbia || sudo mount -L HIPURBIA -o ro /mnt/hipurbia
+mkdir -p "$HOME/hipurbia"
+tar -xzf /mnt/hipurbia/repository.tar.gz -C "$HOME/hipurbia"
+cd "$HOME/hipurbia"
 # A stopped VM can leave a stale pacman lock behind; only clear it when no pacman runs.
 if [ -e /var/lib/pacman/db.lck ] && ! pgrep -x pacman >/dev/null; then
   sudo rm -f /var/lib/pacman/db.lck
 fi
 # The console keymap is a setting; its one writer is apply-system.sh --keymap.
-mkdir -p "$HOME/.config/archlinux-portfolio"
-if ! grep -q '^keymap=' "$HOME/.config/archlinux-portfolio/settings" 2>/dev/null; then
-  printf 'keymap=%s\n' "$CONSOLE_KEYMAP" >>"$HOME/.config/archlinux-portfolio/settings"
+mkdir -p "$HOME/.config/hipurbia"
+if ! grep -q '^keymap=' "$HOME/.config/hipurbia/settings" 2>/dev/null; then
+  printf 'keymap=%s\n' "$CONSOLE_KEYMAP" >>"$HOME/.config/hipurbia/settings"
 fi
 ./scripts/bootstrap.sh --noconfirm --desktop-login --vm
 ./scripts/apply-system.sh --desktop-login --vm --keymap
 GUEST
 # Validated keymap is intentionally expanded client-side.
 # shellcheck disable=SC2029
-ssh "${ssh_opts[@]}" "portfolio@$host_address" "grep -Fxq -- 'KEYMAP=$console_keymap' /etc/vconsole.conf"
+ssh "${ssh_opts[@]}" "hipurbia@$host_address" "grep -Fxq -- 'KEYMAP=$console_keymap' /etc/vconsole.conf"
 printf 'ssh_port=%s\nconsole_keymap=%s\n' "$port" "$console_keymap" >"$run/console-login.txt"
-ssh "${ssh_opts[@]}" "portfolio@$host_address" 'sudo systemctl reboot' || true
+ssh "${ssh_opts[@]}" "hipurbia@$host_address" 'sudo systemctl reboot' || true
 
 printf 'Interactive tested VM is running; the desktop logs in by itself. Details: %s\n' "$run/console-login.txt"
 printf 'Stop it with: %s --stop\n' "$repo_root/scripts/open-tested-vm.sh"

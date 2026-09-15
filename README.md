@@ -1,8 +1,8 @@
-# Arch Linux workstation portfolio
+# hipurbia
 
 ![Warm Night desktop preview](assets/desktop-preview.svg)
 
-A reproducible, security-reviewed version of my real Arch Linux workstation: Wayland desktop, launchers, editor, audio/Bluetooth tuning, security services, storage design and maintenance automation.
+An Arch Linux workstation you can rebuild from nothing. A reproducible, security-reviewed version of my real Arch Linux workstation: Wayland desktop, launchers, editor, audio/Bluetooth tuning, security services, storage design and maintenance automation.
 
 > This is not a raw home-directory dump. It preserves the architecture and behavior while removing credentials, device IDs, UUIDs, hostnames, private paths, personal application inventories and private media.
 
@@ -26,8 +26,8 @@ A reproducible, security-reviewed version of my real Arch Linux workstation: Way
 ## Quick start
 
 ```bash
-git clone https://github.com/gitsual/archlinux-portfolio.git
-cd archlinux-portfolio
+git clone https://github.com/gitsual/hipurbia.git
+cd hipurbia
 ./scripts/bootstrap.sh --dry-run
 ./scripts/check.sh
 ```
@@ -65,7 +65,7 @@ Deploy selected packages:
 ./scripts/deploy.sh hypr waybar nvim audio
 ```
 
-Existing files are never deleted. Conflicts move to a timestamped backup under `${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio/backups/`. Stow runs with `--no-folding`, so local hardware overlays cannot write through a linked directory into the repository.
+Existing files are never deleted. Conflicts move to a timestamped backup under `${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia/backups/`. Stow runs with `--no-folding`, so local hardware overlays cannot write through a linked directory into the repository.
 
 Two things are not stowed because they differ per machine: the Waybar config and the Hyprland fragments for monitors, input devices and the GPU. They are rendered from detected hardware facts into `$XDG_CONFIG_HOME`, never into the checkout, and replaced files go to the same backup location:
 
@@ -116,7 +116,7 @@ scripts/               Bootstrap, deploy, render, audit and real-VM test tools
 
 ## Hardware profiles
 
-The portable Hyprland baseline does not force a GPU. `render/hypr/generated/hardware.conf.in` emits the NVIDIA Wayland environment only when the detected facts say NVIDIA is the sole GPU, and a software cursor on NVIDIA and virtual machines; every other machine gets an empty fragment. To change what was detected, write the corrected fact to `~/.config/archlinux-portfolio/hardware-facts.override` and re-run `scripts/render-config.sh --deploy`.
+The portable Hyprland baseline does not force a GPU. `render/hypr/generated/hardware.conf.in` emits the NVIDIA Wayland environment only when the detected facts say NVIDIA is the sole GPU, and a software cursor on NVIDIA and virtual machines; every other machine gets an empty fragment. To change what was detected, write the corrected fact to `~/.config/hipurbia/hardware-facts.override` and re-run `scripts/render-config.sh --deploy`.
 
 The driver stack itself comes from `data/gpu-catalogue.tsv` through `scripts/gpu-setup.sh`, which is a dry run unless told otherwise:
 
@@ -149,7 +149,7 @@ Ten numbered workspaces, `Super+1` to `Super+9` and `Super+0` for the tenth, `Su
 
 ## Language axes
 
-Locale, console keymap and Hyprland keyboard layout are three separate choices, and each has exactly one writer. They are read from `~/.config/archlinux-portfolio/settings` (see `settings.example`; a missing file means the source workstation's values):
+Locale, console keymap and Hyprland keyboard layout are three separate choices, and each has exactly one writer. They are read from `~/.config/hipurbia/settings` (see `settings.example`; a missing file means the source workstation's values):
 
 ```bash
 sudo -v && ./scripts/apply-system.sh --locale --keymap   # /etc/locale.conf + locale-gen, /etc/vconsole.conf
@@ -168,13 +168,13 @@ The network module shows the address inline (`{ipaddr}/{cidr}`) instead of hidin
 
 ## First run
 
-The first session starts `portfolio-welcome` and no later one does: it writes a marker, and `--first-run` is a no-op afterwards. Two questions and a ten-step tour, all reversible, all applied where you can see them.
+The first session starts `hipurbia-welcome` and no later one does: it writes a marker, and `--first-run` is a no-op afterwards. Two questions and a ten-step tour, all reversible, all applied where you can see them.
 
 The keyboard comes first: eight layouts, each labelled in its own language, written to both the console keymap and the compositor layout. Then the theme, applied live as you move through the catalogue — `scripts/apply-theme.sh` renders the chosen palette over the stowed stylesheets and reloads the wallpaper, the bar, the borders and the notifications, so the whole room changes under the cursor instead of a setting changing in a file you cannot see. Choosing the default again restores the committed symlinks exactly, which is what keeps the theme-drift gate meaningful.
 
 Then the tour, which waits for you to actually press the binding and notices when you do, instead of listing it. It calls the modifier **Windows**, because that is what is printed on the key. It covers opening a window and closing it, moving between the ten desktops and carrying a window to another one, the F1–F5 help panels and the Escape that dismisses them, what each side of the bar is for and where your IP address is, the volume, and `pacman` in both directions — installing Chromium and then removing it with `-Rns`, because installing is easy to try and undoing it is the part that actually teaches the package manager.
 
-Run `portfolio-welcome` again whenever you want; it changes only what you confirm. To change the theme without it: `scripts/apply-theme.sh --list`, then `scripts/apply-theme.sh --theme NAME`.
+Run `hipurbia-welcome` again whenever you want; it changes only what you confirm. To change the theme without it: `scripts/apply-theme.sh --list`, then `scripts/apply-theme.sh --theme NAME`.
 
 The published image meets you at the graphical login first: ReGreet inside a cage kiosk, in the palette, with Hyprland as its default session, so nothing has to be typed to reach the desktop.
 

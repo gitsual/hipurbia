@@ -54,7 +54,7 @@ a crash.
 
 `bootstrap.sh` reads the session locale (`LANG`, which `apply-system.sh
 --locale` sets system-wide), keeps its language part, and loads that table;
-`PORTFOLIO_LANG=es` overrides it for one run. `C`, `POSIX` or an unknown
+`HIPURBIA_LANG=es` overrides it for one run. `C`, `POSIX` or an unknown
 language mean the English reference table. Spanish (`es.conf`) is complete
 and gate-checked; a deliberate gap test shows the `[en]` marking end to end.
 

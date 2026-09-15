@@ -10,7 +10,7 @@ set -Eeuo pipefail
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 waybar="$repo_root/dotfiles/waybar/.config/waybar"
 fixture="$repo_root/tests/data/ws"
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-wsicons.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-wsicons.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

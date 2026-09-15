@@ -5,7 +5,7 @@
 # exactly one place in this repository (tests/cases/test_axis_single_writer.sh
 # holds that line), and each reads its value from here.
 #
-# The file lives in $XDG_CONFIG_HOME/archlinux-portfolio/settings, flat KV via
+# The file lives in $XDG_CONFIG_HOME/hipurbia/settings, flat KV via
 # lib/kv.sh, and is never committed. A missing file means the defaults, which
 # reproduce the source workstation. An unknown key or a malformed value is an
 # error: a typo in a keymap name would otherwise reach /etc/vconsole.conf.

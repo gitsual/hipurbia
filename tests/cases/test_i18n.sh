@@ -14,7 +14,7 @@ source "$repo_root/lib/kv.sh"
 source "$repo_root/lib/i18n.sh"
 gate="$repo_root/scripts/check-i18n-coverage.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-i18n.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-i18n.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 mkdir -p -- "$sandbox/i18n" "$sandbox/data"
 

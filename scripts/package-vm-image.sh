@@ -10,7 +10,7 @@ set -Eeuo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 dist="$repo_root/dist"
-image="$dist/archlinux-portfolio.qcow2"
+image="$dist/hipurbia.qcow2"
 # GitHub refuses a release asset over 2 GiB; the slack absorbs nothing, it is
 # simply a round number below the wall.
 part_size="${VM_IMAGE_PART_SIZE:-1900M}"
@@ -90,9 +90,9 @@ cat >"$dist/$stem.ovf" <<OVF
       <Description>NAT network</Description>
     </Network>
   </NetworkSection>
-  <VirtualSystem ovf:id="archlinux-portfolio">
-    <Info>An Arch Linux workstation provisioned by archlinux-portfolio</Info>
-    <Name>archlinux-portfolio</Name>
+  <VirtualSystem ovf:id="hipurbia">
+    <Info>An Arch Linux workstation provisioned by hipurbia</Info>
+    <Name>hipurbia</Name>
     <OperatingSystemSection ovf:id="101">
       <Info>The kind of installed guest operating system</Info>
       <Description>Arch Linux (64-bit)</Description>

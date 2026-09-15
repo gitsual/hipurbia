@@ -12,7 +12,7 @@ source "$repo_root/lib/kv.sh"
 # shellcheck source=lib/i18n.sh
 source "$repo_root/lib/i18n.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-es.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-es.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 cp -r -- "$repo_root/i18n" "$sandbox/i18n"
 
@@ -44,8 +44,8 @@ grep -q 'esta máquina: chasis=vm' <<<"$out" || fail "es: machine line not trans
 grep -q 'se aplica: Integración con invitado QEMU/SPICE' <<<"$out" || fail "es: applicable selector not translated: $out"
 out="$(LANG=C run_bootstrap vm-virtio --list-selectors)"
 grep -q 'this machine: chassis=vm' <<<"$out" || fail "C: expected English: $out"
-out="$(PORTFOLIO_LANG=es LANG=C run_bootstrap vm-virtio --list-selectors)"
-grep -q 'esta máquina' <<<"$out" || fail 'PORTFOLIO_LANG did not override LANG'
+out="$(HIPURBIA_LANG=es LANG=C run_bootstrap vm-virtio --list-selectors)"
+grep -q 'esta máquina' <<<"$out" || fail 'HIPURBIA_LANG did not override LANG'
 out="$(LANG=xx_XX.UTF-8 run_bootstrap vm-virtio --list-selectors 2>/dev/null)"
 grep -q 'this machine' <<<"$out" || fail 'an unknown language must fall back to English'
 

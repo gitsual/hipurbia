@@ -8,7 +8,7 @@ set -Eeuo pipefail
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 renderer="$repo_root/scripts/render-config.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-hypr.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-hypr.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

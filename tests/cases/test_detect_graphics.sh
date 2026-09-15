@@ -12,7 +12,7 @@ for detector in graphics kernels display; do
 	source "$repo_root/lib/detect/$detector.sh"
 done
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-graphics.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-graphics.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

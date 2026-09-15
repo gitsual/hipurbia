@@ -1,6 +1,6 @@
 He convertido mi workstation real de Arch Linux en un portfolio público y reproducible:
 
-https://github.com/gitsual/archlinux-portfolio
+https://github.com/gitsual/hipurbia
 
 No es una copia de mi carpeta personal. He tratado toda la configuración como un sistema que otra persona pueda estudiar y reconstruir sin publicar datos privados.
 

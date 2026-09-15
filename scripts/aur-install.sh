@@ -77,7 +77,7 @@ for required in git makepkg; do
 	}
 done
 
-work="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-aur.XXXXXX")"
+work="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-aur.XXXXXX")"
 trap 'rm -rf -- "$work"' EXIT
 
 makepkg_args=(-si)

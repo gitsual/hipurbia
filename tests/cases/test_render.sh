@@ -12,7 +12,7 @@ source "$repo_root/lib/kv.sh"
 # shellcheck source=/dev/null
 source "$repo_root/lib/render.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-render.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-render.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

@@ -8,13 +8,13 @@ set -Eeuo pipefail
 # IMAGE_LOCALE, IMAGE_KEYMAP, IMAGE_LAYOUT and IMAGE_USER are exported by the
 # caller.
 
-cd "$HOME/archlinux-portfolio"
+cd "$HOME/hipurbia"
 
 # The acceptance seeds three deliberately different axis values (es/es/fr) so
 # each writer can be told apart. A published image carries defaults instead.
 printf 'locale=%s\nkeymap=%s\nxkb_layout=%s\nime=fcitx5\n' \
 	"$IMAGE_LOCALE" "$IMAGE_KEYMAP" "$IMAGE_LAYOUT" \
-	>"$HOME/.config/archlinux-portfolio/settings"
+	>"$HOME/.config/hipurbia/settings"
 ./scripts/apply-system.sh --locale --keymap
 ./scripts/render-config.sh --deploy >/dev/null
 grep -Fxq "LANG=$IMAGE_LOCALE" /etc/locale.conf
@@ -55,7 +55,7 @@ wanted="$((${#catalogue[@]} / 2))"
 sudo pacman -Scc --noconfirm >/dev/null
 sudo journalctl --rotate >/dev/null 2>&1 || true
 sudo journalctl --vacuum-time=1s >/dev/null 2>&1 || true
-sudo rm -rf -- /var/log/journal/* /var/tmp/* /tmp/portfolio-runtime
+sudo rm -rf -- /var/log/journal/* /var/tmp/* /tmp/hipurbia-runtime
 rm -f -- "$HOME/.bash_history"
 # systemd writes a fresh id at boot when the file exists and is empty.
 sudo truncate -s 0 /etc/machine-id

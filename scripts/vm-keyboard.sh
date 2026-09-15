@@ -11,7 +11,7 @@ set -Eeuo pipefail
 command -v hyprctl >/dev/null || exit 0
 [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]] || exit 0
 
-submap="portfolio-vm"
+submap="hipurbia-vm"
 toggle_key="${VM_TOGGLE_KEY:-Home}"
 [[ "$toggle_key" =~ ^[A-Za-z0-9_]+$ ]] || {
 	printf 'Invalid toggle key name: %s\n' "$toggle_key" >&2

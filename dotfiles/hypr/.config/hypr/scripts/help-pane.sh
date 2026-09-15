@@ -23,7 +23,7 @@ source "$repo_root/lib/i18n.sh"
 source "$repo_root/lib/help.sh"
 
 pane='' plain=false
-language="${PORTFOLIO_LANG:-${LANG:-en}}"
+language="${HIPURBIA_LANG:-${LANG:-en}}"
 while (($#)); do
 	case "$1" in
 	--pane)

@@ -13,19 +13,19 @@ set -Eeuo pipefail
 #
 #   --first-run   do nothing at all when the tour has already been taken
 #
-# Rerun it whenever you like: `portfolio-welcome` with no arguments starts
+# Rerun it whenever you like: `hipurbia-welcome` with no arguments starts
 # from the top and changes only what you confirm.
 
-repo="${PORTFOLIO_REPO:-$HOME/archlinux-portfolio}"
-state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio"
+repo="${HIPURBIA_REPO:-$HOME/hipurbia}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia"
 marker="$state_dir/welcome-done"
-settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/settings"
+settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings"
 
 if [[ "${1:-}" == --first-run ]]; then
 	[[ -e "$marker" ]] && exit 0
 fi
 [[ -d "$repo" ]] || {
-	printf 'The portfolio checkout is not at %s; set PORTFOLIO_REPO.\n' "$repo" >&2
+	printf 'The portfolio checkout is not at %s; set HIPURBIA_REPO.\n' "$repo" >&2
 	exit 1
 }
 
@@ -374,7 +374,7 @@ step_tour() {
 		centre "$SUPER + Shift + E apaga, reinicia o cierra la sesión."
 		centre ''
 		fg "${palette[COLOR_FG_DIM]}"
-		centre 'Vuelve a este asistente cuando quieras: portfolio-welcome'
+		centre 'Vuelve a este asistente cuando quieras: hipurbia-welcome'
 		centre 'Cambia de tema sin él: scripts/apply-theme.sh --theme NOMBRE'
 		footer 'Enter para empezar'
 		reset

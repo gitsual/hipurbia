@@ -1,8 +1,8 @@
 # The downloadable image
 
 A release carries the same workstation this repository builds, already
-provisioned, as a disk you can boot: `archlinux-portfolio.qcow2` for
-QEMU/libvirt and `archlinux-portfolio.ova` for VirtualBox and VMware.
+provisioned, as a disk you can boot: `hipurbia.qcow2` for
+QEMU/libvirt and `hipurbia.ova` for VirtualBox and VMware.
 
 ## Reassembling
 
@@ -11,7 +11,7 @@ Download every part of the one you want, put them in the same directory and
 concatenate them in order:
 
 ```sh
-cat archlinux-portfolio.qcow2.part* >archlinux-portfolio.qcow2
+cat hipurbia.qcow2.part* >hipurbia.qcow2
 sha256sum -c SHA256SUMS
 ```
 
@@ -97,7 +97,7 @@ that already has `paru` or `yay` keeps using it.
 
 The image ships `en_US.UTF-8`, a `us` console keymap and a `us` compositor
 layout, with fcitx5 installed. All three are settings, not builds: edit
-`~/.config/archlinux-portfolio/settings` and run
+`~/.config/hipurbia/settings` and run
 
 ```sh
 ./scripts/apply-system.sh --locale --keymap

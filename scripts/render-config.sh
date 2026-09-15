@@ -26,10 +26,10 @@ source "$repo_root/lib/render.sh"
 source "$repo_root/lib/settings.sh"
 
 render_dir="${RENDER_DIR:-$repo_root/render}"
-facts_file="${FACTS_FILE:-${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio/hardware-facts}"
-facts_override="${FACTS_OVERRIDE:-${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/hardware-facts.override}"
-settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/settings}"
-backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio/backups/$(date -u +%Y%m%dT%H%M%SZ)"
+facts_file="${FACTS_FILE:-${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia/hardware-facts}"
+facts_override="${FACTS_OVERRIDE:-${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/hardware-facts.override}"
+settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings}"
+backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia/backups/$(date -u +%Y%m%dT%H%M%SZ)"
 
 usage() {
 	cat <<'USAGE'
@@ -41,7 +41,7 @@ Usage: scripts/render-config.sh --committed | --deploy | --dry-run | --check-dri
   --check-drift  verify the deployed renders still match a fresh render
 
 Deploy-time output never lands inside the checkout. Existing files move to
-${XDG_STATE_HOME:-~/.local/state}/archlinux-portfolio/backups/<stamp>/ first.
+${XDG_STATE_HOME:-~/.local/state}/hipurbia/backups/<stamp>/ first.
 Overrides: THEME_FILE, FACTS_FILE, FACTS_OVERRIDE, SETTINGS_FILE, RENDER_DIR, XDG_CONFIG_HOME.
 USAGE
 }
@@ -130,7 +130,7 @@ backup_path() {
 	printf '%s/%s' "$backup_root" "$relative"
 }
 
-scratch="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-deploy-render.XXXXXX")"
+scratch="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-deploy-render.XXXXXX")"
 trap 'rm -rf -- "$scratch"' EXIT
 
 status=0

@@ -62,7 +62,7 @@ hash_checkout() {
 		find dotfiles render templates data -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum
 	)
 }
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-integrity.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-integrity.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 home="$sandbox/home"
 mkdir -p -- "$home"

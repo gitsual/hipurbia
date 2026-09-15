@@ -24,8 +24,8 @@ for detector in chassis power input net thermal graphics kernels display; do
 	source "$repo_root/lib/detect/$detector.sh"
 done
 
-facts_file="${FACTS_FILE:-${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio/hardware-facts}"
-facts_override="${FACTS_OVERRIDE:-${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/hardware-facts.override}"
+facts_file="${FACTS_FILE:-${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia/hardware-facts}"
+facts_override="${FACTS_OVERRIDE:-${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/hardware-facts.override}"
 action=''
 print_key=''
 

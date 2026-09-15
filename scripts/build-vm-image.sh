@@ -110,8 +110,8 @@ image_user='user'
 ssh-keygen -q -t ed25519 -N '' -f "$run/id_ed25519"
 public_key="$(<"$run/id_ed25519.pub")"
 cat >"$run/meta-data" <<'META'
-instance-id: archportfolio-image
-local-hostname: archportfolio
+instance-id: hipurbia-image
+local-hostname: hipurbia
 META
 cat >"$run/user-data" <<USERDATA
 #cloud-config
@@ -129,7 +129,7 @@ USERDATA
 xorriso -as mkisofs -quiet -output "$run/seed.iso" -volid cidata -joliet -rock "$run/user-data" "$run/meta-data"
 
 tar --exclude=.git --exclude=.vm-test --exclude=.vm-image --exclude=dist -czf "$run/repository.tar.gz" -C "$repo_root" .
-xorriso -as mkisofs -quiet -output "$run/repository.iso" -volid PORTFOLIO -joliet -rock "$run/repository.tar.gz"
+xorriso -as mkisofs -quiet -output "$run/repository.iso" -volid HIPURBIA -joliet -rock "$run/repository.tar.gz"
 qemu-img create -q -f qcow2 -F qcow2 -b "$base" "$run/build.qcow2" "$disk_size"
 
 port="${VM_SSH_PORT:-}"
@@ -213,7 +213,7 @@ kill -0 "$qemu_pid" 2>/dev/null && {
 	exit 1
 }
 
-artifact="$output_dir/archlinux-portfolio.qcow2"
+artifact="$output_dir/hipurbia.qcow2"
 printf '%s\n' 'Flattening the overlay into a standalone image...'
 qemu-img convert -O qcow2 -c "$run/build.qcow2" "$artifact.part"
 mv -- "$artifact.part" "$artifact"

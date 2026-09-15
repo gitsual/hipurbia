@@ -47,7 +47,7 @@ for package in "${selected[@]}"; do
 done
 
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio/backups/$stamp"
+backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia/backups/$stamp"
 
 for package in "${selected[@]}"; do
 	package_root="$repo_root/dotfiles/$package"

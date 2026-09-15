@@ -17,8 +17,8 @@ done
 selectors_load "${SELECTORS_FILE:-$repo_root/data/selectors.tsv}"
 
 # Messages follow the session locale (the --locale axis sets it system-wide);
-# PORTFOLIO_LANG overrides for one run. C and POSIX mean the reference table.
-language="${PORTFOLIO_LANG:-${LANG:-en}}"
+# HIPURBIA_LANG overrides for one run. C and POSIX mean the reference table.
+language="${HIPURBIA_LANG:-${LANG:-en}}"
 language="${language%%[_.@]*}"
 [[ "$language" =~ ^[a-z]{2,3}$ ]] || language=en
 i18n_load "$language" "${I18N_DIR:-$repo_root/i18n}" 2>/dev/null || i18n_load en "${I18N_DIR:-$repo_root/i18n}"
@@ -159,7 +159,7 @@ if $dry_run; then
 	printf 'would install official packages (%d): %s\n' "${#official[@]}" "${official[*]}"
 	((${#aur[@]})) && printf 'would install AUR packages (%d): %s\n' "${#aur[@]}" "${aur[*]}"
 	HOME="${HOME}" "$repo_root/scripts/deploy.sh" --all --dry-run
-	facts_preview="$(mktemp "${TMPDIR:-/tmp}/archportfolio-facts.XXXXXX")"
+	facts_preview="$(mktemp "${TMPDIR:-/tmp}/hipurbia-facts.XXXXXX")"
 	"$repo_root/scripts/hardware-facts.sh" --dry-run >"$facts_preview"
 	FACTS_FILE="$facts_preview" "$repo_root/scripts/render-config.sh" --dry-run
 	rm -f -- "$facts_preview"

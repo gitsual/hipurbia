@@ -96,7 +96,7 @@ stage 'unit and fixture tests'
 "$repo_root/tests/run.sh"
 
 stage 'deployment script dry run'
-dry_home="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-dry-run.XXXXXX")"
+dry_home="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-dry-run.XXXXXX")"
 trap 'rm -rf -- "$dry_home"' EXIT
 HOME="$dry_home" XDG_STATE_HOME="$dry_home/.local/state" "$repo_root/scripts/deploy.sh" --all --dry-run
 HOME="$dry_home" XDG_STATE_HOME="$dry_home/.local/state" FACTS_FILE="$repo_root/tests/golden/vm-virtio/hardware-facts" \

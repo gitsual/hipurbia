@@ -31,8 +31,8 @@ source "$repo_root/lib/render.sh"
 # shellcheck source=lib/settings.sh
 source "$repo_root/lib/settings.sh"
 
-settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/settings}"
-state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio"
+settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia"
 manifest="$state_dir/theme-overlay"
 templates_dir="${TEMPLATES_DIR:-$repo_root/templates}"
 default_theme='warm-night'

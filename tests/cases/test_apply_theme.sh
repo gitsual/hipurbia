@@ -25,7 +25,7 @@ command -v stow >/dev/null || {
 	exit 0
 }
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-theme.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-theme.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 mkdir -p -- "$sandbox/.config"
 
@@ -38,7 +38,7 @@ stow --dir="$repo_root/dotfiles" --target="$sandbox" --no-folding "${packages[@]
 run() {
 	HOME="$sandbox" XDG_CONFIG_HOME="$sandbox/.config" XDG_STATE_HOME="$sandbox/.state" \
 		FACTS_FILE="$facts" FACTS_OVERRIDE="$sandbox/absent" \
-		SETTINGS_FILE="$sandbox/.config/archlinux-portfolio/settings" \
+		SETTINGS_FILE="$sandbox/.config/hipurbia/settings" \
 		"$apply" "$@"
 }
 
@@ -93,12 +93,12 @@ for target in "${!before[@]}"; do
 	[[ "$(readlink -- "$target")" == "${before[$target]}" ]] ||
 		fail "$target was restored to the wrong place"
 done
-[[ -e "$sandbox/.state/archlinux-portfolio/theme-overlay" ]] &&
+[[ -e "$sandbox/.state/hipurbia/theme-overlay" ]] &&
 	fail 'the default still records an overlay it does not have'
 
 # Nothing outside the home directory is ever written: the greeter's stylesheet
 # lives in /etc and belongs to apply-system.sh, which asks for root first.
-grep -Fq 'etc/greetd' "$sandbox/.state/archlinux-portfolio/theme-overlay" 2>/dev/null &&
+grep -Fq 'etc/greetd' "$sandbox/.state/hipurbia/theme-overlay" 2>/dev/null &&
 	fail 'the overlay reaches outside the home directory'
 
 printf 'apply-theme: %d palette-dependent files overlaid and restored exactly\n' "${#before[@]}"

@@ -8,7 +8,7 @@ set -Eeuo pipefail
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 gate="$repo_root/scripts/check-asset-manifest.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-assets.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-assets.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 # A minimal tree with one real asset is enough: the gate's three failure modes

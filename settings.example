@@ -1,6 +1,6 @@
 # Example user settings, for documentation.
 #
-# The real file lives in $XDG_CONFIG_HOME/archlinux-portfolio/settings and is
+# The real file lives in $XDG_CONFIG_HOME/hipurbia/settings and is
 # never committed. These are choices, not detections: hardware facts describe
 # what the machine is, settings describe what its owner wants. A missing file
 # means these defaults, which reproduce the source workstation.

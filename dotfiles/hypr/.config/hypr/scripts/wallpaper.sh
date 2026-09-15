@@ -8,9 +8,9 @@
 # leaving seven themes with somebody else's background.
 set -Eeuo pipefail
 
-repo="${PORTFOLIO_REPO:-$HOME/archlinux-portfolio}"
+repo="${HIPURBIA_REPO:-$HOME/hipurbia}"
 wallpapers="$HOME/.local/share/wallpapers"
-settings="${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/settings"
+settings="${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings"
 
 theme=warm-night
 [[ -f "$settings" ]] && theme="$(sed -nE 's/^theme=(.+)$/\1/p' "$settings" | tail -1)"

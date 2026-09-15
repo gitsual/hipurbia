@@ -5,15 +5,15 @@
 # CONSOLE_KEYMAP is exported by the caller.
 set -Eeuo pipefail
 sudo pacman -Syu --noconfirm
-sudo mkdir -p /mnt/portfolio
-sudo mount -L PORTFOLIO -o ro /mnt/portfolio
-mkdir -p "$HOME/archlinux-portfolio"
-tar -xzf /mnt/portfolio/repository.tar.gz -C "$HOME/archlinux-portfolio"
-cd "$HOME/archlinux-portfolio"
+sudo mkdir -p /mnt/hipurbia
+sudo mount -L HIPURBIA -o ro /mnt/hipurbia
+mkdir -p "$HOME/hipurbia"
+tar -xzf /mnt/hipurbia/repository.tar.gz -C "$HOME/hipurbia"
+cd "$HOME/hipurbia"
 # Three language axes with three distinguishable values, so each assertion
 # below can only be satisfied by its own writer.
-mkdir -p "$HOME/.config/archlinux-portfolio"
-printf 'locale=es_ES.UTF-8\nkeymap=%s\nxkb_layout=fr\nime=fcitx5\n' "$CONSOLE_KEYMAP" >"$HOME/.config/archlinux-portfolio/settings"
+mkdir -p "$HOME/.config/hipurbia"
+printf 'locale=es_ES.UTF-8\nkeymap=%s\nxkb_layout=fr\nime=fcitx5\n' "$CONSOLE_KEYMAP" >"$HOME/.config/hipurbia/settings"
 ./scripts/bootstrap.sh --noconfirm --desktop-login --vm --desktop --ime --ricer --gui-greeter --apps
 ./scripts/apply-system.sh --locale --keymap
 grep -Fxq 'LANG=es_ES.UTF-8' /etc/locale.conf
@@ -28,9 +28,9 @@ grep -Fxq '    kb_layout = fr' "$HOME/.config/hypr/generated/input.conf"
 greeter_plan="$(./scripts/apply-system.sh --dry-run --greeter)"
 grep -q 'LANG=es_ES.UTF-8 XKB_DEFAULT_LAYOUT=fr cage -s -- regreet' <<<"$greeter_plan"
 pacman -Qq greetd-regreet cage >/dev/null
-mkdir -p /tmp/portfolio-runtime
-chmod 700 /tmp/portfolio-runtime
-XDG_RUNTIME_DIR=/tmp/portfolio-runtime Hyprland --verify-config -c "$HOME/.config/hypr/hyprland.conf"
+mkdir -p /tmp/hipurbia-runtime
+chmod 700 /tmp/hipurbia-runtime
+XDG_RUNTIME_DIR=/tmp/hipurbia-runtime Hyprland --verify-config -c "$HOME/.config/hypr/hyprland.conf"
 for fragment in hardware monitors input; do
   test -f "$HOME/.config/hypr/generated/$fragment.conf"
   test ! -L "$HOME/.config/hypr/generated/$fragment.conf"

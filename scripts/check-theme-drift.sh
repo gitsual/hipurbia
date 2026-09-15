@@ -42,7 +42,7 @@ esac
 
 render_load_tokens "$theme"
 
-scratch="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-render.XXXXXX")"
+scratch="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-render.XXXXXX")"
 trap 'rm -rf -- "$scratch"' EXIT
 
 status=0

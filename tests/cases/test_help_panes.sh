@@ -9,7 +9,7 @@ set -Eeuo pipefail
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 pane="$repo_root/dotfiles/hypr/.config/hypr/scripts/help-pane.sh"
 data="$repo_root/tests/data/help"
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-help.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-help.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

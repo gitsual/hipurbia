@@ -3,7 +3,7 @@
 What this repository claims about a machine it has never seen, and how each
 claim was checked. Every row carries exactly one status:
 
-- **verified on author hardware**: run on the workstation this portfolio
+- **verified on author hardware**: run on the workstation hipurbia
   describes (NVIDIA, open kernel modules).
 - **VM-verified**: exercised by `scripts/test-vm.sh` in the official Arch
   cloud image under QEMU/KVM with a virtio GPU, in one boot, on every
