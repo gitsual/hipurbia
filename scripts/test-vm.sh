@@ -163,7 +163,7 @@ cd "$HOME/archlinux-portfolio"
 # below can only be satisfied by its own writer.
 mkdir -p "$HOME/.config/archlinux-portfolio"
 printf 'locale=es_ES.UTF-8\nkeymap=%s\nxkb_layout=fr\nime=fcitx5\n' "$CONSOLE_KEYMAP" >"$HOME/.config/archlinux-portfolio/settings"
-./scripts/bootstrap.sh --noconfirm --desktop-login --vm --desktop --ime
+./scripts/bootstrap.sh --noconfirm --desktop-login --vm --desktop --ime --ricer
 ./scripts/apply-system.sh --locale --keymap
 grep -Fxq 'LANG=es_ES.UTF-8' /etc/locale.conf
 LC_ALL=C locale -a | grep -Fxq 'es_ES.utf8'
@@ -201,6 +201,14 @@ command -v fcitx5 >/dev/null
 fc-match -f '%{family}\n' ':charset=4e2d' | grep -q CJK
 fc-match -f '%{family}\n' ':charset=3042' | grep -q CJK
 fc-match -f '%{family}\n' ':charset=1f600' | grep -qi emoji
+# Ricing tools: installed, configured through Stow, and hypridle wired into
+# the session (whether it is running after a login is a destination test).
+for executable in hypridle nwg-bar cliphist swappy wf-recorder nwg-look qt6ct; do
+  command -v "$executable" >/dev/null
+done
+test -L "$HOME/.config/hypr/hypridle.conf"
+test -L "$HOME/.config/nwg-bar/bar.json"
+grep -Fxq 'exec-once = hypridle' "$HOME/.config/hypr/hyprland.conf"
 # Every package the desktop selector promises is installed.
 pacman -Qq $(grep -Ev '^[[:space:]]*(#|$)' packages/desktop.txt) >/dev/null
 for executable in Hyprland waybar kitty dunst rofi dmenu_run wofi nvim clamscan ufw greetd tuigreet firefox thunar mpv; do

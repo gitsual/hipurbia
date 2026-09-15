@@ -1,0 +1,5 @@
+/* nwg-bar power menu, Warm Night palette. Rendered from data/theme.conf. */
+window { background-color: rgba(@COLOR_BG:rgb@, 0.85); }
+#outer-box { margin: 0; padding: 12px; }
+button { background: rgba(@COLOR_SURFACE:rgb@, 0.9); color: #@COLOR_FG@; border: 2px solid #@COLOR_BORDER_INACTIVE@; border-radius: 12px; margin: 8px; padding: 18px; font-size: 16px; }
+button:hover, button:focus { background: #@COLOR_ACCENT@; color: #@COLOR_BG@; border-color: #@COLOR_ACCENT@; }

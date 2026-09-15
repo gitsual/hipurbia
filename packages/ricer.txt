@@ -1,0 +1,7 @@
+cliphist
+kvantum
+nwg-bar
+nwg-look
+qt6ct
+swappy
+wf-recorder

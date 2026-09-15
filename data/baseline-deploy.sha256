@@ -11,7 +11,8 @@ d41c8a7443dca0a4871539a652020666549f453c6d6c10f10e49661e132d687b  dotfiles/audio
 48bf41bedb732183af62dd480869cb0df58b835218ecc2d9902c48d50904845d  dotfiles/automation/.config/systemd/user/workstation-task@.timer
 153439fa8e31f1565fadb2fe4b5bf5bd33a064619e2354bfe2c6c720d459b3cc  dotfiles/automation/.local/bin/workstation-task-runner
 0f37a2c826a582041b95bbc4d7391cd306512556875c3c4b93bbff15cf5e9f79  dotfiles/dunst/.config/dunst/dunstrc
-a28bf5902afda823d0012ec6b712739a5594edd277761215d5a7dacf5f4437fd  dotfiles/hypr/.config/hypr/hyprland.conf
+88b2f14bf2cc2f9077fdb92ddfa2a554a7bb14f03c2e76ab7f7270dfd6347582  dotfiles/hypr/.config/hypr/hypridle.conf
+5ba5df366384706a2db2dbb2f367a4e95f79ffcdd5a1cc05127b1c4599b7e0b3  dotfiles/hypr/.config/hypr/hyprland.conf
 af1bc3ab6d57ffe3680bf863df466968ed583d03ee683d40edb4e4b229835ed3  dotfiles/hypr/.config/hypr/hyprlock.conf
 163f61548eb88b3eb707121db7f12583ef7ee5e0a832f2c894c1000320c69cd6  dotfiles/hypr/.config/hypr/hyprpaper.conf
 a27ad37c6209ce8e54c0694c92a0dd36d50dea3a22e2d7b35dfabd26ad53ce1a  dotfiles/hypr/.config/hypr/scripts/help-pane.sh
@@ -37,6 +38,8 @@ af3994ef8c9cb44374819c49a6d882c50260226eb4c579845f332c104c170429  dotfiles/nvim/
 2dbdb419b89ff973088c27787913b67721548fd619bfa7c33e41ba2baf909b90  dotfiles/nvim/.config/nvim/lua/mappings.lua
 b79eec5b1fc081aacc33c09d9ee41554d2e5ff6bde83b36360d98eeef8e1d8d1  dotfiles/nvim/.config/nvim/lua/options.lua
 678211fcda42157bf799f21704a9fdf2f16146370ebdb910f18efc5731e52a71  dotfiles/nvim/.config/nvim/lua/plugins/init.lua
+747a9640f6cfed7e6ba420c0b8c40b4aa53edb5f850c83711b5d608b01fc21c0  dotfiles/ricer/.config/nwg-bar/bar.json
+1b3319a09bc512d6a75e054c92845a14b089044bdce874672b8eb5e7d49c8f12  dotfiles/ricer/.config/nwg-bar/style.css
 f8460c016f366d6284d40e9be371e5bfdc3f0c11ec8e37ccaf09397066eedb81  dotfiles/rofi/.config/rofi/config.rasi
 7d57c3d361514100ecc1fbaeb67cbafbd47a87cf36eed54207a39ee229bf3e9d  dotfiles/rofi/.config/rofi/power/powermenu.sh
 7052c1d2e4c778acbbcdafd72a91e444481be1ffef37c1e988281366081cc521  dotfiles/rofi/.config/rofi/themes/warm-night.rasi

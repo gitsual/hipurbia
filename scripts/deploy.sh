@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
-packages=(hypr waybar kitty dunst rofi wofi nvim shell theme audio security automation)
+packages=(hypr waybar kitty dunst rofi wofi nvim shell theme audio security automation ricer)
 dry_run=false
 
 usage() {

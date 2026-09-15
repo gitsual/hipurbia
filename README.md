@@ -133,6 +133,10 @@ The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K 
 
 `bootstrap.sh --list-selectors` prints the optional package sets and whether each applies to this machine; `--desktop` adds the everyday applications (`packages/desktop.txt`: browser, file manager, image and PDF viewers, media player, office suite) on top of the base profile, which a test keeps byte-identical without the flag.
 
+## Ricing tools
+
+`bootstrap.sh --ricer` adds the customisation set (`packages/ricer.txt`, all from the official repositories: `cliphist`, `swappy`, `wf-recorder`, `nwg-look`, `qt6ct`, `kvantum`, `nwg-bar`). `hypridle` is part of the base and starts with the session: lock after five minutes, screen off after ten, suspend after thirty. `Super+Shift+Q` opens the `nwg-bar` power menu beside the rofi one on `Super+Shift+E`, with the same five entries; `Super+V` picks from the clipboard history. `packages/aur.txt` stays empty and `wlogout` is never installed, both pinned by a test.
+
 ## Workspaces
 
 Ten numbered workspaces, `Super+1` to `Super+9` and `Super+0` for the tenth, `Super+Shift` to move a window there, and `Super+[` / `Super+]` to walk them with wraparound. Special workspaces are never part of that sequence. Waybar shows all ten by number, each occupied one followed by a glyph per window (`dotfiles/waybar/.config/waybar/workspace-icons.json`: class first, then a class prefix, then a title fragment, then a default), the active one underlined and an urgent one in italics. The strip is a `custom/ws` module fed by `ws-refresh.sh`, a `socat` listener on Hyprland's event socket that debounces a burst, takes one `hyprctl` snapshot and signals Waybar; nothing polls.
