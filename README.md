@@ -107,7 +107,9 @@ The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K 
 
 ## Verification
 
-`scripts/check.sh` validates shell, Python, JSON, Lua, systemd units, all package manifests, symlinks, file types and privacy patterns, runs Gitleaks, and performs both a dry run and a two-pass deployment regression in temporary HOMEs. `scripts/test-neovim.sh` performs the separate clean editor installation without calling external AI services. `scripts/test-vm.sh` installs and exercises the current tree in an official Arch QEMU/KVM guest. Publication also requires scanning the exact staged Git objects and resulting commit before push.
+`scripts/check.sh` validates shell, Python, JSON, Lua, systemd units, all package manifests, symlinks, file types and privacy patterns, verifies every bundled asset against `data/asset-manifest.tsv`, runs the behaviour tests in `tests/cases/`, runs Gitleaks, and performs both a dry run and a two-pass deployment regression in temporary HOMEs. `scripts/test-neovim.sh` performs the separate clean editor installation without calling external AI services. `scripts/test-vm.sh` installs and exercises the current tree in an official Arch QEMU/KVM guest. Publication also requires scanning the exact staged Git objects and resulting commit before push.
+
+Every claim in this repository rests on author-run evidence, not CI: these checks are run by hand on the author's machine and in a local VM before publication. There is no hosted pipeline re-running them on each commit, and nothing here should be read as if there were.
 
 ## License
 

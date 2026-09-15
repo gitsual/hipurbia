@@ -1,0 +1,10 @@
+# id	manifest	predicate	system_flag	label_key
+# Selectors are the optional package sets bootstrap.sh can install on top of
+# the base profile. The predicate says which machines the selector applies to,
+# in terms of hardware facts (see hardware-facts.example); an empty predicate
+# means "any machine". Grammar, evaluated left to right with && binding
+# tighter than ||:  key=value  key!=value  key~word  (word in a space list).
+# A selector whose predicate fails is not offered, and an explicit request for
+# it exits 3 with the reason — never a silent no-op.
+desktop-login	packages/desktop-login.txt		--desktop-login	selector.desktop_login
+vm	packages/vm.txt	chassis=vm	--vm	selector.vm

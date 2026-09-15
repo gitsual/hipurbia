@@ -2,24 +2,61 @@
 set -Eeuo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+# shellcheck source=lib/kv.sh
+source "$repo_root/lib/kv.sh"
+# shellcheck source=lib/facts.sh
+source "$repo_root/lib/facts.sh"
+# shellcheck source=lib/selectors.sh
+source "$repo_root/lib/selectors.sh"
+for detector in chassis power input net graphics kernels display; do
+	# shellcheck source=/dev/null
+	source "$repo_root/lib/detect/$detector.sh"
+done
+selectors_load "${SELECTORS_FILE:-$repo_root/data/selectors.tsv}"
+
 dry_run=false
 no_install=false
 system_profile=false
 desktop_login=false
 vm_profile=false
 noninteractive=false
+list_selectors=false
+requested=()
 
 usage() {
 	cat <<'USAGE'
-Usage: scripts/bootstrap.sh [--dry-run] [--no-install] [--noconfirm] [--system] [--desktop-login] [--vm]
+Usage: scripts/bootstrap.sh [--dry-run] [--no-install] [--noconfirm] [--system] [--list-selectors] [SELECTOR-FLAG ...]
 
 Profiles:
   base             Portable workstation packages and user configuration (always)
   --desktop-login  Add greetd/tuigreet for a complete graphical login path
   --vm             Add QEMU/SPICE guest integration
   --system         Apply selected system profiles after installation
+  --list-selectors Show which optional profiles apply to this machine and exit
+
+A profile that does not apply to this machine is not offered; asking for it
+explicitly exits 3 and says why.
 USAGE
 }
+
+# Detect this machine once, in memory. bootstrap runs on a fresh install, so it
+# cannot assume a facts file exists yet.
+declare -A facts=()
+facts['chassis']="$(detect_chassis)"
+facts['virt']="$(detect_virt)"
+facts['has_battery']="$(detect_has_battery)"
+facts['has_backlight']="$(detect_has_backlight)"
+facts['has_touchpad']="$(detect_has_touchpad)"
+facts['has_wifi']="$(detect_has_wifi)"
+facts['has_bluetooth']="$(detect_has_bluetooth)"
+facts['gpu_vendors']="$(detect_gpu_vendors)"
+facts['gpu_devices']="$(detect_gpu_devices)"
+facts['gpu_hybrid']="$(detect_gpu_hybrid)"
+facts['kernels']="$(detect_kernels)"
+facts['needs_dkms']="$(detect_needs_dkms)"
+facts['secure_boot']="$(detect_secure_boot)"
+facts['monitor_count']="$(detect_monitor_count)"
+facts['max_scale']="$(detect_max_scale)"
 
 while (($#)); do
 	case "$1" in
@@ -27,11 +64,19 @@ while (($#)); do
 	--no-install) no_install=true ;;
 	--noconfirm) noninteractive=true ;;
 	--system) system_profile=true ;;
-	--desktop-login) desktop_login=true ;;
-	--vm) vm_profile=true ;;
+	--list-selectors) list_selectors=true ;;
 	-h | --help)
 		usage
 		exit 0
+		;;
+	--*)
+		# Any other flag must be a selector's system_flag from the registry.
+		if id="$(selector_for_flag "$1")"; then
+			requested+=("$id")
+		else
+			printf 'Unknown option: %s\n' "$1" >&2
+			exit 2
+		fi
 		;;
 	*)
 		printf 'Unknown option: %s\n' "$1" >&2
@@ -39,6 +84,34 @@ while (($#)); do
 		;;
 	esac
 	shift
+done
+
+if $list_selectors; then
+	printf 'this machine: chassis=%s gpu=%s\n' "${facts[chassis]}" "${facts[gpu_vendors]:-none}"
+	for id in "${SELECTOR_IDS[@]}"; do
+		if selector_applicable "$id" facts; then
+			printf '  %-16s %s\n' "${SELECTOR_FLAG["$id"]}" "applies"
+		else
+			printf '  %-16s not applicable (needs: %s)\n' "${SELECTOR_FLAG["$id"]}" "${SELECTOR_PREDICATE["$id"]}"
+		fi
+	done
+	exit 0
+fi
+
+# An explicit request for a selector this machine does not satisfy is a
+# mistake worth stopping on, not something to quietly skip.
+for id in "${requested[@]}"; do
+	selector_applicable "$id" facts || {
+		printf '%s does not apply to this machine: it needs %s, and this machine has %s\n' \
+			"${SELECTOR_FLAG["$id"]}" "${SELECTOR_PREDICATE["$id"]}" \
+			"$(for atom in ${SELECTOR_PREDICATE["$id"]}; do [[ "$atom" =~ ^([a-z_]+) ]] && printf '%s=%s ' "${BASH_REMATCH[1]}" "${facts[${BASH_REMATCH[1]}]:-}"; done)" >&2
+		printf 'Run scripts/bootstrap.sh --list-selectors to see what applies.\n' >&2
+		exit 3
+	}
+	case "$id" in
+	desktop-login) desktop_login=true ;;
+	vm) vm_profile=true ;;
+	esac
 done
 
 # shellcheck disable=SC1091

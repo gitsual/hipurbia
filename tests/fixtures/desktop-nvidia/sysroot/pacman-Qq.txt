@@ -1,0 +1,6 @@
+base
+linux
+linux-api-headers
+linux-firmware
+linux-headers
+stow

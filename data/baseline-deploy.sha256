@@ -1,0 +1,53 @@
+# Frozen baseline of the default deploy, captured before phase 0 of the
+# daily-driver-distro program. Later units assert that the default profile
+# (no selector flags) is byte-identical to this. A unit that changes a file
+# here intentionally updates this manifest in its own PR, which makes the
+# change visible in review instead of silently moving the baseline.
+# Regenerate: scripts/freeze-baseline.sh --update
+664dfe5c8557c3cf15fc390a7fada37b289d782574c72aa547adff29c23cbdac  dotfiles/audio/.config/pipewire/pipewire-pulse.conf.d/60-stability.conf
+b841c27d9111e24ab047b845c23ed0495091750142047eb8068ab1df2d0eb2e5  dotfiles/audio/.config/pipewire/pipewire.conf.d/60-workstation-rates.conf
+d41c8a7443dca0a4871539a652020666549f453c6d6c10f10e49661e132d687b  dotfiles/audio/.config/wireplumber/wireplumber.conf.d/50-bluetooth-balanced.conf
+5e69d3cd2e19ea5c3364bfaa2a591c62f065622557922104d345c9f559da62a7  dotfiles/automation/.config/systemd/user/workstation-task@.service
+48bf41bedb732183af62dd480869cb0df58b835218ecc2d9902c48d50904845d  dotfiles/automation/.config/systemd/user/workstation-task@.timer
+153439fa8e31f1565fadb2fe4b5bf5bd33a064619e2354bfe2c6c720d459b3cc  dotfiles/automation/.local/bin/workstation-task-runner
+0f37a2c826a582041b95bbc4d7391cd306512556875c3c4b93bbff15cf5e9f79  dotfiles/dunst/.config/dunst/dunstrc
+aeac7d956419c817847678f00c798f4c8acaa6fe43c0c948333f1f1f33baaf20  dotfiles/hypr/.config/hypr/hardware.conf
+d3a69dbd29792bf5f902cb16f5353ab42b7bb79e01b43a78f3446c0f87d8b034  dotfiles/hypr/.config/hypr/hyprland.conf
+af1bc3ab6d57ffe3680bf863df466968ed583d03ee683d40edb4e4b229835ed3  dotfiles/hypr/.config/hypr/hyprlock.conf
+163f61548eb88b3eb707121db7f12583ef7ee5e0a832f2c894c1000320c69cd6  dotfiles/hypr/.config/hypr/hyprpaper.conf
+c4e0d9f453fe2d4b1f273d1b4bbfb36f0acd225bea06d3adaab13cff4b53822e  dotfiles/hypr/.config/hypr/scripts/keybindings.sh
+584b11b7333d31a8b07c2ea778646c772c8f74f8d6c5bd5660ab86073fcf6bbc  dotfiles/hypr/.config/hypr/scripts/screenshot.sh
+492b057eb259d9fe4d6510525a4ae01cbc1f49fc609fa3fe19624c9821af068a  dotfiles/hypr/.config/hypr/scripts/wallpaper.sh
+17add001d26a2437abc21ac2a90c9b716fa7d52b4d4a69c2bd18f7041b96b91b  dotfiles/hypr/.local/share/wallpapers/warm-night.png
+d8f156ea6199d20c27a00a6840b0b385e28437dd6e65be9e1143a42ed8128957  dotfiles/hypr/.local/share/wallpapers/warm-night.svg
+d08abcb761f2d7d95b9c17b574e6c6a63f8243b1c0908a7a7fd23f9721bd471c  dotfiles/kitty/.config/kitty/kitty.conf
+29a57c607a4e1415422b6fdc4f1be89dcc7dc30af840a3921933f4bbc1236c8d  dotfiles/nvim/.config/nvim/.stylua.toml
+087c5fa638f8f9fa84ffdc1f74e55e1ffafa35e5ce44c04943555d75e91ce9de  dotfiles/nvim/.config/nvim/init.lua
+ba2874b1aaff006e2fb1a45ef743f8f9071c6cba273e3d3e67fb8381fb309123  dotfiles/nvim/.config/nvim/lazy-lock.json
+894ca19dbca292cf2afb6a9298acf7ed4f34f254cf40dc8e17c2e471e5f2b44e  dotfiles/nvim/.config/nvim/lua/chadrc.lua
+35fe734cc409202bf3254cb726fd9abcc09c0a7dfc42676b99d80056a1cdd6c8  dotfiles/nvim/.config/nvim/lua/configs/conform.lua
+3e07056c7e17f7c5a3e863586cb28d9b78689e7b8f7451efe6f7d9315c968a96  dotfiles/nvim/.config/nvim/lua/configs/lazy.lua
+3b9813f1c185ff4acf1dc6129aa86a1992c4503d0de4f6e6fcda57b9b8a72750  dotfiles/nvim/.config/nvim/lua/configs/lspconfig.lua
+9a2057839d52ae5e9bda14eba75691c3383e60c3aa6426fb669e514592ddbaf4  dotfiles/nvim/.config/nvim/lua/configs/spectre.lua
+960335166abf109c5908ba78ad69b7a091128b8110fdb498a1c5887a7f957caf  dotfiles/nvim/.config/nvim/lua/custom/clipboard.lua
+8413cf1a53f0d901f36d19655f1cd6e73dfc3effe0910d77c7b993a3ae6f9ccc  dotfiles/nvim/.config/nvim/lua/custom/configs/ai_agents.lua
+2acec2547072b43b7da72412575ddaea362c75211cd86e21c6603915fdf4b015  dotfiles/nvim/.config/nvim/lua/custom/configs/ai_context.lua
+0dda0ff0356caa8c9344b3e9fc3ed919f4a339f9e911cb6f913c39d9858e777e  dotfiles/nvim/.config/nvim/lua/custom/configs/avante_compat.lua
+40460f807308aaddd4d659d3e25ce02f1a1452dc48101cc73ebcfbb106ac1f75  dotfiles/nvim/.config/nvim/lua/custom/configs/cmp.lua
+af3994ef8c9cb44374819c49a6d882c50260226eb4c579845f332c104c170429  dotfiles/nvim/.config/nvim/lua/custom/configs/treesitter_compat.lua
+2dbdb419b89ff973088c27787913b67721548fd619bfa7c33e41ba2baf909b90  dotfiles/nvim/.config/nvim/lua/mappings.lua
+b79eec5b1fc081aacc33c09d9ee41554d2e5ff6bde83b36360d98eeef8e1d8d1  dotfiles/nvim/.config/nvim/lua/options.lua
+678211fcda42157bf799f21704a9fdf2f16146370ebdb910f18efc5731e52a71  dotfiles/nvim/.config/nvim/lua/plugins/init.lua
+f8460c016f366d6284d40e9be371e5bfdc3f0c11ec8e37ccaf09397066eedb81  dotfiles/rofi/.config/rofi/config.rasi
+7d57c3d361514100ecc1fbaeb67cbafbd47a87cf36eed54207a39ee229bf3e9d  dotfiles/rofi/.config/rofi/power/powermenu.sh
+7052c1d2e4c778acbbcdafd72a91e444481be1ffef37c1e988281366081cc521  dotfiles/rofi/.config/rofi/themes/warm-night.rasi
+b6859c9e44bd1c1c8c294c047f76ff4be949518764269cd7ba07dbfda7e56e9d  dotfiles/security/.config/systemd/user/clamav-home-scan.service
+a7f6d6e31fa8111b724b1b06d46311866ea490845b7377797fca481072550e6d  dotfiles/security/.config/systemd/user/clamav-home-scan.timer
+7d15c37ed2d0df0ce9c6588a1dc0d2a5399ccf7cfafcfdddab4f42e5a587430f  dotfiles/security/.local/bin/workstation-security-audit
+410205a9b66267208e995bae4aa8b7797acb85f9931a02e7c50277cd0786357b  dotfiles/shell/.bashrc
+497102907be39a6e82346d1f24ab4f7b34c36cab1fd3eb2a271d812066414993  dotfiles/theme/.config/gtk-3.0/settings.ini
+497102907be39a6e82346d1f24ab4f7b34c36cab1fd3eb2a271d812066414993  dotfiles/theme/.config/gtk-4.0/settings.ini
+7120b38f5a9ec3b00e22fac420218c406c8fddd8c62ff5359a275102a70e303c  dotfiles/theme/.config/kdeglobals
+6bfa95296e0814c40f757e3e0bc66ef5f177a4c885f634b2ba3bd435a58d630f  dotfiles/waybar/.config/waybar/config
+234d8c2a309d6707c31398da12bbc14ec6093e74a24a52f453eb172d8d62e1c7  dotfiles/waybar/.config/waybar/style.css
+16e0f8c1f5ed428ec0c8da4e8775f7c3ae967171ab62f337dc365c076514a411  dotfiles/wofi/.config/wofi/style.css

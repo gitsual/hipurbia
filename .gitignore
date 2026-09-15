@@ -1,3 +1,9 @@
+# Machine-specific generated state; hardware-facts.example is the committed one
+hardware-facts
+hardware-facts.override
+# The fixture goldens are committed: a test compares against them.
+!tests/golden/*/hardware-facts
+
 # Local test and audit output
 .audit/
 .vm-test/
@@ -24,3 +30,6 @@
 **/credentials*
 **/tokens*
 **/cookies*
+
+# SDD session artifacts
+.atl/
