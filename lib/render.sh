@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+# Token substitution for theme templates.
+#
+# A template is a committed file with @NAME@ placeholders. Rendering replaces
+# each with the token's value from data/theme.conf, optionally through one
+# filter, and nothing else: no shell expansion, no command, no include. The
+# @NAME@ syntax is chosen over ${NAME} precisely so that the CSS, INI and
+# rasi syntax around it stays literal (ADR-2).
+#
+#   @NAME@         the value as stored          2D1F2D
+#   @NAME:lower@   lower-cased                  2d1f2d
+#   @NAME:rgb@     decimal triplet for rgba()   45, 31, 45
+#
+# An unknown token or filter is an error, never an empty string: a placeholder
+# silently rendered as nothing would ship a broken stylesheet.
+#
+# Sourced, not executed. Requires lib/kv.sh.
+
+declare -gA RENDER_TOKENS=()
+
+# render_load_tokens FILE — load the palette. Values must be bare 6-digit hex;
+# anything else is refused here so a template never has to guess.
+render_load_tokens() {
+	local file="$1" key
+	RENDER_TOKENS=()
+	kv_load "$file" RENDER_TOKENS || {
+		printf 'render: cannot read theme file %s\n' "$file" >&2
+		return 1
+	}
+	for key in "${!RENDER_TOKENS[@]}"; do
+		[[ "${RENDER_TOKENS["$key"]}" =~ ^[0-9A-F]{6}$ ]] || {
+			printf 'render: token %s is not bare upper-case 6-digit hex: %q\n' "$key" "${RENDER_TOKENS["$key"]}" >&2
+			return 1
+		}
+	done
+}
+
+# render_apply_filter VALUE FILTER
+render_apply_filter() {
+	local value="$1" filter="$2"
+	case "$filter" in
+	'') printf '%s' "$value" ;;
+	lower) printf '%s' "${value,,}" ;;
+	rgb) printf '%d, %d, %d' "0x${value:0:2}" "0x${value:2:2}" "0x${value:4:2}" ;;
+	*)
+		printf 'render: unknown filter %q\n' "$filter" >&2
+		return 1
+		;;
+	esac
+}
+
+# render_string TEXT — substitute every placeholder in TEXT. Scans left to
+# right with parameter expansion only; a value is inserted as literal bytes.
+render_string() {
+	local text="$1" out='' rest name filter value
+	rest="$text"
+	while [[ "$rest" =~ @([A-Z][A-Z0-9_]*)(:([a-z]+))?@ ]]; do
+		name="${BASH_REMATCH[1]}"
+		filter="${BASH_REMATCH[3]}"
+		[[ -v RENDER_TOKENS["$name"] ]] || {
+			printf 'render: unknown token @%s@\n' "$name" >&2
+			return 1
+		}
+		value="$(render_apply_filter "${RENDER_TOKENS["$name"]}" "$filter")" || return 1
+		out+="${rest%%"${BASH_REMATCH[0]}"*}$value"
+		rest="${rest#*"${BASH_REMATCH[0]}"}"
+	done
+	printf '%s' "$out$rest"
+}
+
+# render_file TEMPLATE OUTPUT — render line by line so a template of any size
+# costs no more than its length, then write atomically.
+render_file() {
+	local template="$1" output="$2" line rendered tmp lineno=0
+	[[ -r "$template" ]] || {
+		printf 'render: no template at %s\n' "$template" >&2
+		return 1
+	}
+	tmp="$(mktemp -- "${output}.XXXXXX")"
+	local failed=0
+	while IFS= read -r line || [[ -n "$line" ]]; do
+		lineno=$((lineno + 1))
+		if rendered="$(render_string "$line")"; then
+			printf '%s\n' "$rendered"
+		else
+			printf 'render: %s line %d\n' "$template" "$lineno" >&2
+			failed=1
+			break
+		fi
+	done <"$template" >"$tmp"
+	if ((failed)); then
+		rm -f -- "$tmp"
+		return 1
+	fi
+	mv -- "$tmp" "$output"
+}
+
+# render_output_path TEMPLATE — where a template renders to: the same path
+# under dotfiles/ with the .in suffix removed.
+#   templates/waybar/.config/waybar/style.css.in
+#   -> dotfiles/waybar/.config/waybar/style.css
+render_output_path() {
+	local template="$1"
+	template="${template#templates/}"
+	printf 'dotfiles/%s' "${template%.in}"
+}
