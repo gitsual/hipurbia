@@ -91,7 +91,8 @@ dotfiles/              User-level Stow packages
   automation/          Generic local service and timer framework
 system/                Reviewed system-level templates, including optional login
 profiles/              Optional audio, automation and VM package profiles
-render/                Deploy-time templates rendered from hardware facts into $XDG_CONFIG_HOME
+render/                Deploy-time templates rendered from hardware facts and settings into $XDG_CONFIG_HOME
+settings.example       The user settings file (language axes) with its defaults
 templates/             Themed templates rendered from data/theme.conf into dotfiles/
 packages/              Base and composable official/AUR manifests
 docs/                  Architecture, coverage, VM validation and publication copy
@@ -116,6 +117,17 @@ scripts/               Bootstrap, deploy, render, audit and real-VM test tools
 The portable Hyprland baseline does not force a GPU. `render/hypr/generated/hardware.conf.in` emits the NVIDIA Wayland environment only when the detected facts say NVIDIA is the sole GPU, and a software cursor on NVIDIA and virtual machines; every other machine gets an empty fragment. To change what was detected, write the corrected fact to `~/.config/archlinux-portfolio/hardware-facts.override` and re-run `scripts/render-config.sh --deploy`. Audio device node names are rendered locally by `scripts/configure-audio.py` and are never committed.
 
 The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop starts it with `swaybg`, including on virtual GPUs without accelerated rendering. The header SVG is a stylized preview, not a real desktop capture.
+
+## Language axes
+
+Locale, console keymap and Hyprland keyboard layout are three separate choices, and each has exactly one writer. They are read from `~/.config/archlinux-portfolio/settings` (see `settings.example`; a missing file means the source workstation's values):
+
+```bash
+sudo -v && ./scripts/apply-system.sh --locale --keymap   # /etc/locale.conf + locale-gen, /etc/vconsole.conf
+./scripts/render-config.sh --deploy                       # kb_layout into ~/.config/hypr/generated/input.conf
+```
+
+A test pins the single-writer rule and another that `LC_ALL=C` is only ever pinned at parser call sites, never exported.
 
 ## Verification
 

@@ -1,0 +1,14 @@
+# Example user settings, for documentation.
+#
+# The real file lives in $XDG_CONFIG_HOME/archlinux-portfolio/settings and is
+# never committed. These are choices, not detections: hardware facts describe
+# what the machine is, settings describe what its owner wants. A missing file
+# means these defaults, which reproduce the source workstation.
+#
+# Each axis has exactly one writer:
+#   locale      scripts/apply-system.sh --locale   -> /etc/locale.conf, /etc/locale.gen
+#   keymap      scripts/apply-system.sh --keymap   -> /etc/vconsole.conf
+#   xkb_layout  scripts/render-config.sh --deploy  -> ~/.config/hypr/generated/input.conf
+locale=es_ES.UTF-8
+keymap=es
+xkb_layout=es

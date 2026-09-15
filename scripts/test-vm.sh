@@ -146,7 +146,9 @@ $ready || {
 	exit 1
 }
 
-if ! ssh "${ssh_opts[@]}" "portfolio@$host_address" 'bash -s' >"$run/guest-test.log" 2>&1 <<'GUEST'
+# The validated keymap is intentionally expanded client-side.
+# shellcheck disable=SC2029
+if ! ssh "${ssh_opts[@]}" "portfolio@$host_address" "CONSOLE_KEYMAP='$console_keymap' bash -s" >"$run/guest-test.log" 2>&1 <<'GUEST'
 set -Eeuo pipefail
 sudo pacman -Syu --noconfirm
 sudo mkdir -p /mnt/portfolio
@@ -154,7 +156,16 @@ sudo mount -L PORTFOLIO -o ro /mnt/portfolio
 mkdir -p "$HOME/archlinux-portfolio"
 tar -xzf /mnt/portfolio/repository.tar.gz -C "$HOME/archlinux-portfolio"
 cd "$HOME/archlinux-portfolio"
+# Three language axes with three distinguishable values, so each assertion
+# below can only be satisfied by its own writer.
+mkdir -p "$HOME/.config/archlinux-portfolio"
+printf 'locale=es_ES.UTF-8\nkeymap=%s\nxkb_layout=fr\n' "$CONSOLE_KEYMAP" >"$HOME/.config/archlinux-portfolio/settings"
 ./scripts/bootstrap.sh --noconfirm --desktop-login --vm
+./scripts/apply-system.sh --locale --keymap
+grep -Fxq 'LANG=es_ES.UTF-8' /etc/locale.conf
+LC_ALL=C locale -a | grep -Fxq 'es_ES.utf8'
+grep -Fxq "KEYMAP=$CONSOLE_KEYMAP" /etc/vconsole.conf
+grep -Fxq '    kb_layout = fr' "$HOME/.config/hypr/generated/input.conf"
 ./scripts/test-neovim.sh
 ./scripts/apply-system.sh --dry-run --desktop-login --vm
 mkdir -p /tmp/portfolio-runtime
@@ -185,12 +196,8 @@ grep -Fq 'VM_ACCEPTANCE: PASS' "$run/guest-test.log"
 printf 'Arch VM acceptance: passed (KVM, %s MiB, %s vCPU, SSH port %s)\n' "$memory" "$cpus" "$port"
 
 if $gui; then
-	# Validated keymap is intentionally expanded client-side.
-	# shellcheck disable=SC2029
-	ssh "${ssh_opts[@]}" "portfolio@$host_address" "localectl list-keymaps | grep -Fxq -- '$console_keymap'"
-	# Validated keymap is intentionally expanded client-side.
-	# shellcheck disable=SC2029
-	ssh "${ssh_opts[@]}" "portfolio@$host_address" "sudo localectl set-keymap -- '$console_keymap'"
+	# The console keymap was written by apply-system.sh --keymap during the
+	# acceptance run, from the settings file seeded above.
 	ssh "${ssh_opts[@]}" "portfolio@$host_address" 'cd "$HOME/archlinux-portfolio" && ./scripts/apply-system.sh --desktop-login --vm'
 	# Validated keymap is intentionally expanded client-side.
 	# shellcheck disable=SC2029

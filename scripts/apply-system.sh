@@ -2,7 +2,14 @@
 set -Eeuo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+# shellcheck source=lib/kv.sh
+source "$repo_root/lib/kv.sh"
+# shellcheck source=lib/settings.sh
+source "$repo_root/lib/settings.sh"
+settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/settings}"
 dry_run=false
+locale_axis=false
+keymap_axis=false
 security=false
 bluetooth=false
 desktop_login=false
@@ -12,9 +19,15 @@ selection_made=false
 usage() {
 	cat <<'USAGE'
 Usage: scripts/apply-system.sh [--dry-run] [--security] [--bluetooth] [--desktop-login] [--vm]
+                               [--locale] [--keymap]
 
 With no module selector, the backward-compatible security and Bluetooth profiles
 are applied. Selectors compose without enabling unrelated services.
+
+--locale writes /etc/locale.conf and generates the locale; --keymap writes
+/etc/vconsole.conf. Both read their value from the user settings file
+($XDG_CONFIG_HOME/archlinux-portfolio/settings, see settings.example) and are
+the only writers of those files in this repository.
 USAGE
 }
 
@@ -25,6 +38,8 @@ while (($#)); do
 	--bluetooth) bluetooth=true; selection_made=true ;;
 	--desktop-login) desktop_login=true; selection_made=true ;;
 	--vm) vm_profile=true; selection_made=true ;;
+	--locale) locale_axis=true; selection_made=true ;;
+	--keymap) keymap_axis=true; selection_made=true ;;
 	-h | --help)
 		usage
 		exit 0
@@ -53,6 +68,47 @@ install_config() {
 	fi
 	sudo install -Dm644 -- "$source" "$destination"
 }
+
+# write_axis DESTINATION LINE... — replace DESTINATION with LINE(s), through
+# the same backup as every other system file. Shown, not done, in a dry run.
+write_axis() {
+	local destination="$1" staged
+	shift
+	if $dry_run; then
+		printf 'would write %s: %s\n' "$destination" "$*"
+		return
+	fi
+	staged="$(mktemp)"
+	printf '%s\n' "$@" >"$staged"
+	install_config "$staged" "$destination"
+	rm -f -- "$staged"
+}
+
+if $locale_axis || $keymap_axis; then
+	settings_load "$settings_file"
+fi
+if $locale_axis; then
+	locale="$(settings_get locale)"
+	write_axis /etc/locale.conf "LANG=$locale"
+	if $dry_run; then
+		printf 'would enable %s in /etc/locale.gen and run locale-gen\n' "$locale"
+	else
+		# Uncomment the line when it exists, append it when it does not; the
+		# file is Arch's, so its own format is kept.
+		if sudo grep -Eq "^#?[[:space:]]*${locale//./\\.} UTF-8[[:space:]]*$" /etc/locale.gen; then
+			sudo sed -i -E "s/^#?[[:space:]]*(${locale//./\\.} UTF-8)[[:space:]]*$/\\1/" /etc/locale.gen
+		else
+			printf '%s UTF-8\n' "$locale" | sudo tee -a /etc/locale.gen >/dev/null
+		fi
+		sudo locale-gen >/dev/null
+	fi
+fi
+if $keymap_axis; then
+	keymap="$(settings_get keymap)"
+	# vconsole.conf may carry a FONT line; only the KEYMAP line is ours.
+	mapfile -t kept < <(sudo cat /etc/vconsole.conf 2>/dev/null | grep -v '^KEYMAP=' || true)
+	write_axis /etc/vconsole.conf "KEYMAP=$keymap" "${kept[@]}"
+fi
 
 services=()
 start_services=()

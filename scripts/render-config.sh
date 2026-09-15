@@ -22,11 +22,14 @@ source "$repo_root/lib/facts.sh"
 source "$repo_root/lib/selectors.sh"
 # shellcheck source=lib/render.sh
 source "$repo_root/lib/render.sh"
+# shellcheck source=lib/settings.sh
+source "$repo_root/lib/settings.sh"
 
 theme="${THEME_FILE:-$repo_root/data/theme.conf}"
 render_dir="${RENDER_DIR:-$repo_root/render}"
 facts_file="${FACTS_FILE:-${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio/hardware-facts}"
 facts_override="${FACTS_OVERRIDE:-${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/hardware-facts.override}"
+settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/settings}"
 backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio/backups/$(date -u +%Y%m%dT%H%M%SZ)"
 
 usage() {
@@ -40,7 +43,7 @@ Usage: scripts/render-config.sh --committed | --deploy | --dry-run | --check-dri
 
 Deploy-time output never lands inside the checkout. Existing files move to
 ${XDG_STATE_HOME:-~/.local/state}/archlinux-portfolio/backups/<stamp>/ first.
-Overrides: THEME_FILE, FACTS_FILE, FACTS_OVERRIDE, RENDER_DIR, XDG_CONFIG_HOME.
+Overrides: THEME_FILE, FACTS_FILE, FACTS_OVERRIDE, SETTINGS_FILE, RENDER_DIR, XDG_CONFIG_HOME.
 USAGE
 }
 
@@ -79,6 +82,12 @@ if [[ -r "$facts_file" ]]; then
 	facts_require_schema "$facts_file"
 fi
 render_load_facts "$facts_file" "$facts_override"
+# Settings are the chosen values (language axes); they become tokens the same
+# way facts do, under their own prefix so a template says which it means.
+settings_load "$settings_file"
+for key in "${!SETTINGS[@]}"; do
+	RENDER_TOKENS["SETTING_${key^^}"]="${SETTINGS["$key"]}"
+done
 
 # inside_checkout PATH — 0 when PATH, or the nearest ancestor that exists,
 # resolves into the repository. A deployed directory that is itself a symlink

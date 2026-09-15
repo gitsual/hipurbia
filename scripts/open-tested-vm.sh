@@ -75,11 +75,10 @@ $ready || {
 
 # Validated keymap is intentionally expanded client-side.
 # shellcheck disable=SC2029
-ssh "${ssh_opts[@]}" "portfolio@$host_address" "localectl list-keymaps | grep -Fxq -- '$console_keymap'"
-# Validated keymap is intentionally expanded client-side.
+ssh "${ssh_opts[@]}" "portfolio@$host_address" "LC_ALL=C localectl list-keymaps | grep -Fxq -- '$console_keymap'"
+# The validated keymap is intentionally expanded client-side.
 # shellcheck disable=SC2029
-ssh "${ssh_opts[@]}" "portfolio@$host_address" "sudo localectl set-keymap -- '$console_keymap'"
-ssh "${ssh_opts[@]}" "portfolio@$host_address" 'bash -s' <<'GUEST'
+ssh "${ssh_opts[@]}" "portfolio@$host_address" "CONSOLE_KEYMAP='$console_keymap' bash -s" <<'GUEST'
 set -Eeuo pipefail
 sudo mkdir -p /mnt/portfolio
 mountpoint -q /mnt/portfolio || sudo mount -L PORTFOLIO -o ro /mnt/portfolio
@@ -90,8 +89,13 @@ cd "$HOME/archlinux-portfolio"
 if [ -e /var/lib/pacman/db.lck ] && ! pgrep -x pacman >/dev/null; then
   sudo rm -f /var/lib/pacman/db.lck
 fi
+# The console keymap is a setting; its one writer is apply-system.sh --keymap.
+mkdir -p "$HOME/.config/archlinux-portfolio"
+if ! grep -q '^keymap=' "$HOME/.config/archlinux-portfolio/settings" 2>/dev/null; then
+  printf 'keymap=%s\n' "$CONSOLE_KEYMAP" >>"$HOME/.config/archlinux-portfolio/settings"
+fi
 ./scripts/bootstrap.sh --noconfirm --desktop-login --vm
-./scripts/apply-system.sh --desktop-login --vm
+./scripts/apply-system.sh --desktop-login --vm --keymap
 GUEST
 # Validated keymap is intentionally expanded client-side.
 # shellcheck disable=SC2029
