@@ -12,7 +12,7 @@
 #
 # Sourced, not executed. Requires lib/kv.sh.
 
-SETTINGS_ALLOWED_KEYS=(locale keymap xkb_layout ime)
+SETTINGS_ALLOWED_KEYS=(locale keymap xkb_layout ime theme)
 declare -gA SETTINGS=()
 
 # settings_defaults — reset SETTINGS to the values the source workstation uses.
@@ -22,6 +22,7 @@ settings_defaults() {
 		[keymap]=es
 		[xkb_layout]=es
 		[ime]=none
+		[theme]=warm-night
 	)
 }
 
@@ -29,6 +30,8 @@ settings_defaults() {
 #   locale      a UTF-8 locale name (only those are generated), or C.UTF-8
 #   keymap      a console keymap name as localectl lists them
 #   xkb_layout  one or more XKB layouts, comma-separated (us,es)
+#   theme       a name in the catalogue; the file has to exist, which only the
+#               renderer can know, so here the shape is all that is checked
 settings_valid() {
 	local key="$1" value="$2"
 	case "$key" in
@@ -36,6 +39,7 @@ settings_valid() {
 	keymap) [[ "$value" =~ ^[A-Za-z0-9_.-]+$ ]] ;;
 	xkb_layout) [[ "$value" =~ ^[a-z]{2,8}(,[a-z]{2,8})*$ ]] ;;
 	ime) [[ "$value" == none || "$value" == fcitx5 ]] ;;
+	theme) [[ "$value" =~ ^[a-z][a-z0-9-]*$ ]] ;;
 	*) return 1 ;;
 	esac
 }

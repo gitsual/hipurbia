@@ -25,7 +25,6 @@ source "$repo_root/lib/render.sh"
 # shellcheck source=lib/settings.sh
 source "$repo_root/lib/settings.sh"
 
-theme="${THEME_FILE:-$repo_root/data/theme.conf}"
 render_dir="${RENDER_DIR:-$repo_root/render}"
 facts_file="${FACTS_FILE:-${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio/hardware-facts}"
 facts_override="${FACTS_OVERRIDE:-${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/hardware-facts.override}"
@@ -73,6 +72,26 @@ if [[ "$mode" == committed ]]; then
 	exec "$repo_root/scripts/check-theme-drift.sh" --render
 fi
 
+# Settings are the chosen values (language axes); they become tokens the same
+# way facts do, under their own prefix so a template says which it means.
+settings_load "$settings_file"
+
+# The catalogue is resolved after the settings are read, because the chosen
+# theme is one of them. THEME_FILE still wins: the gates render an explicit
+# file. The default name resolves to data/theme.conf, the palette every
+# committed dotfile was rendered from, so choosing nothing changes nothing.
+if [[ -n "${THEME_FILE:-}" ]]; then
+	theme="$THEME_FILE"
+elif [[ "${SETTINGS[theme]}" == warm-night ]]; then
+	theme="$repo_root/data/theme.conf"
+else
+	theme="$repo_root/data/themes/${SETTINGS[theme]}.conf"
+	[[ -f "$theme" ]] || {
+		printf 'no theme named %s; the catalogue holds: %s\n' "${SETTINGS[theme]}" \
+			"$(find "$repo_root/data/themes" -name '*.conf' -printf '%f\n' | sed 's/\.conf$//' | LC_ALL=C sort | tr '\n' ' ')" >&2
+		exit 1
+	}
+fi
 render_load_tokens "$theme"
 [[ -r "$facts_file" || -r "$facts_override" ]] || {
 	printf 'no hardware facts at %s; run scripts/hardware-facts.sh --emit first\n' "$facts_file" >&2
@@ -82,9 +101,6 @@ if [[ -r "$facts_file" ]]; then
 	facts_require_schema "$facts_file"
 fi
 render_load_facts "$facts_file" "$facts_override"
-# Settings are the chosen values (language axes); they become tokens the same
-# way facts do, under their own prefix so a template says which it means.
-settings_load "$settings_file"
 for key in "${!SETTINGS[@]}"; do
 	RENDER_TOKENS["SETTING_${key^^}"]="${SETTINGS["$key"]}"
 	# ...and as setting_<key> for line guards, next to the facts.
