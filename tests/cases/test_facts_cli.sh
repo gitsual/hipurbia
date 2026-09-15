@@ -9,7 +9,7 @@ set -Eeuo pipefail
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 cli="$repo_root/scripts/hardware-facts.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-facts-cli.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-facts-cli.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {
@@ -85,7 +85,14 @@ python3 "$repo_root/scripts/privacy-scan.py" "$facts" >/dev/null ||
 # --- nothing machine-specific lands in the checkout -------------------------
 [[ ! -e "$repo_root/hardware-facts" ]] ||
 	fail 'checkout: a generated facts file appeared in the repository'
-git -C "$repo_root" check-ignore -q hardware-facts ||
-	fail 'checkout: the generated facts file is not gitignored'
+# The VM gate runs this test on a tree exported without .git, so the ignore
+# rule is asserted through git only where git can see a repository.
+if git -C "$repo_root" rev-parse --git-dir >/dev/null 2>&1; then
+	git -C "$repo_root" check-ignore -q hardware-facts ||
+		fail 'checkout: the generated facts file is not gitignored'
+else
+	grep -Fxq 'hardware-facts' "$repo_root/.gitignore" ||
+		fail 'checkout: .gitignore carries no rule for the generated facts file'
+fi
 
 printf 'facts cli: dry-run inert, override wins, allowlist enforced, output publishable\n'

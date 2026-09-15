@@ -8,7 +8,9 @@
 #      detector that learns something new cannot leak it into the file — it has
 #      to be added here first, in review. This is what keeps serials, MAC
 #      addresses, hostnames, EDID strings, PCI bus addresses and usernames out
-#      of a file that ends up in bug reports.
+#      of a file that ends up in bug reports. `cpu_temp_path` is a /sys path
+#      and therefore allowed: an hwmon index identifies a driver's probe order,
+#      not the person holding the machine.
 #   2. A schema version. Consumers call facts_require_schema and refuse a file
 #      they do not understand, rather than silently mis-reading a future format.
 #
@@ -17,7 +19,7 @@
 FACTS_SCHEMA=1
 
 # The allowlist. `gpu_families` (catalogue family ids such as nvidia_open) is
-# derived from gpu_devices by the GPU catalogue and joins this list with it.
+# derived from gpu_devices by the GPU catalogue, lib/gpu.sh, not detected.
 FACTS_ALLOWED_KEYS=(
 	FACTS_SCHEMA
 	chassis
@@ -27,8 +29,10 @@ FACTS_ALLOWED_KEYS=(
 	has_touchpad
 	has_wifi
 	has_bluetooth
+	cpu_temp_path
 	gpu_vendors
 	gpu_devices
+	gpu_families
 	gpu_hybrid
 	kernels
 	needs_dkms
@@ -43,6 +47,14 @@ facts_key_allowed() {
 	for key in "${FACTS_ALLOWED_KEYS[@]}"; do
 		[[ "$key" == "$candidate" ]] && return 0
 	done
+	# A deploy-time guard may also test a setting, as setting_<key>, when
+	# lib/settings.sh is loaded. Such a key never enters a facts file:
+	# facts_emit writes the allowlist above and nothing else.
+	if [[ "$candidate" == setting_* && -v SETTINGS_ALLOWED_KEYS ]]; then
+		for key in "${SETTINGS_ALLOWED_KEYS[@]}"; do
+			[[ "setting_$key" == "$candidate" ]] && return 0
+		done
+	fi
 	return 1
 }
 

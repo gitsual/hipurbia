@@ -41,7 +41,7 @@ asset_root="${ASSET_ROOT:-$repo_root}"
 # unexpected-binary stage of check.sh does, so the two stages cannot disagree.
 discover() {
 	find "$asset_root" \
-		\( -path "$asset_root/.git" -o -path "$asset_root/.vm-test" -o -path "$asset_root/.audit" -o -path "$asset_root/.atl" -o -path "$asset_root/data" \) -prune -o \
+		\( -path "$asset_root/.git" -o -path "$asset_root/.vm-test" -o -path "$asset_root/.vm-image" -o -path "$asset_root/dist" -o -path "$asset_root/.audit" -o -path "$asset_root/.atl" -o -path "$asset_root/data" \) -prune -o \
 		-type f -print0 |
 		while IFS= read -r -d '' file; do
 			case "$(file -b --mime-type -- "$file")" in

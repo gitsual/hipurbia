@@ -1,0 +1,25 @@
+# Example user settings, for documentation.
+#
+# The real file lives in $XDG_CONFIG_HOME/hipurbia/settings and is
+# never committed. These are choices, not detections: hardware facts describe
+# what the machine is, settings describe what its owner wants. A missing file
+# means these defaults, which reproduce the source workstation.
+#
+# Each axis has exactly one writer:
+#   locale      scripts/apply-system.sh --locale   -> /etc/locale.conf, /etc/locale.gen
+#   keymap      scripts/apply-system.sh --keymap   -> /etc/vconsole.conf
+#   xkb_layout  scripts/render-config.sh --deploy  -> ~/.config/hypr/generated/input.conf
+#   ime         scripts/render-config.sh --deploy  -> ~/.config/hypr/generated/input.conf
+#               (none or fcitx5; the packages come from bootstrap.sh --ime)
+#   theme       scripts/render-config.sh --deploy  -> every themed config
+#               (a name from data/themes/, or warm-night for the default)
+#   weather_location
+#               scripts/render-config.sh --deploy  -> the bar's weather module
+#               (auto lets wttr.in geolocate by IP; a place name or airport
+#               code asks about somewhere else)
+locale=es_ES.UTF-8
+keymap=es
+xkb_layout=es
+ime=none
+theme=warm-night
+weather_location=auto

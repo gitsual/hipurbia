@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Fixture hyprctl: answers -j clients|workspaces|activeworkspace from $WS_FIXTURE.
+set -Eeuo pipefail
+[[ "${1:-}" == -j ]] || exit 2
+printf '%s\n' "$(<"${WS_FIXTURE:?}/$2.json")"

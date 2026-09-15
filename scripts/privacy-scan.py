@@ -9,7 +9,7 @@ import re
 import sys
 from pathlib import Path
 
-EXCLUDED_PARTS = {".git", ".audit", ".vm-test", "__pycache__"}
+EXCLUDED_PARTS = {".git", ".audit", ".vm-test", ".vm-image", "dist", "__pycache__"}
 TEXT_LIMIT = 2 * 1024 * 1024
 SENSITIVE_NAMES = re.compile(
     r"(?i)(^|[._-])(id_rsa|id_ed25519|credentials?|tokens?|cookies?|secrets?|\.env)([._-]|$)"
@@ -22,7 +22,15 @@ RULES = {
         r"(?i)(?:token|api[_-]?key|password|passwd|secret|oauth|credential)"
         r"\s*[:=]\s*[\"']?(?!example|placeholder|changeme|\$\{|<)[^\s\"']{8,}"
     ),
-    "email-address": re.compile(r"(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b"),
+    # A systemd template instance (serial-getty@ttyS0.service) has the shape of
+    # an address and is not one. The unit suffixes are excluded by name rather
+    # than by loosening the rule, so a real address in a .service file is still
+    # caught.
+    "email-address": re.compile(
+        r"(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\."
+        r"(?!service\b|socket\b|timer\b|target\b|mount\b|slice\b|path\b|swap\b|device\b)"
+        r"[A-Z]{2,}\b"
+    ),
     "absolute-home-path": re.compile(r"/home/[A-Za-z0-9._-]+"),
     "private-ipv4": re.compile(
         r"(?<![\d.])(?:10(?:\.\d{1,3}){3}|127(?:\.\d{1,3}){3}|"

@@ -8,11 +8,20 @@ source "$repo_root/lib/kv.sh"
 source "$repo_root/lib/facts.sh"
 # shellcheck source=lib/selectors.sh
 source "$repo_root/lib/selectors.sh"
-for detector in chassis power input net graphics kernels display; do
+# shellcheck source=lib/i18n.sh
+source "$repo_root/lib/i18n.sh"
+for detector in chassis power input net thermal graphics kernels display; do
 	# shellcheck source=/dev/null
 	source "$repo_root/lib/detect/$detector.sh"
 done
 selectors_load "${SELECTORS_FILE:-$repo_root/data/selectors.tsv}"
+
+# Messages follow the session locale (the --locale axis sets it system-wide);
+# HIPURBIA_LANG overrides for one run. C and POSIX mean the reference table.
+language="${HIPURBIA_LANG:-${LANG:-en}}"
+language="${language%%[_.@]*}"
+[[ "$language" =~ ^[a-z]{2,3}$ ]] || language=en
+i18n_load "$language" "${I18N_DIR:-$repo_root/i18n}" 2>/dev/null || i18n_load en "${I18N_DIR:-$repo_root/i18n}"
 
 dry_run=false
 no_install=false
@@ -21,7 +30,8 @@ desktop_login=false
 vm_profile=false
 noninteractive=false
 list_selectors=false
-requested=()
+requested_selectors=()
+gui_greeter=false
 
 usage() {
 	cat <<'USAGE'
@@ -49,6 +59,7 @@ facts['has_backlight']="$(detect_has_backlight)"
 facts['has_touchpad']="$(detect_has_touchpad)"
 facts['has_wifi']="$(detect_has_wifi)"
 facts['has_bluetooth']="$(detect_has_bluetooth)"
+facts['cpu_temp_path']="$(detect_cpu_temp_path)"
 facts['gpu_vendors']="$(detect_gpu_vendors)"
 facts['gpu_devices']="$(detect_gpu_devices)"
 facts['gpu_hybrid']="$(detect_gpu_hybrid)"
@@ -72,7 +83,7 @@ while (($#)); do
 	--*)
 		# Any other flag must be a selector's system_flag from the registry.
 		if id="$(selector_for_flag "$1")"; then
-			requested+=("$id")
+			requested_selectors+=("$id")
 		else
 			printf 'Unknown option: %s\n' "$1" >&2
 			exit 2
@@ -87,12 +98,12 @@ while (($#)); do
 done
 
 if $list_selectors; then
-	printf 'this machine: chassis=%s gpu=%s\n' "${facts[chassis]}" "${facts[gpu_vendors]:-none}"
+	printf '%s\n' "$(i18n_format bootstrap.this_machine "${facts[chassis]}" "${facts[gpu_vendors]:-none}")"
 	for id in "${SELECTOR_IDS[@]}"; do
 		if selector_applicable "$id" facts; then
-			printf '  %-16s %s\n' "${SELECTOR_FLAG["$id"]}" "applies"
+			printf '  %-16s %s: %s\n' "${SELECTOR_FLAG["$id"]}" "$(i18n_get selector.applies)" "$(i18n_get "${SELECTOR_LABEL["$id"]}")"
 		else
-			printf '  %-16s not applicable (needs: %s)\n' "${SELECTOR_FLAG["$id"]}" "${SELECTOR_PREDICATE["$id"]}"
+			printf '  %-16s %s: %s\n' "${SELECTOR_FLAG["$id"]}" "$(i18n_format selector.needs "${SELECTOR_PREDICATE["$id"]}")" "$(i18n_get "${SELECTOR_LABEL["$id"]}")"
 		fi
 	done
 	exit 0
@@ -100,17 +111,16 @@ fi
 
 # An explicit request for a selector this machine does not satisfy is a
 # mistake worth stopping on, not something to quietly skip.
-for id in "${requested[@]}"; do
+for id in "${requested_selectors[@]}"; do
 	selector_applicable "$id" facts || {
-		printf '%s does not apply to this machine: it needs %s, and this machine has %s\n' \
-			"${SELECTOR_FLAG["$id"]}" "${SELECTOR_PREDICATE["$id"]}" \
-			"$(for atom in ${SELECTOR_PREDICATE["$id"]}; do [[ "$atom" =~ ^([a-z_]+) ]] && printf '%s=%s ' "${BASH_REMATCH[1]}" "${facts[${BASH_REMATCH[1]}]:-}"; done)" >&2
+		printf '%s\n' "$(i18n_format selector.not_applicable "${SELECTOR_FLAG["$id"]}" "${SELECTOR_PREDICATE["$id"]}") ($(for atom in ${SELECTOR_PREDICATE["$id"]}; do [[ "$atom" =~ ^([a-z_]+) ]] && printf '%s=%s ' "${BASH_REMATCH[1]}" "${facts[${BASH_REMATCH[1]}]:-}"; done))" >&2
 		printf 'Run scripts/bootstrap.sh --list-selectors to see what applies.\n' >&2
 		exit 3
 	}
 	case "$id" in
 	desktop-login) desktop_login=true ;;
 	vm) vm_profile=true ;;
+	gui-greeter) gui_greeter=true ;;
 	esac
 done
 
@@ -123,24 +133,36 @@ source /etc/os-release
 
 mapfile -t official < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/packages/pacman.txt")
 mapfile -t aur < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/packages/aur.txt")
-if $desktop_login; then
-	mapfile -t optional < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/packages/desktop-login.txt")
-	official+=("${optional[@]}")
-fi
-if $vm_profile; then
-	mapfile -t optional < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/packages/vm.txt")
-	official+=("${optional[@]}")
-fi
-mapfile -t official < <(printf '%s\n' "${official[@]}" | LC_ALL=C sort -u)
+# Every requested selector contributes its manifest from the registry; the
+# registry is the only place a selector and its packages are tied together.
+for id in "${requested_selectors[@]}"; do
+	mapfile -t optional < <(grep -Ev '^[[:space:]]*(#|$)' "$repo_root/${SELECTOR_MANIFEST["$id"]}")
+	official+=("${optional[@]:-}")
+	# A selector may also name packages that only exist as AUR build recipes,
+	# in a sibling manifest. They are kept apart because installing them is a
+	# different act: pacman fetches a binary, the AUR compiles one here.
+	aur_manifest="$repo_root/${SELECTOR_MANIFEST["$id"]%.txt}-aur.txt"
+	if [[ -f "$aur_manifest" ]]; then
+		mapfile -t optional_aur < <(grep -Ev '^[[:space:]]*(#|$)' "$aur_manifest")
+		aur+=("${optional_aur[@]:-}")
+	fi
+done
+mapfile -t official < <(printf '%s\n' "${official[@]}" | grep -v '^$' | LC_ALL=C sort -u)
+mapfile -t aur < <(printf '%s\n' "${aur[@]:-}" | grep -v '^$' | LC_ALL=C sort -u)
 
 system_args=()
 $desktop_login && system_args+=(--desktop-login)
 $vm_profile && system_args+=(--vm)
+$gui_greeter && system_args+=(--greeter)
 
 if $dry_run; then
 	printf 'would install official packages (%d): %s\n' "${#official[@]}" "${official[*]}"
 	((${#aur[@]})) && printf 'would install AUR packages (%d): %s\n' "${#aur[@]}" "${aur[*]}"
 	HOME="${HOME}" "$repo_root/scripts/deploy.sh" --all --dry-run
+	facts_preview="$(mktemp "${TMPDIR:-/tmp}/hipurbia-facts.XXXXXX")"
+	"$repo_root/scripts/hardware-facts.sh" --dry-run >"$facts_preview"
+	FACTS_FILE="$facts_preview" "$repo_root/scripts/render-config.sh" --dry-run
+	rm -f -- "$facts_preview"
 	if $system_profile; then
 		"$repo_root/scripts/apply-system.sh" --dry-run "${system_args[@]}"
 	fi
@@ -152,20 +174,21 @@ if ! $no_install; then
 	$noninteractive && pacman_args+=(--noconfirm)
 	sudo pacman "${pacman_args[@]}" -- "${official[@]}"
 	if ((${#aur[@]})); then
-		helper=""
-		command -v paru >/dev/null && helper=paru
-		command -v yay >/dev/null && helper=yay
-		[[ -n "$helper" ]] || {
-			printf 'AUR packages exist but no paru/yay helper is installed.\n' >&2
-			exit 1
-		}
-		aur_args=(-S --needed)
+		# One place owns the decision to compile from the AUR, and it neither
+		# needs nor installs a helper: every name is built from its own recipe
+		# against the pacman that is on this machine.
+		aur_args=()
 		$noninteractive && aur_args+=(--noconfirm)
-		"$helper" "${aur_args[@]}" -- "${aur[@]}"
+		"$repo_root/scripts/aur-install.sh" "${aur_args[@]}" -- "${aur[@]}"
 	fi
 fi
 
 "$repo_root/scripts/deploy.sh" --all
+# The machine-specific fragments are rendered after Stow so that the escape
+# gate sees the final directory layout, and before check.sh so a render
+# failure stops the bootstrap here rather than surfacing as a broken session.
+"$repo_root/scripts/hardware-facts.sh" --emit
+"$repo_root/scripts/render-config.sh" --deploy
 "$repo_root/scripts/check.sh"
 if $system_profile; then
 	"$repo_root/scripts/apply-system.sh" "${system_args[@]}"

@@ -1,0 +1,5 @@
+Ctrl+T	Nueva pestaña
+Ctrl+W	Cerrar la pestaña
+Ctrl+L	Ir a la barra de direcciones
+Ctrl+Shift+T	Reabrir la última pestaña cerrada
+Ctrl+F	Buscar en la página

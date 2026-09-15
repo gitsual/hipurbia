@@ -1,0 +1,19 @@
+font_family Fira Code
+bold_font Fira Code Bold
+italic_font Fira Code Italic
+bold_italic_font Fira Code Bold Italic
+font_size 11.0
+enable_audio_bell no
+window_padding_width 4
+foreground #@TERMINAL_FG:lower@
+background #@TERMINAL_BG:lower@
+background_opacity 0.95
+cursor_shape beam
+cursor_blink_interval 0.5
+copy_on_select yes
+url_style curly
+open_url_with default
+mouse_hide_wait 3.0
+repaint_delay 10
+input_delay 3
+sync_to_monitor yes

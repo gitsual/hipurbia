@@ -1,0 +1,10 @@
+/* ReGreet, Warm Night palette. Rendered from data/theme.conf into
+   system/etc/greetd/regreet.css; installed next to regreet.toml. */
+window { background-color: #2D1F2D; color: #E8D5AB; }
+.background { background-color: #2D1F2D; }
+frame, .frame { background-color: rgba(67, 54, 63, 0.92); border: 2px solid #7C606E; border-radius: 12px; padding: 24px; }
+entry, combobox, button { background: #5A4855; color: #E8D5AB; border: 1px solid #979367; border-radius: 8px; padding: 8px 12px; }
+entry:focus { border-color: #E1777D; }
+button.suggested-action, button:hover { background: #E1777D; color: #2D1F2D; }
+label { color: #E8D5AB; }
+label.error { color: #BD6161; }

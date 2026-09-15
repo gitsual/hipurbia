@@ -1,0 +1,11 @@
+monitoradded>>HDMI-A-1
+openwindow>>1a,1,kitty,~
+windowtitle>>1a
+activewindow>>kitty,~
+openwindow>>1b,1,firefox,Arch Wiki
+workspace>>2
+focusedmon>>DP-1,2
+urgent>>1b
+windowtitle>>2a
+renameworkspace>>2,two
+screencast>>1,0

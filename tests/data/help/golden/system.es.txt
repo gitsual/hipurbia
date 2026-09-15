@@ -1,0 +1,5 @@
+Ctrl+Alt+F3	Cambiar a una consola de texto (F1 o F2 vuelve)
+Print	Captura de toda la pantalla
+XF86AudioRaiseVolume	Subir el volumen
+XF86AudioLowerVolume	Bajar el volumen
+XF86MonBrightnessUp	Más brillo (portátiles)

@@ -6,6 +6,7 @@ bluez-utils
 btrfs-progs
 clamav
 cryptsetup
+curl
 dmenu
 dunst
 fd
@@ -21,9 +22,12 @@ jq
 keepassxc
 kitty
 libnotify
+librsvg
 lynis
 neovim
 networkmanager
+noto-fonts
+noto-fonts-cjk
 noto-fonts-emoji
 pacman-contrib
 papirus-icon-theme
@@ -41,6 +45,7 @@ seahorse
 shellcheck
 shfmt
 slurp
+socat
 sof-firmware
 stow
 swaybg

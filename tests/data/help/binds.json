@@ -1,0 +1,7 @@
+[
+  {"locked": false, "mouse": false, "release": false, "repeat": false, "non_consuming": false, "has_description": false, "modmask": 64, "submap": "", "key": "Return", "keycode": 0, "catch_all": false, "description": "", "dispatcher": "exec", "arg": "kitty"},
+  {"locked": false, "mouse": false, "release": false, "repeat": false, "non_consuming": false, "has_description": false, "modmask": 65, "submap": "", "key": "S", "keycode": 0, "catch_all": false, "description": "", "dispatcher": "exec", "arg": "screenshot"},
+  {"locked": false, "mouse": false, "release": false, "repeat": false, "non_consuming": false, "has_description": false, "modmask": 0, "submap": "", "key": "F1", "keycode": 0, "catch_all": false, "description": "", "dispatcher": "exec", "arg": "help"},
+  {"locked": false, "mouse": false, "release": false, "repeat": false, "non_consuming": false, "has_description": false, "modmask": 72, "submap": "", "key": "up", "keycode": 0, "catch_all": false, "description": "", "dispatcher": "resizeactive", "arg": "0 -10"},
+  {"locked": false, "mouse": false, "release": false, "repeat": false, "non_consuming": false, "has_description": false, "modmask": 68, "submap": "", "key": "Q", "keycode": 0, "catch_all": false, "description": "", "dispatcher": "exec", "arg": "added by a local overlay, not in the registry"}
+]

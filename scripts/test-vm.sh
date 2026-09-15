@@ -71,13 +71,13 @@ actual="$(sha256sum "$base" | cut -d' ' -f1)"
 ssh-keygen -q -t ed25519 -N '' -f "$run/id_ed25519"
 public_key="$(<"$run/id_ed25519.pub")"
 cat >"$run/meta-data" <<'META'
-instance-id: archportfolio-vm
-local-hostname: archportfolio
+instance-id: hipurbia-vm
+local-hostname: hipurbia
 META
 cat >"$run/user-data" <<USERDATA
 #cloud-config
 users:
-  - name: portfolio
+  - name: hipurbia
     groups: [wheel]
     shell: /bin/bash
     sudo: ALL=(ALL) NOPASSWD:ALL
@@ -90,7 +90,7 @@ USERDATA
 xorriso -as mkisofs -quiet -output "$run/seed.iso" -volid cidata -joliet -rock "$run/user-data" "$run/meta-data"
 
 tar --exclude=.git --exclude=.vm-test -czf "$run/repository.tar.gz" -C "$repo_root" .
-xorriso -as mkisofs -quiet -output "$run/repository.iso" -volid PORTFOLIO -joliet -rock "$run/repository.tar.gz"
+xorriso -as mkisofs -quiet -output "$run/repository.iso" -volid HIPURBIA -joliet -rock "$run/repository.tar.gz"
 qemu-img create -q -f qcow2 -F qcow2 -b "$base" "$run/system.qcow2" 32G
 
 port="${VM_SSH_PORT:-}"
@@ -100,7 +100,10 @@ if [[ -z "$port" ]]; then
 fi
 memory="${VM_MEMORY_MB:-8192}"
 cpus="${VM_CPUS:-4}"
-display_args=(-display none)
+# The guest always carries the virtio GPU, headless or not: the catalogue's
+# virtio row is "verified in the VM gate" only if the gate actually runs on
+# it (QEMU's default Bochs VGA resolves to the generic Mesa row).
+display_args=(-display none -device virtio-vga)
 $gui && display_args=(-display "gtk,full-screen=on" -device virtio-vga -device qemu-xhci -device usb-tablet)
 
 $gui && bash "$repo_root/scripts/vm-desktop.sh"
@@ -138,7 +141,7 @@ trap cleanup EXIT
 ssh_opts=(-i "$run/id_ed25519" -p "$port" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5)
 ready=false
 for _ in {1..90}; do
-	if ssh "${ssh_opts[@]}" "portfolio@$host_address" true >/dev/null 2>&1; then ready=true; break; fi
+	if ssh "${ssh_opts[@]}" "hipurbia@$host_address" true >/dev/null 2>&1; then ready=true; break; fi
 	sleep 2
 done
 $ready || {
@@ -146,26 +149,9 @@ $ready || {
 	exit 1
 }
 
-if ! ssh "${ssh_opts[@]}" "portfolio@$host_address" 'bash -s' >"$run/guest-test.log" 2>&1 <<'GUEST'
-set -Eeuo pipefail
-sudo pacman -Syu --noconfirm
-sudo mkdir -p /mnt/portfolio
-sudo mount -L PORTFOLIO -o ro /mnt/portfolio
-mkdir -p "$HOME/archlinux-portfolio"
-tar -xzf /mnt/portfolio/repository.tar.gz -C "$HOME/archlinux-portfolio"
-cd "$HOME/archlinux-portfolio"
-./scripts/bootstrap.sh --noconfirm --desktop-login --vm
-./scripts/test-neovim.sh
-./scripts/apply-system.sh --dry-run --desktop-login --vm
-mkdir -p /tmp/portfolio-runtime
-chmod 700 /tmp/portfolio-runtime
-XDG_RUNTIME_DIR=/tmp/portfolio-runtime Hyprland --verify-config -c "$HOME/.config/hypr/hyprland.conf"
-for executable in Hyprland waybar kitty dunst rofi dmenu_run wofi nvim clamscan ufw greetd tuigreet; do
-  command -v "$executable" >/dev/null
- done
-printf '%s\n' 'VM_ACCEPTANCE: PASS'
-GUEST
-then
+# The validated keymap is intentionally expanded client-side.
+# shellcheck disable=SC2029
+if ! ssh "${ssh_opts[@]}" "hipurbia@$host_address" "CONSOLE_KEYMAP='$console_keymap' bash -s" >"$run/guest-test.log" 2>&1 <"$repo_root/tests/guest-acceptance.sh"; then
 	python - "$run/guest-test.log" <<'PY'
 import sys
 from pathlib import Path
@@ -179,21 +165,17 @@ grep -Fq 'VM_ACCEPTANCE: PASS' "$run/guest-test.log"
 printf 'Arch VM acceptance: passed (KVM, %s MiB, %s vCPU, SSH port %s)\n' "$memory" "$cpus" "$port"
 
 if $gui; then
+	# The console keymap was written by apply-system.sh --keymap during the
+	# acceptance run, from the settings file seeded above.
+	ssh "${ssh_opts[@]}" "hipurbia@$host_address" 'cd "$HOME/hipurbia" && ./scripts/apply-system.sh --desktop-login --vm'
 	# Validated keymap is intentionally expanded client-side.
 	# shellcheck disable=SC2029
-	ssh "${ssh_opts[@]}" "portfolio@$host_address" "localectl list-keymaps | grep -Fxq -- '$console_keymap'"
-	# Validated keymap is intentionally expanded client-side.
-	# shellcheck disable=SC2029
-	ssh "${ssh_opts[@]}" "portfolio@$host_address" "sudo localectl set-keymap -- '$console_keymap'"
-	ssh "${ssh_opts[@]}" "portfolio@$host_address" 'cd "$HOME/archlinux-portfolio" && ./scripts/apply-system.sh --desktop-login --vm'
-	# Validated keymap is intentionally expanded client-side.
-	# shellcheck disable=SC2029
-	ssh "${ssh_opts[@]}" "portfolio@$host_address" "grep -Fxq -- 'KEYMAP=$console_keymap' /etc/vconsole.conf"
+	ssh "${ssh_opts[@]}" "hipurbia@$host_address" "grep -Fxq -- 'KEYMAP=$console_keymap' /etc/vconsole.conf"
 	printf 'ssh_port=%s\nconsole_keymap=%s\n' "$port" "$console_keymap" >"$run/console-login.txt"
-	ssh "${ssh_opts[@]}" "portfolio@$host_address" 'sudo systemctl reboot' || true
+	ssh "${ssh_opts[@]}" "hipurbia@$host_address" 'sudo systemctl reboot' || true
 	bash "$repo_root/scripts/vm-keyboard.sh"
 	printf 'Interactive VM kept running; the desktop logs in by itself. Details: %s\n' "$run/console-login.txt"
-	printf 'SSH: ssh -i %s -p %s portfolio@%s\n' "$run/id_ed25519" "$port" "$host_address"
+	printf 'SSH: ssh -i %s -p %s hipurbia@%s\n' "$run/id_ed25519" "$port" "$host_address"
 elif $keep; then
 	printf 'VM artifacts kept at %s\n' "$run"
 fi

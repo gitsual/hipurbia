@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
-packages=(hypr waybar kitty dunst rofi wofi nvim shell theme audio security automation)
+packages=(hypr waybar kitty dunst rofi wofi nvim shell theme audio security automation ricer welcome)
 dry_run=false
 
 usage() {
@@ -47,7 +47,7 @@ for package in "${selected[@]}"; do
 done
 
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio/backups/$stamp"
+backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia/backups/$stamp"
 
 for package in "${selected[@]}"; do
 	package_root="$repo_root/dotfiles/$package"

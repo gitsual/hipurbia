@@ -15,9 +15,9 @@ The script:
 3. attaches a read-only archive of the current working tree, excluding Git and VM artifacts;
 4. boots the guest with KVM and user-mode networking bound only to loopback;
 5. updates the guest, installs the base, graphical-login and VM package profiles;
-6. deploys every Stow package into the guest user's HOME;
+6. deploys every Stow package into the guest user's HOME, then detects the guest's hardware facts and renders the machine-specific Waybar and Hyprland fragments from them;
 7. runs the full repository checker and clean Neovim installation;
-8. checks the Hyprland configuration and required workstation executables;
+8. checks the Hyprland configuration, the rendered fragments (present, regular files, valid JSON, no drift) and required workstation executables;
 9. runs the selected system profile as a dry-run so the test does not pretend firewall, Bluetooth or hardware effects occurred.
 
 The host HOME, packages, services and firewall are not modified. Failed runs preserve logs and the overlay under ignored `.vm-test/`; successful runs clean the disposable run directory unless `--keep` is used.

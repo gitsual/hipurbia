@@ -24,4 +24,5 @@ The source workstation combines Arch Linux, Hyprland, three launchers, a highly 
 3. **Reversible changes:** destination conflicts and system files are backed up before replacement.
 4. **Idempotence:** `stow --no-folding --restow` supports local overlays and safe repeated execution.
 5. **Hardware privacy:** identifiers are rendered on the destination machine and never committed.
-6. **Fail-closed publication:** suspicious names/content, binaries, syntax errors and Gitleaks findings block release.
+6. **Machine-specific renders:** files whose content depends on the machine (Waybar modules, Hyprland monitor/input/GPU fragments) are templates under `render/`, rendered from detected hardware facts into `$XDG_CONFIG_HOME` and never committed or stowed. The Waybar config left Stow for this reason: a JSON module array cannot be extended by a local overlay, only replaced. The renderer refuses any output path that resolves inside the checkout.
+7. **Fail-closed publication:** suspicious names/content, binaries, syntax errors and Gitleaks findings block release.

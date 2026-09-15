@@ -1,0 +1,8 @@
+[
+  {"id": 1, "name": "1", "monitor": "DP-1", "windows": 2},
+  {"id": 2, "name": "2", "monitor": "DP-1", "windows": 1},
+  {"id": 3, "name": "3", "monitor": "HDMI-A-1", "windows": 2},
+  {"id": 4, "name": "4", "monitor": "HDMI-A-1", "windows": 2},
+  {"id": 5, "name": "5", "monitor": "DP-1", "windows": 1},
+  {"id": -99, "name": "special:scratch", "monitor": "DP-1", "windows": 1}
+]
