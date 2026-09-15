@@ -1,0 +1,303 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+# The first thing a stranger sees after logging in: three questions and a
+# guided tour, in the palette, in their own language.
+#
+# It is deliberately a terminal program rather than a toolkit dialog. The
+# desktop it is introducing is a tiling compositor driven from the keyboard,
+# and a wizard that hands you a mouse teaches the wrong lesson on the first
+# screen. What it does borrow from a graphical wizard is the manners: one
+# question at a time, every choice reversible, the current answer always
+# visible, and nothing applied that cannot be seen immediately.
+#
+#   --first-run   do nothing at all when the tour has already been taken
+#
+# Rerun it whenever you like: `portfolio-welcome` with no arguments starts
+# from the top and changes only what you confirm.
+
+repo="${PORTFOLIO_REPO:-$HOME/archlinux-portfolio}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/archlinux-portfolio"
+marker="$state_dir/welcome-done"
+settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/archlinux-portfolio/settings"
+
+if [[ "${1:-}" == --first-run ]]; then
+	[[ -e "$marker" ]] && exit 0
+fi
+[[ -d "$repo" ]] || {
+	printf 'The portfolio checkout is not at %s; set PORTFOLIO_REPO.\n' "$repo" >&2
+	exit 1
+}
+
+# ---------------------------------------------------------------- appearance
+
+# The wizard wears the theme it is offering, so a colour that is unreadable is
+# unreadable here first. Truecolor escapes, because the palette is hex and the
+# 256-colour cube would round it into something else.
+declare -A palette=()
+palette_load() {
+	local name="$1" file key value
+	if [[ "$name" == warm-night ]]; then file="$repo/data/theme.conf"; else file="$repo/data/themes/$name.conf"; fi
+	[[ -f "$file" ]] || return 1
+	palette=()
+	while IFS='=' read -r key value; do
+		[[ "$key" == [A-Z]* ]] || continue
+		palette["$key"]="$value"
+	done <"$file"
+	palette[TITLE]="$(sed -nE 's/^# @title: (.*)$/\1/p' "$file")"
+	palette[ESSENCE]="$(sed -nE 's/^# @essence: (.*)$/\1/p' "$file")"
+}
+
+fg() { printf '\033[38;2;%d;%d;%dm' "0x${1:0:2}" "0x${1:2:2}" "0x${1:4:2}"; }
+bg() { printf '\033[48;2;%d;%d;%dm' "0x${1:0:2}" "0x${1:2:2}" "0x${1:4:2}"; }
+reset() { printf '\033[0m'; }
+
+columns() { tput cols 2>/dev/null || printf '80'; }
+
+# centre TEXT — pad to the middle of the terminal. Printable width, not byte
+# length: the labels carry accents and box characters.
+centre() {
+	local text="$1" width visible pad
+	width="$(columns)"
+	visible="$(printf '%s' "$text" | sed -E 's/\x1b\[[0-9;]*m//g' | wc -L)"
+	pad=$(((width - visible) / 2))
+	((pad < 0)) && pad=0
+	printf '%*s%s\n' "$pad" '' "$text"
+}
+
+frame() {
+	local title="$1" subtitle="$2"
+	printf '\033[2J\033[H'
+	bg "${palette[COLOR_BG]}"
+	printf '\033[2J\033[H'
+	printf '\n\n'
+	fg "${palette[COLOR_ACCENT]}"
+	centre "$title"
+	fg "${palette[COLOR_FG_DIM]}"
+	centre "$subtitle"
+	fg "${palette[COLOR_MUTED]}"
+	centre "$(printf '─%.0s' {1..48})"
+	printf '\n'
+}
+
+footer() {
+	local hint="$1"
+	printf '\n'
+	fg "${palette[COLOR_MUTED]}"
+	centre "$hint"
+	reset
+}
+
+# choose TITLE SUBTITLE HINT PREVIEW_FN NAME... — a keyboard list. Prints the
+# chosen name on stdout; everything it draws goes to the terminal directly, so
+# the caller can capture the answer without capturing the interface.
+choose() {
+	local title="$1" subtitle="$2" hint="$3" preview="$4"
+	shift 4
+	local items=("$@") index=0 key last=-1
+	while true; do
+		if ((index != last)) && [[ -n "$preview" ]]; then
+			"$preview" "${items[$index]}" || true
+			last=$index
+		fi
+		{
+			frame "$title" "$subtitle"
+			local position label
+			for position in "${!items[@]}"; do
+				label="${labels[${items[$position]}]:-${items[$position]}}"
+				if ((position == index)); then
+					fg "${palette[COLOR_BG]}"
+					bg "${palette[COLOR_ACCENT]}"
+					centre "  ▸ $label  "
+					bg "${palette[COLOR_BG]}"
+				else
+					fg "${palette[COLOR_FG]}"
+					centre "    $label  "
+				fi
+			done
+			footer "$hint"
+		} >/dev/tty
+		IFS= read -rsn1 key </dev/tty
+		case "$key" in
+		$'\x1b')
+			# An arrow key arrives as three bytes; a lone Escape as one.
+			IFS= read -rsn2 -t 0.05 key </dev/tty || key=''
+			case "$key" in
+			'[A') ((index > 0)) && ((index--)) ;;
+			'[B') ((index < ${#items[@]} - 1)) && ((index++)) ;;
+			esac
+			;;
+		k) ((index > 0)) && ((index--)) ;;
+		j) ((index < ${#items[@]} - 1)) && ((index++)) ;;
+		'') break ;;
+		esac
+	done
+	printf '%s' "${items[$index]}"
+}
+
+# ------------------------------------------------------------------ settings
+
+setting_write() {
+	local key="$1" value="$2" temporary
+	mkdir -p -- "$(dirname -- "$settings_file")"
+	temporary="$(mktemp)"
+	[[ -f "$settings_file" ]] && grep -vE "^$key=" "$settings_file" >"$temporary"
+	printf '%s=%s\n' "$key" "$value" >>"$temporary"
+	LC_ALL=C sort -o "$temporary" "$temporary"
+	mv -- "$temporary" "$settings_file"
+}
+
+# ------------------------------------------------------------------- content
+
+declare -A labels=(
+	[es]='Español            ·  teclado es'
+	[us]='English (US)       ·  keyboard us'
+	[gb]='English (UK)       ·  keyboard gb'
+	[fr]='Français           ·  clavier fr'
+	[de]='Deutsch            ·  Tastatur de'
+	[it]='Italiano           ·  tastiera it'
+	[pt]='Português          ·  teclado pt'
+	[latam]='Español (Latam)    ·  teclado latam'
+)
+layouts=(es us gb fr de it pt latam)
+
+themes=(warm-night)
+while IFS= read -r file; do themes+=("$(basename -- "$file" .conf)"); done \
+	< <(find "$repo/data/themes" -name '*.conf' -type f | LC_ALL=C sort)
+for name in "${themes[@]}"; do
+	title="$(sed -nE 's/^# @title: (.*)$/\1/p' \
+		"$([[ "$name" == warm-night ]] && printf '%s' "$repo/data/theme.conf" || printf '%s' "$repo/data/themes/$name.conf")")"
+	essence="$(sed -nE 's/^# @essence: (.*)$/\1/p' \
+		"$([[ "$name" == warm-night ]] && printf '%s' "$repo/data/theme.conf" || printf '%s' "$repo/data/themes/$name.conf")")"
+	printf -v "labels[$name]" '%-18s ·  %s' "$title" "$essence"
+done
+
+# The preview is the point: selecting a theme dresses the whole desktop before
+# you commit to it, so the choice is made by looking rather than by reading a
+# name. Failures are swallowed on purpose — a compositor that is not running
+# yet must not stop the wizard.
+theme_preview() {
+	local name="$1"
+	palette_load "$name" || return 0
+	setting_write theme "$name"
+	(cd "$repo" && ./scripts/render-config.sh --deploy) >/dev/null 2>&1 || return 0
+	hyprctl reload >/dev/null 2>&1 || true
+	pkill -SIGUSR2 waybar >/dev/null 2>&1 || true
+	[[ -x "$HOME/.config/hypr/scripts/wallpaper.sh" ]] &&
+		bash "$HOME/.config/hypr/scripts/wallpaper.sh" >/dev/null 2>&1 &
+	return 0
+}
+
+# --------------------------------------------------------------------- steps
+
+step_layout() {
+	local chosen
+	chosen="$(choose 'Teclado · Keyboard' \
+		'La distribución que usan la consola y el escritorio.' \
+		'↑ ↓ para moverte · Enter para elegir' '' "${layouts[@]}")"
+	setting_write xkb_layout "$chosen"
+	setting_write keymap "$chosen"
+	(cd "$repo" && ./scripts/render-config.sh --deploy) >/dev/null 2>&1 || true
+	hyprctl reload >/dev/null 2>&1 || true
+	printf '%s' "$chosen"
+}
+
+step_theme() {
+	local chosen
+	chosen="$(choose 'Tema · Theme' \
+		'Se aplica mientras eliges: mira el fondo y la barra.' \
+		'↑ ↓ para previsualizar · Enter para quedártelo' theme_preview "${themes[@]}")"
+	printf '%s' "$chosen"
+}
+
+# wait_for TITLE INSTRUCTION PREDICATE [ARG...] — a tour step that ends when
+# the user actually does the thing. Asking someone to read a keybinding teaches
+# nothing; asking them to press it and then noticing that they did is the whole
+# difference. The predicate is a function name, never a string to eval.
+wait_for() {
+	local title="$1" instruction="$2" deadline=$((SECONDS + 120)) key
+	shift 2
+	{
+		frame 'Tour' "$title"
+		fg "${palette[COLOR_FG]}"
+		centre "$instruction"
+		footer 'Enter para saltar este paso'
+	} >/dev/tty
+	while ((SECONDS < deadline)); do
+		if "$@" >/dev/null 2>&1; then
+			{
+				fg "${palette[COLOR_OK]}"
+				centre '✓'
+				reset
+			} >/dev/tty
+			sleep 1
+			return 0
+		fi
+		IFS= read -rsn1 -t 0.4 key </dev/tty && [[ -z "$key" ]] && return 0
+	done
+	return 0
+}
+
+window_count() { hyprctl clients -j 2>/dev/null | grep -c '"class"' || printf '0'; }
+more_windows_than() { (($(window_count) > $1)); }
+left_first_workspace() {
+	local current
+	current="$(hyprctl activeworkspace -j 2>/dev/null | sed -nE 's/.*"id": ?([0-9]+).*/\1/p' | head -1)"
+	[[ -n "$current" && "$current" != 1 ]]
+}
+help_pane_open() { hyprctl clients -j 2>/dev/null | grep -q help-pane; }
+
+step_tour() {
+	local before
+	before="$(window_count)"
+	wait_for 'Abrir una terminal' \
+		'Pulsa SUPER + Enter. Aparecerá otra ventana junto a esta.' \
+		more_windows_than "$before"
+	wait_for 'Cambiar de escritorio' \
+		'Pulsa SUPER + 2. La barra de arriba te dirá dónde estás.' \
+		left_first_workspace
+	wait_for 'La ayuda siempre está ahí' \
+		'Pulsa F1 para el panel de atajos. Ciérralo con SUPER + Q.' \
+		help_pane_open
+	{
+		frame 'Listo' 'Ya sabes lo suficiente para romper cosas con criterio.'
+		fg "${palette[COLOR_FG]}"
+		centre 'F1 a F5 abren los paneles de ayuda.'
+		centre 'SUPER + R abre el lanzador. SUPER + Q cierra.'
+		centre ''
+		fg "${palette[COLOR_FG_DIM]}"
+		centre 'Vuelve a este asistente cuando quieras: portfolio-welcome'
+		footer 'Enter para empezar'
+		reset
+	} >/dev/tty
+	IFS= read -rsn1 </dev/tty || true
+}
+
+# ----------------------------------------------------------------------- run
+
+palette_load "$(sed -nE 's/^theme=(.*)$/\1/p' "$settings_file" 2>/dev/null | tail -1)" ||
+	palette_load warm-night
+
+printf '\033[?25l'
+restore() {
+	printf '\033[?25h'
+	reset
+	printf '\033[2J\033[H'
+}
+trap restore EXIT
+
+{
+	frame 'Bienvenido' 'Arch Linux, montado a mano y explicado.'
+	fg "${palette[COLOR_FG]}"
+	centre 'Tres preguntas y una vuelta guiada. Un minuto.'
+	footer 'Enter para empezar · Ctrl-C para salir'
+	reset
+} >/dev/tty
+IFS= read -rsn1 </dev/tty || true
+
+step_layout >/dev/null
+step_theme >/dev/null
+step_tour
+
+mkdir -p -- "$state_dir"
+printf 'welcome completed: %s\n' "$(date -uIseconds)" >"$marker"

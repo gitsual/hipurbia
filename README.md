@@ -166,6 +166,12 @@ The bar is rendered per machine from `render/waybar/config.in`, so a module appe
 
 The network module shows the address inline (`{ipaddr}/{cidr}`) instead of hiding it in a tooltip, and click-toggles to the interface name; the bluetooth tooltip enumerates the connected devices. Weather is a fifth setting, `weather_location` (default `auto`, which lets wttr.in geolocate by IP) — set it to a place name or airport code to ask about somewhere else, and note that the module makes an outbound request every half hour either way.
 
+## First run
+
+The first session starts `portfolio-welcome` and no later one does: it writes a marker, and `--first-run` is a no-op afterwards. Three steps, all reversible, all applied where you can see them — the keyboard (eight layouts, each labelled in its own language, written to both the console keymap and the compositor layout), the theme (applied live as you move through the catalogue, so the wallpaper and the bar change under the cursor rather than after a confirmation), and a short guided tour that waits for you to actually press the binding and notices when you do, instead of listing it. Run `portfolio-welcome` again whenever you want; it changes only what you confirm.
+
+The published image meets you at the graphical login first: ReGreet inside a cage kiosk, in the palette, with Hyprland as its default session, so nothing has to be typed to reach the desktop.
+
 ## Graphical login
 
 `--desktop-login` installs greetd with tuigreet, as before. `bootstrap.sh --gui-greeter` (or `apply-system.sh --greeter`) installs ReGreet inside a cage kiosk instead, styled from the palette (`templates/system/etc/greetd/regreet.css.in`). The greeter has two language axes of its own, rendered from the settings file into greetd's command: `LANG` for the greeter process and `XKB_DEFAULT_LAYOUT` for the keyboard cage hands it. Each is written in exactly one place, pinned by the same test as the session's axes. The test VM keeps its passwordless autologin, frozen byte-for-byte.

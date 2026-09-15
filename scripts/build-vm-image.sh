@@ -195,7 +195,7 @@ printf '%s\n' 'Guest acceptance: passed'
 printf '%s\n' 'Sealing...'
 # shellcheck disable=SC2029
 ssh "${ssh_opts[@]}" "$image_user@$host_address" \
-	"IMAGE_LOCALE='$image_locale' IMAGE_KEYMAP='$image_keymap' IMAGE_LAYOUT='$image_layout' bash -s" \
+	"IMAGE_LOCALE='$image_locale' IMAGE_KEYMAP='$image_keymap' IMAGE_LAYOUT='$image_layout' IMAGE_USER='$image_user' bash -s" \
 	>"$run/guest-seal.log" 2>&1 <"$repo_root/scripts/seal-vm-image.sh" || {
 	tail -n 60 "$run/guest-seal.log" >&2
 	printf '%s\n' 'Seal failed; the overlay is not publishable' >&2

@@ -21,6 +21,14 @@ grep -Fxq "LANG=$IMAGE_LOCALE" /etc/locale.conf
 grep -Fxq "KEYMAP=$IMAGE_KEYMAP" /etc/vconsole.conf
 grep -Fxq "    kb_layout = $IMAGE_LAYOUT" "$HOME/.config/hypr/generated/input.conf"
 
+# The test guest logs straight in with no greeter, which is right for a gate
+# and wrong for a published image: whoever downloads this should meet the
+# graphical login, in the palette, and land in Hyprland without typing its
+# name. ReGreet's default session is already Hyprland, so installing it for
+# real is the whole change.
+sudo ./scripts/apply-system.sh --greeter
+grep -Fq 'cage -s -- regreet' /etc/greetd/config.toml
+
 # Nothing that identifies the build host or the build run may survive.
 sudo pacman -Scc --noconfirm >/dev/null
 sudo journalctl --rotate >/dev/null 2>&1 || true
