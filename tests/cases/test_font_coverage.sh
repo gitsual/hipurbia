@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 # CJK and emoji are covered by fonts the base manifest installs, and the VM
 # gate proves it by code point (fc-match ':charset=...'), not by family name.
-# Here: the manifest names the fonts, the guest script asks by code point,
+# Here: the manifest names the fonts, tests/guest-acceptance.sh asks by code point,
 # and, when this host has the same fonts, fc-match agrees.
 
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
@@ -16,7 +16,7 @@ for font in noto-fonts noto-fonts-cjk noto-fonts-emoji ttf-jetbrains-mono-nerd; 
 	grep -Fxq -- "$font" "$repo_root/packages/pacman.txt" || fail "$font is not in the base manifest"
 done
 for codepoint in 4e2d 3042 1f600; do
-	grep -Fq "charset=$codepoint" "$repo_root/scripts/test-vm.sh" || fail "the VM gate does not ask fc-match for U+$codepoint"
+	grep -Fq "charset=$codepoint" "$repo_root/tests/guest-acceptance.sh" || fail "the guest acceptance does not ask fc-match for U+$codepoint"
 done
 if command -v fc-list >/dev/null && fc-list | grep -q 'Noto Sans CJK'; then
 	fc-match -f '%{family}\n' ':charset=4e2d' | grep -q 'CJK' || fail 'U+4E2D does not resolve to a CJK font on this host'
