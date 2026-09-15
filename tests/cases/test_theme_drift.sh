@@ -13,6 +13,7 @@ sandbox="$(mktemp -d "${TMPDIR:-/tmp}/archportfolio-drift.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 cp -r -- "$repo_root/templates" "$sandbox/templates"
 cp -r -- "$repo_root/dotfiles" "$sandbox/dotfiles"
+cp -r -- "$repo_root/system" "$sandbox/system"
 cp -- "$repo_root/data/theme.conf" "$sandbox/theme.conf"
 
 fail() {

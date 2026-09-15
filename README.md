@@ -158,6 +158,10 @@ A test pins the single-writer rule and another that `LC_ALL=C` is only ever pinn
 
 The base profile installs Noto (Latin, CJK, emoji) so any script renders; the VM gate asks `fc-match` by code point, not by family name. An input method is a fourth setting, `ime=fcitx5` (default `none`): it adds the fcitx5 environment and daemon start to the input fragment and nothing else, and `bootstrap.sh --ime` installs fcitx5 with Mozc.
 
+## Graphical login
+
+`--desktop-login` installs greetd with tuigreet, as before. `bootstrap.sh --gui-greeter` (or `apply-system.sh --greeter`) installs ReGreet inside a cage kiosk instead, styled from the palette (`templates/system/etc/greetd/regreet.css.in`). The greeter has two language axes of its own, rendered from the settings file into greetd's command: `LANG` for the greeter process and `XKB_DEFAULT_LAYOUT` for the keyboard cage hands it. Each is written in exactly one place, pinned by the same test as the session's axes. The test VM keeps its passwordless autologin, frozen byte-for-byte.
+
 ## Verification
 
 `scripts/check.sh` validates shell, Python, JSON, Lua, systemd units, all package manifests, symlinks, file types and privacy patterns, verifies every bundled asset against `data/asset-manifest.tsv`, runs the behaviour tests in `tests/cases/`, runs Gitleaks, performs both a dry run and a two-pass deployment regression in temporary HOMEs, and checks deployment integrity: Stow and the machine-specific renders never claim the same path, never write into the checkout, and every package and Hyprland fragment is accounted for. `scripts/test-neovim.sh` performs the separate clean editor installation without calling external AI services. `scripts/test-vm.sh` installs and exercises the current tree in an official Arch QEMU/KVM guest. Publication also requires scanning the exact staged Git objects and resulting commit before push.

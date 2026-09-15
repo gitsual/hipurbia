@@ -163,7 +163,7 @@ cd "$HOME/archlinux-portfolio"
 # below can only be satisfied by its own writer.
 mkdir -p "$HOME/.config/archlinux-portfolio"
 printf 'locale=es_ES.UTF-8\nkeymap=%s\nxkb_layout=fr\nime=fcitx5\n' "$CONSOLE_KEYMAP" >"$HOME/.config/archlinux-portfolio/settings"
-./scripts/bootstrap.sh --noconfirm --desktop-login --vm --desktop --ime --ricer
+./scripts/bootstrap.sh --noconfirm --desktop-login --vm --desktop --ime --ricer --gui-greeter
 ./scripts/apply-system.sh --locale --keymap
 grep -Fxq 'LANG=es_ES.UTF-8' /etc/locale.conf
 LC_ALL=C locale -a | grep -Fxq 'es_ES.utf8'
@@ -171,6 +171,12 @@ grep -Fxq "KEYMAP=$CONSOLE_KEYMAP" /etc/vconsole.conf
 grep -Fxq '    kb_layout = fr' "$HOME/.config/hypr/generated/input.conf"
 ./scripts/test-neovim.sh
 ./scripts/apply-system.sh --dry-run --desktop-login --vm
+# The graphical greeter is rendered, not installed (the guest keeps its
+# autologin): its two axes carry the seeded locale and layout, distinct from
+# each other and from the console keymap.
+greeter_plan="$(./scripts/apply-system.sh --dry-run --greeter)"
+grep -q 'LANG=es_ES.UTF-8 XKB_DEFAULT_LAYOUT=fr cage -s -- regreet' <<<"$greeter_plan"
+pacman -Qq greetd-regreet cage >/dev/null
 mkdir -p /tmp/portfolio-runtime
 chmod 700 /tmp/portfolio-runtime
 XDG_RUNTIME_DIR=/tmp/portfolio-runtime Hyprland --verify-config -c "$HOME/.config/hypr/hyprland.conf"

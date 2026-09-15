@@ -1,0 +1,16 @@
+# ReGreet: what to offer and remember. The look lives in regreet.css.
+[default_session]
+command = "Hyprland"
+user = ""
+
+[commands]
+reboot = ["systemctl", "reboot"]
+poweroff = ["systemctl", "poweroff"]
+
+[appearance]
+greeting_msg = "Welcome"
+
+[GTK]
+application_prefer_dark_theme = true
+cursor_theme_name = "Adwaita"
+font_name = "JetBrains Mono Nerd Font 12"

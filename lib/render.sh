@@ -156,10 +156,16 @@ render_file() {
 # under dotfiles/ with the .in suffix removed.
 #   templates/waybar/.config/waybar/style.css.in
 #   -> dotfiles/waybar/.config/waybar/style.css
+#   templates/system/etc/greetd/regreet.css.in
+#   -> system/etc/greetd/regreet.css        (system files are not stowed)
 render_output_path() {
 	local template="$1"
 	template="${template#templates/}"
-	printf 'dotfiles/%s' "${template%.in}"
+	if [[ "$template" == system/* ]]; then
+		printf '%s' "${template%.in}"
+	else
+		printf 'dotfiles/%s' "${template%.in}"
+	fi
 }
 
 # render_deploy_output_path TEMPLATE — where a deploy-time template renders

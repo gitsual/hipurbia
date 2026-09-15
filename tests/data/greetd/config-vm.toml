@@ -1,0 +1,8 @@
+# Test-VM variant: no greeter and no passphrase. The desktop starts directly
+# as the guest user on every boot and after every logout.
+[terminal]
+vt = 1
+
+[default_session]
+command = "Hyprland"
+user = "portfolio"

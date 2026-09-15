@@ -1,0 +1,13 @@
+# Graphical login: ReGreet inside a cage kiosk. Rendered by
+# scripts/apply-system.sh --greeter from the user settings, installed as
+# /etc/greetd/config.toml. The greeter has two language axes of its own,
+# each one variable in the command below: the process language (LANG) and
+# the keyboard layout cage hands to the greeter (XKB_DEFAULT_LAYOUT). They
+# come from the same settings file as the session's axes and are written
+# nowhere else.
+[terminal]
+vt = 1
+
+[default_session]
+command = "env LANG=@SETTING_LOCALE@ XKB_DEFAULT_LAYOUT=@SETTING_XKB_LAYOUT@ cage -s -- regreet"
+user = "greeter"

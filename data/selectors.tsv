@@ -11,3 +11,4 @@ vm	packages/vm.txt	chassis=vm	--vm	selector.vm
 desktop	packages/desktop.txt		--desktop	selector.desktop
 ime	packages/ime.txt		--ime	selector.ime
 ricer	packages/ricer.txt		--ricer	selector.ricer
+gui-greeter	packages/gui-greeter.txt		--gui-greeter	selector.gui_greeter
