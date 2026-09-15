@@ -96,4 +96,7 @@ trap - EXIT
 stage 'isolated deployment regression'
 "$repo_root/scripts/test-deploy.sh"
 
+stage 'deployment integrity'
+"$repo_root/scripts/check-deploy-integrity.sh"
+
 printf '%s\n' 'all repository checks passed'
