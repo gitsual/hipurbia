@@ -8,11 +8,20 @@ source "$repo_root/lib/kv.sh"
 source "$repo_root/lib/facts.sh"
 # shellcheck source=lib/selectors.sh
 source "$repo_root/lib/selectors.sh"
+# shellcheck source=lib/i18n.sh
+source "$repo_root/lib/i18n.sh"
 for detector in chassis power input net graphics kernels display; do
 	# shellcheck source=/dev/null
 	source "$repo_root/lib/detect/$detector.sh"
 done
 selectors_load "${SELECTORS_FILE:-$repo_root/data/selectors.tsv}"
+
+# Messages follow the session locale (the --locale axis sets it system-wide);
+# PORTFOLIO_LANG overrides for one run. C and POSIX mean the reference table.
+language="${PORTFOLIO_LANG:-${LANG:-en}}"
+language="${language%%[_.@]*}"
+[[ "$language" =~ ^[a-z]{2,3}$ ]] || language=en
+i18n_load "$language" "${I18N_DIR:-$repo_root/i18n}" 2>/dev/null || i18n_load en "${I18N_DIR:-$repo_root/i18n}"
 
 dry_run=false
 no_install=false
@@ -21,7 +30,7 @@ desktop_login=false
 vm_profile=false
 noninteractive=false
 list_selectors=false
-requested=()
+requested_selectors=()
 
 usage() {
 	cat <<'USAGE'
@@ -72,7 +81,7 @@ while (($#)); do
 	--*)
 		# Any other flag must be a selector's system_flag from the registry.
 		if id="$(selector_for_flag "$1")"; then
-			requested+=("$id")
+			requested_selectors+=("$id")
 		else
 			printf 'Unknown option: %s\n' "$1" >&2
 			exit 2
@@ -87,12 +96,12 @@ while (($#)); do
 done
 
 if $list_selectors; then
-	printf 'this machine: chassis=%s gpu=%s\n' "${facts[chassis]}" "${facts[gpu_vendors]:-none}"
+	printf '%s\n' "$(i18n_format bootstrap.this_machine "${facts[chassis]}" "${facts[gpu_vendors]:-none}")"
 	for id in "${SELECTOR_IDS[@]}"; do
 		if selector_applicable "$id" facts; then
-			printf '  %-16s %s\n' "${SELECTOR_FLAG["$id"]}" "applies"
+			printf '  %-16s %s: %s\n' "${SELECTOR_FLAG["$id"]}" "$(i18n_get selector.applies)" "$(i18n_get "${SELECTOR_LABEL["$id"]}")"
 		else
-			printf '  %-16s not applicable (needs: %s)\n' "${SELECTOR_FLAG["$id"]}" "${SELECTOR_PREDICATE["$id"]}"
+			printf '  %-16s %s: %s\n' "${SELECTOR_FLAG["$id"]}" "$(i18n_format selector.needs "${SELECTOR_PREDICATE["$id"]}")" "$(i18n_get "${SELECTOR_LABEL["$id"]}")"
 		fi
 	done
 	exit 0
@@ -100,11 +109,9 @@ fi
 
 # An explicit request for a selector this machine does not satisfy is a
 # mistake worth stopping on, not something to quietly skip.
-for id in "${requested[@]}"; do
+for id in "${requested_selectors[@]}"; do
 	selector_applicable "$id" facts || {
-		printf '%s does not apply to this machine: it needs %s, and this machine has %s\n' \
-			"${SELECTOR_FLAG["$id"]}" "${SELECTOR_PREDICATE["$id"]}" \
-			"$(for atom in ${SELECTOR_PREDICATE["$id"]}; do [[ "$atom" =~ ^([a-z_]+) ]] && printf '%s=%s ' "${BASH_REMATCH[1]}" "${facts[${BASH_REMATCH[1]}]:-}"; done)" >&2
+		printf '%s\n' "$(i18n_format selector.not_applicable "${SELECTOR_FLAG["$id"]}" "${SELECTOR_PREDICATE["$id"]}") ($(for atom in ${SELECTOR_PREDICATE["$id"]}; do [[ "$atom" =~ ^([a-z_]+) ]] && printf '%s=%s ' "${BASH_REMATCH[1]}" "${facts[${BASH_REMATCH[1]}]:-}"; done))" >&2
 		printf 'Run scripts/bootstrap.sh --list-selectors to see what applies.\n' >&2
 		exit 3
 	}
