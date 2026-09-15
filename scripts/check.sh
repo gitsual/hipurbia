@@ -81,6 +81,9 @@ stage 'selector registry'
 stage 'gpu catalogue'
 "$repo_root/scripts/check-gpu-catalogue.sh"
 
+stage 'help registry'
+"$repo_root/scripts/check-help-registry.sh"
+
 stage 'i18n coverage'
 "$repo_root/scripts/check-i18n-coverage.sh"
 

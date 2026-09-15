@@ -28,3 +28,14 @@ WS_CACHE="$ws_cache" WS_ICONS="$repo_root/dotfiles/waybar/.config/waybar/workspa
 	"$repo_root/dotfiles/waybar/.config/waybar/scripts/ws-render.sh" >"$repo_root/tests/data/ws/golden/render.json"
 rm -f -- "$ws_cache"
 printf 'regenerated: tests/data/ws/golden/render.json\n'
+
+# The help panes: F2..F5 in every table, rendered plain.
+mkdir -p -- "$repo_root/tests/data/help/golden"
+for pane in browser shell editor system; do
+	for lang in en es; do
+		HELP_REPO_ROOT="$repo_root" "$repo_root/dotfiles/hypr/.config/hypr/scripts/help-pane.sh" --pane "$pane" --lang "$lang" --plain \
+			>"$repo_root/tests/data/help/golden/$pane.$lang.txt"
+	done
+done
+printf 'regenerated: tests/data/help/golden/*.txt\n'
+

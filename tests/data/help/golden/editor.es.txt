@@ -1,0 +1,5 @@
+Space	Tecla líder: sigue el menú de which-key
+Space+F	Buscar archivos
+Space+/	Buscar texto en el proyecto
+Space+E	Explorador de archivos
+G+D	Ir a la definición

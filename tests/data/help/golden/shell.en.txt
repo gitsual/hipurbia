@@ -1,0 +1,5 @@
+Ctrl+R	Search the command history
+Ctrl+A	Beginning of the line
+Ctrl+E	End of the line
+Ctrl+U	Delete to the beginning of the line
+Ctrl+Z	Suspend the foreground job (fg resumes)

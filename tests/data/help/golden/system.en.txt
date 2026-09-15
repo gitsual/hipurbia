@@ -1,0 +1,5 @@
+Ctrl+Alt+F3	Switch to a text console (F1 or F2 returns)
+Print	Full-screen screenshot
+XF86AudioRaiseVolume	Volume up
+XF86AudioLowerVolume	Volume down
+XF86MonBrightnessUp	Screen brighter (laptops)

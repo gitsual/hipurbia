@@ -1,0 +1,5 @@
+Space	Leader key: the which-key menu follows
+Space+F	Find files
+Space+/	Search text in the project
+Space+E	File explorer
+G+D	Go to definition

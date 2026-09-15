@@ -1,0 +1,5 @@
+Ctrl+R	Buscar en el historial de comandos
+Ctrl+A	Inicio de la línea
+Ctrl+E	Fin de la línea
+Ctrl+U	Borrar hasta el inicio de la línea
+Ctrl+Z	Suspender el proceso en primer plano (fg lo reanuda)

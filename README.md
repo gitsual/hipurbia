@@ -133,6 +133,10 @@ The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K 
 
 Ten numbered workspaces, `Super+1` to `Super+9` and `Super+0` for the tenth, `Super+Shift` to move a window there, and `Super+[` / `Super+]` to walk them with wraparound. Special workspaces are never part of that sequence. Waybar shows all ten by number, each occupied one followed by a glyph per window (`dotfiles/waybar/.config/waybar/workspace-icons.json`: class first, then a class prefix, then a title fragment, then a default), the active one underlined and an urgent one in italics. The strip is a `custom/ws` module fed by `ws-refresh.sh`, a `socat` listener on Hyprland's event socket that debounces a burst, takes one `hyprctl` snapshot and signals Waybar; nothing polls.
 
+## Help panes
+
+`F1` to `F5` open a rofi pane with the keys of Hyprland, the browser, the shell, the editor and the system, described in the session language. The rows come from `data/help-registry.tsv`; the Hyprland pane also reads `hyprctl binds -j`, and a live bind the registry does not know is shown as `UNREGISTERED` rather than dropped. Every bind in the Hyprland template carries a `# @help:` line above it, and `check.sh` refuses a bind without one, a registry row without a bind, or a label missing from the English table. A description is text: selecting a row acts on the registry's action column, never on the translation. `docs/keys.md` is the same registry for readers without a session.
+
 ## Language axes
 
 Locale, console keymap and Hyprland keyboard layout are three separate choices, and each has exactly one writer. They are read from `~/.config/archlinux-portfolio/settings` (see `settings.example`; a missing file means the source workstation's values):

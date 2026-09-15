@@ -1,0 +1,5 @@
+Ctrl+T	New tab
+Ctrl+W	Close the tab
+Ctrl+L	Focus the address bar
+Ctrl+Shift+T	Reopen the last closed tab
+Ctrl+F	Find in page
