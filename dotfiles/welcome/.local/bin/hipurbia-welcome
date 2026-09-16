@@ -270,6 +270,13 @@ step_language() {
 	fi
 	i18n_load "$chosen" "${I18N_DIR:-$repo/i18n}" 2>/dev/null ||
 		i18n_load en "${I18N_DIR:-$repo/i18n}"
+	# The wizard can change its own language mid-run; the bar, the launcher and
+	# the panes cannot. They read LANG once, from the session, and the session
+	# reads /etc/locale.conf once, at login. Saying so is the difference
+	# between a setting that looks broken and one that is merely not finished.
+	if [[ -z "$preview_note" && "${LANG%%[._@]*}" != "$chosen" ]]; then
+		preview_note="$(t welcome.language.relogin)"
+	fi
 	printf '%s' "$chosen"
 }
 
