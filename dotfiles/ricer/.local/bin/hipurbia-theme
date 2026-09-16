@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Pick a theme from a menu and wear it.
+#
+#   --print   list what the menu would show, one theme per line, and exit
+#
+# The catalogue is read from data/, never copied here: a second list is a
+# second thing to forget to update. Each row is the theme's own title and
+# essence, which are the lines the catalogue already writes for the wizard.
+set -Eeuo pipefail
+
+self="$(readlink -f -- "${BASH_SOURCE[0]}")"
+repo="${HIPURBIA_REPO:-$(cd -- "$(dirname -- "$self")/../../../.." && pwd -P)}"
+# shellcheck source=lib/kv.sh
+source "$repo/lib/kv.sh"
+# shellcheck source=lib/i18n.sh
+source "$repo/lib/i18n.sh"
+
+language="${HIPURBIA_LANG:-${LANG:-en}}"
+language="${language%%[._@]*}"
+i18n_load "$language" "${I18N_DIR:-$repo/i18n}" 2>/dev/null ||
+	i18n_load en "${I18N_DIR:-$repo/i18n}"
+
+names=(warm-night)
+while IFS= read -r file; do names+=("$(basename -- "$file" .conf)"); done \
+	< <(find "$repo/data/themes" -name '*.conf' -type f | LC_ALL=C sort)
+
+file_for() {
+	if [[ "$1" == warm-night ]]; then
+		printf '%s' "$repo/data/theme.conf"
+	else
+		printf '%s' "$repo/data/themes/$1.conf"
+	fi
+}
+
+menu() {
+	local name file title essence
+	for name in "${names[@]}"; do
+		file="$(file_for "$name")"
+		title="$(sed -nE 's/^# @title: (.*)$/\1/p' "$file")"
+		essence="$(sed -nE 's/^# @essence: (.*)$/\1/p' "$file")"
+		printf '%s — %s\n' "${title:-$name}" "${essence:-$name}"
+	done
+}
+
+if [[ "${1:-}" == --print ]]; then
+	menu
+	exit 0
+fi
+
+current="$(sed -nE 's/^theme=(.*)$/\1/p' \
+	"${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings" 2>/dev/null | tail -1)"
+selected=0
+for index in "${!names[@]}"; do
+	[[ "${names[$index]}" == "$current" ]] && selected="$index"
+done
+
+# -format i again: the row that comes back is a position, so a title with an
+# em dash in it, or a translated one, can never be mistaken for a theme name.
+chosen="$(menu | rofi -dmenu -i -format i -selected-row "$selected" -p "$(i18n_get help.hypr.theme)")" || exit 0
+[[ "$chosen" =~ ^[0-9]+$ ]] || exit 0
+((chosen < ${#names[@]})) || exit 0
+exec "$repo/scripts/apply-theme.sh" --theme "${names[$chosen]}"

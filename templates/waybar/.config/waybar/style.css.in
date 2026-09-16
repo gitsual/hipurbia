@@ -13,6 +13,7 @@ window#waybar { background: rgba(@COLOR_BG:rgb@, 0.95); border-radius: 12px; bor
 #window.empty { color: #@COLOR_MUTED@; }
 #submap { color: #@COLOR_BG@; background: #@COLOR_ACCENT@; }
 #bluetooth.connected { color: #@COLOR_OK@; }
+#custom-theme { background: rgba(@COLOR_SURFACE:rgb@, 0.7); color: #@COLOR_ACCENT@; border-radius: 10px; margin: 5px 2px; padding: 0 10px; }
 #custom-power { background: #@COLOR_ACCENT@; color: #@COLOR_BG@; border-radius: 10px; margin: 5px; padding: 0 10px; }
 tooltip { background: rgba(@COLOR_BG:rgb@, 0.98); border: 2px solid #@COLOR_ACCENT@; border-radius: 8px; }
 tooltip label { color: #@COLOR_FG@; }
