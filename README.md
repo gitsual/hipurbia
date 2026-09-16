@@ -1,12 +1,68 @@
-# hipurbia
+<h1 align="center">hipurbia</h1>
 
-![Warm Night desktop preview](assets/desktop-preview.svg)
+<p align="center">
+  <em>An Arch Linux workstation you can rebuild from nothing —<br>
+  where the colour scheme is a build artifact, not a mood.</em>
+</p>
 
-An Arch Linux workstation you can rebuild from nothing. A reproducible, security-reviewed version of my real Arch Linux workstation: Wayland desktop, launchers, editor, audio/Bluetooth tuning, security services, storage design and maintenance automation.
+<p align="center">
+  <img alt="Arch Linux" src="https://img.shields.io/badge/Arch%20Linux-0E1513?style=for-the-badge&logo=archlinux&logoColor=E8C66A">
+  <img alt="Hyprland" src="https://img.shields.io/badge/Hyprland-0E1513?style=for-the-badge&logo=wayland&logoColor=55A185">
+  <img alt="8 palettes" src="https://img.shields.io/badge/8%20palettes-one%20source-0E1513?style=for-the-badge&labelColor=0E1513&color=E1777D">
+  <img alt="46 gates" src="https://img.shields.io/badge/46%20gates-author--run-0E1513?style=for-the-badge&labelColor=0E1513&color=AAA875">
+  <img alt="MIT" src="https://img.shields.io/badge/license-MIT-0E1513?style=for-the-badge&labelColor=0E1513&color=6CA4B1">
+</p>
+
+![hipurbia running Verdigris Night](assets/screenshots/verdigris-night.png)
+
+<div align="center">
+
+**os** Arch Linux · **wm** [Hyprland](https://hyprland.org) · **bar** Waybar · **term** kitty · **shell** bash<br>
+**editor** Neovim / NvChad · **launchers** rofi · wofi · dmenu · **notify** dunst<br>
+**lock** hyprlock + hypridle · **wallpaper** swaybg · **font** JetBrains Mono Nerd Font<br>
+**greeter** ReGreet in a cage kiosk · **colour** `data/theme.conf` → `templates/` → `dotfiles/`
+
+</div>
+
+Every image on this page is a real `grim` capture taken inside the QEMU/KVM guest that
+`scripts/test-vm.sh` builds from this tree — same commit, same deploy, no mockups and no
+compositing. The palette swatches in the banner are read from the palette that is on the
+screen at the moment of the shot.
+
+## Eight palettes, one source of colour
+
+A theme here is not a pile of hand-edited stylesheets. `data/theme.conf` holds the palette;
+everything that carries a colour lives in `templates/` and is *rendered* into `dotfiles/`;
+`scripts/check-theme-drift.sh` fails the build when a committed render and its template
+disagree. Switching palette (`Super+Shift+T`, the `◐` in the bar, or
+`scripts/apply-theme.sh --theme NAME`) re-renders over the stowed symlinks live — wallpaper,
+bar, borders, notifications, launcher and every open terminal — and choosing the default again
+restores the symlinks byte for byte. Every colour must also exist in `data/palette-corpus.tsv`:
+a colour with no cause is slop.
+
+| | |
+|:--:|:--:|
+| ![Warm Night](assets/screenshots/warm-night.png)<br>**Warm Night** · Nocturne | ![Cold Slate](assets/screenshots/cold-slate.png)<br>**Cold Slate** · Resistance |
+| ![Verdigris Night](assets/screenshots/verdigris-night.png)<br>**Verdigris Night** · Technique | ![Ember Forge](assets/screenshots/ember-forge.png)<br>**Ember Forge** · Appetite |
+| ![Emerald Night](assets/screenshots/emerald-night.png)<br>**Emerald Night** · Quartz | ![Gilded Dusk](assets/screenshots/gilded-dusk.png)<br>**Gilded Dusk** · Nostalgia |
+| ![Moss and Stone](assets/screenshots/moss-stone.png)<br>**Moss and Stone** · Endurance | ![Wild Bloom](assets/screenshots/wild-bloom.png)<br>**Wild Bloom** · Romance |
+
+## The surfaces it draws itself
+
+| Power menu | Theme picker | Help pane |
+|:--:|:--:|:--:|
+| ![Power menu](assets/screenshots/overlay-power.png) | ![Theme picker](assets/screenshots/overlay-theme.png) | ![Help pane](assets/screenshots/overlay-help.png) |
+| `Super+Shift+Q` · nwg-bar, entries generated per run in the session language, icons drawn from the palette and rasterized at start | `Super+Shift+T` · the catalogue itself, read from `data/themes/`, never a copy of it | `F1`–`F5` · every bind, described in the session language, from `data/help-registry.tsv` |
+
+Nothing in those three is a committed English render. The labels come from `i18n/`, the actions
+never do: a translation can change what a button says and cannot change what it does.
+
+## What is reproduced
+
+A reproducible, security-reviewed version of my real Arch Linux workstation: Wayland desktop, launchers, editor, audio/Bluetooth tuning, security services, storage design and maintenance automation.
 
 > This is not a raw home-directory dump. It preserves the architecture and behavior while removing credentials, device IDs, UUIDs, hostnames, private paths, personal application inventories and private media.
 
-## What is reproduced
 
 | Layer | Components | Engineering focus |
 |---|---|---|
@@ -129,7 +185,7 @@ sudo -v && ./scripts/gpu-setup.sh --apply
 
 A hybrid machine gets both families plus `nvidia-prime`; a DKMS stack gets the headers of every installed kernel; Secure Boot with a DKMS module is warned about, not hidden. `--gpu FAMILY` overrides the detection only for a family the facts also see (or `generic`), and refuses anything else with exit 3. Audio device node names are rendered locally by `scripts/configure-audio.py` and are never committed.
 
-The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop starts it with `swaybg`, including on virtual GPUs without accelerated rendering. The header SVG is a stylized preview, not a real desktop capture.
+The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop starts it with `swaybg`, including on virtual GPUs without accelerated rendering.
 
 ## Optional selectors
 
@@ -137,7 +193,7 @@ The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K 
 
 ## Ricing tools
 
-`bootstrap.sh --ricer` adds the customisation set (`packages/ricer.txt`, all from the official repositories: `cliphist`, `swappy`, `wf-recorder`, `nwg-look`, `qt6ct`, `kvantum`, `nwg-bar`). `hypridle` is part of the base and starts with the session: lock after five minutes, screen off after ten, suspend after thirty. `Super+Shift+Q` opens the `nwg-bar` power menu beside the rofi one on `Super+Shift+E`, with the same five entries; `Super+V` picks from the clipboard history. `packages/aur.txt` stays empty and `wlogout` is never installed, both pinned by a test.
+`bootstrap.sh --ricer` adds the customisation set (`packages/ricer.txt`, all from the official repositories: `cliphist`, `swappy`, `wf-recorder`, `nwg-look`, `qt6ct`, `kvantum`, `nwg-bar`). `hypridle` is part of the base and starts with the session: lock after five minutes, screen off after ten, suspend after thirty. `Super+Shift+Q` opens the `nwg-bar` power menu beside the rofi one on `Super+Shift+E`, with the same five entries: both read their labels from `i18n/` at run time, and both are drawn in the palette — the five icons are the repository's own SVG templates, rendered like every other themed surface and rasterized to PNG at start because librsvg no longer ships the pixbuf loader GTK would need to read them directly. `Super+Shift+T` opens the theme picker over whatever is on screen, the same catalogue the wizard walks, also on the `◐` button in the bar. `Super+V` picks from the clipboard history. `packages/aur.txt` stays empty and `wlogout` is never installed, both pinned by a test.
 
 ## Workspaces
 
@@ -168,9 +224,11 @@ The network module shows the address inline (`{ipaddr}/{cidr}`) instead of hidin
 
 ## First run
 
-The first session starts `hipurbia-welcome` and no later one does: it writes a marker, and `--first-run` is a no-op afterwards. Two questions and a ten-step tour, all reversible, all applied where you can see them.
+The first session starts `hipurbia-welcome` and no later one does: it writes a marker, and `--first-run` is a no-op afterwards. Three questions and a ten-step tour, all reversible, all applied where you can see them.
 
-The keyboard comes first: eight layouts, each labelled in its own language, written to both the console keymap and the compositor layout. Then the theme, applied live as you move through the catalogue — `scripts/apply-theme.sh` renders the chosen palette over the stowed stylesheets and reloads the wallpaper, the bar, the borders and the notifications, so the whole room changes under the cursor instead of a setting changing in a file you cannot see. Choosing the default again restores the committed symlinks exactly, which is what keeps the theme-drift gate meaningful.
+The language comes first, because it is the one answer that changes every question after it: the wizard writes `/etc/locale.conf` through `apply-system.sh --locale` and reloads its own tables on the spot, so the rest of the tour is already in the language just chosen. It says plainly that the bar, the launcher and the help panes read `LANG` once, at login, and will follow on the next one. Every string the wizard says comes from `i18n/`, like every other surface; a test refuses a Spanish literal in the program itself.
+
+The keyboard is next: eight layouts, each labelled in its own language, written to both the console keymap and the compositor layout. Then the theme, applied live as you move through the catalogue — `scripts/apply-theme.sh` renders the chosen palette over the stowed stylesheets and reloads the wallpaper, the bar, the borders and the notifications, so the whole room changes under the cursor instead of a setting changing in a file you cannot see. Choosing the default again restores the committed symlinks exactly, which is what keeps the theme-drift gate meaningful.
 
 Then the tour, which waits for you to actually press the binding and notices when you do, instead of listing it. It calls the modifier **Windows**, because that is what is printed on the key. It covers opening a window and closing it, moving between the ten desktops and carrying a window to another one, the F1–F5 help panels and the Escape that dismisses them, what each side of the bar is for and where your IP address is, the volume, and `pacman` in both directions — installing Chromium and then removing it with `-Rns`, because installing is easy to try and undoing it is the part that actually teaches the package manager.
 

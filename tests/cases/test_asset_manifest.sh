@@ -14,7 +14,8 @@ trap 'rm -rf -- "$sandbox"' EXIT
 # A minimal tree with one real asset is enough: the gate's three failure modes
 # are independent of how many assets are listed.
 mkdir -p -- "$sandbox/assets"
-cp -- "$repo_root/assets/desktop-preview.svg" "$sandbox/assets/desktop-preview.svg"
+fixture="$repo_root/assets/screenshots/verdigris-night.png"
+cp -- "$fixture" "$sandbox/assets/fixture.png"
 manifest="$sandbox/manifest.tsv"
 
 run_gate() {
@@ -38,7 +39,7 @@ rm -- "$sandbox/assets/stray.png"
 run_gate >/dev/null || fail 'scenario 1: gate must pass again once the stray file is gone'
 
 # Scenario 2 — a listed asset's bytes changed.
-printf '<!-- tampered -->\n' >>"$sandbox/assets/desktop-preview.svg"
+printf 'tampered\n' >>"$sandbox/assets/fixture.png"
 if run_gate >/dev/null 2>&1; then
 	fail 'scenario 2: gate accepted a tampered asset'
 fi
@@ -46,7 +47,7 @@ run_gate --update >/dev/null
 run_gate >/dev/null || fail 'scenario 2: regenerating the manifest must restore the green state'
 
 # Scenario 3 — a listed asset disappeared from the tree.
-rm -- "$sandbox/assets/desktop-preview.svg"
+rm -- "$sandbox/assets/fixture.png"
 if run_gate >/dev/null 2>&1; then
 	fail 'scenario 3: gate accepted a manifest entry with no file behind it'
 fi
