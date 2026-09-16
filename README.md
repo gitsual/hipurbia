@@ -179,13 +179,25 @@ disagree. Switching palette re-renders over the stowed symlinks live, and choosi
 again restores those symlinks byte for byte. Every colour must also exist in
 `data/palette-corpus.tsv`: a colour with no cause is slop.
 
-The terminal is part of that, not an exception to it.
+The terminal and the editor are part of that, not exceptions to it.
 `templates/kitty/.config/kitty/kitty.conf.in` carries `TERMINAL_FG` and `TERMINAL_BG` like every
 other themed file, and the terminals already open re-read it on `SIGUSR1` — the signal kitty
 sends itself — so the palette lands in the window you are looking at instead of the next one you
 open. Deploying does not undo any of this: `deploy.sh` restows the committed defaults and then
 reapplies the theme named in `~/.config/hipurbia/settings`, because restowing the default render
 over a live overlay used to undress the desktop.
+
+The editor was the last surface that ignored the theme, and it showed: eight captures of eight
+palettes with the same blue Neovim in the middle of each. NvChad ships a catalogue of base46
+themes and picking the nearest one would have been a resemblance, not a derivation — its hexes
+exist in no corpus here. So the theme is generated:
+`templates/nvim/.config/nvim/lua/themes/hipurbia.lua.in` maps base46's thirty names and sixteen
+bases onto palette tokens, several names sharing one token on purpose, because a palette carries
+one colour per meaning rather than one per name base46 happens to use. The editor sits on
+`TERMINAL_BG` rather than `COLOR_BG`: it lives inside the terminal, and the warm chrome is for
+borders and bars, not for text read for hours. `scripts/test-neovim.sh` starts a real editor and
+asks it what colour it painted `Normal` on, because a theme that fails to resolve falls back
+quietly instead of shouting.
 
 ### The wallpaper and the logo are rendered too
 
