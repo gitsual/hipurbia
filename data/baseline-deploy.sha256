@@ -17,7 +17,7 @@ af1bc3ab6d57ffe3680bf863df466968ed583d03ee683d40edb4e4b229835ed3  dotfiles/hypr/
 163f61548eb88b3eb707121db7f12583ef7ee5e0a832f2c894c1000320c69cd6  dotfiles/hypr/.config/hypr/hyprpaper.conf
 388eeabf98a758911f2f80e75c8dade63bff3d1e33e2e59c6fcee8f7232377b6  dotfiles/hypr/.config/hypr/scripts/help-pane.sh
 584b11b7333d31a8b07c2ea778646c772c8f74f8d6c5bd5660ab86073fcf6bbc  dotfiles/hypr/.config/hypr/scripts/screenshot.sh
-11a7e1ee987f7cb673270bd45ff34e29398821ba3662ad0fe409ea4a6fc67936  dotfiles/hypr/.config/hypr/scripts/wallpaper.sh
+638ca23a6da32c7a55c2fc7ac99c94850446ae4615a44302c843446cc775f189  dotfiles/hypr/.config/hypr/scripts/wallpaper.sh
 17add001d26a2437abc21ac2a90c9b716fa7d52b4d4a69c2bd18f7041b96b91b  dotfiles/hypr/.local/share/wallpapers/warm-night.png
 d8f156ea6199d20c27a00a6840b0b385e28437dd6e65be9e1143a42ed8128957  dotfiles/hypr/.local/share/wallpapers/warm-night.svg
 da2bd4e135e304b68ce0d70d074eba9afc476a17c77d5e1c34806735421066bb  dotfiles/kitty/.config/kitty/kitty.conf

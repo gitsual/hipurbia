@@ -102,3 +102,86 @@ grep -Fq 'etc/greetd' "$sandbox/.state/hipurbia/theme-overlay" 2>/dev/null &&
 	fail 'the overlay reaches outside the home directory'
 
 printf 'apply-theme: %d palette-dependent files overlaid and restored exactly\n' "${#before[@]}"
+
+# --------------------------------------------------------------- the swap
+#
+# Everything above proves the overlay lands and is restored. These pin HOW it
+# is written, because both of the ways it used to be written were invisible to
+# a test that only looks at the result.
+
+# The config must never stop existing, not even between two syscalls. It used
+# to: the restore did `rm -f` then `ln -s`, and a reload landing in that gap
+# made Hyprland write its own stub config over the path -- a session with 6
+# binds instead of 55, which draws normally and answers no key. The stub then
+# made the `ln -s` fail with EEXIST, killing the script under `set -e` and
+# leaving the overlay half undone.
+# Removing a target with nothing to restore is fine; removing it in order to
+# put something back in its place is the bug. Only the second is flagged.
+awk '/rm -f -- "\$target"/ { window = 2; next }
+     window && (/ln -s -- "\$link" "\$target"/ || /mv -- "\$scratch" "\$target"/) { found = 1 }
+     window { window-- }
+     END { exit(found ? 0 : 1) }' "$apply" &&
+	fail 'apply-theme.sh unlinks a target before recreating it; rename over it instead'
+grep -Fq 'mv -T --' "$apply" ||
+	fail 'apply-theme.sh no longer swaps files with an atomic rename'
+
+# The scratch file has to be a sibling of its target. `mktemp` with no argument
+# lands in $TMPDIR, and /tmp is tmpfs while $HOME is not, so the mv crossed a
+# filesystem and became a byte-by-byte copy -- a window holding a half-written
+# config for anything that reloads.
+# shellcheck disable=SC2016  # $TMPDIR names the variable, it is not expanded
+grep -Eq 'mktemp\)"' "$apply" &&
+	fail 'apply-theme.sh renders into $TMPDIR; the mv there is a copy, not a rename'
+
+# The wallpaper is half of what choosing a theme is FOR, and it was dead from
+# the first commit: apply-theme.sh gated it on the script being executable
+# while committing that script 644, so the block never ran anywhere. Both call
+# sites invoke it through `bash`, so the bit is not what the guard should ask
+# about -- but the bit is also the odd one out among its siblings, so pin both.
+wallpaper='dotfiles/hypr/.config/hypr/scripts/wallpaper.sh'
+[[ -x "$repo_root/$wallpaper" ]] ||
+	fail "$wallpaper is not executable; every sibling script in the repo is"
+if git -C "$repo_root" rev-parse --git-dir >/dev/null 2>&1; then
+	mode="$(git -C "$repo_root" ls-files -s -- "$wallpaper" | cut -d' ' -f1)"
+	[[ "$mode" == 100755 ]] ||
+		fail "$wallpaper is committed $mode; a lost execute bit used to disable the wallpaper silently"
+fi
+# shellcheck disable=SC2016  # the pattern is literal shell source to search for
+grep -Fq '[[ -x "$HOME/.config/hypr/scripts/wallpaper.sh" ]]' "$apply" &&
+	fail 'apply-theme.sh gates the wallpaper on a bit it never uses; test -f'
+
+# Previewing fires one wallpaper.sh per keypress. Unserialised, the desktop
+# ended up wearing whichever instance finished last rather than the theme the
+# user stopped on. The lock alone is not enough: the setting has to be read
+# after it is held, so queued instances converge on what is current now.
+grep -Fq 'flock 9' "$repo_root/$wallpaper" ||
+	fail 'wallpaper.sh does not serialise the swap; concurrent previews race'
+lock_line="$(grep -n 'flock 9' "$repo_root/$wallpaper" | head -1 | cut -d: -f1)"
+# shellcheck disable=SC2016  # the pattern is literal shell source to search for
+theme_line="$(grep -n '^\[\[ -f "\$settings" \]\]' "$repo_root/$wallpaper" | head -1 | cut -d: -f1)"
+((lock_line < theme_line)) ||
+	fail 'wallpaper.sh reads the theme before taking the lock; queued instances will apply a stale one'
+
+# A reload talks to another process, and a wedged one never answers. Previews
+# run synchronously from the wizard, so an unbounded call there stops the
+# keyboard loop for the life of the session -- a frozen desktop reached by a
+# second road. Anything that waits on another process has to be bounded.
+grep -Eq '^[[:space:]]*(hyprctl|dunstctl) ' "$apply" &&
+	fail 'apply-theme.sh waits on another process with no timeout'
+
+# The terminal is part of the palette, and an open one must not keep the
+# previous theme's ground until it is closed. kitty re-reads its config on
+# SIGUSR1; that is the signal kitty's own reload_conf_in_all_kitties sends.
+grep -Fq 'pkill -SIGUSR1 -x kitty' "$apply" ||
+	fail 'open terminals keep the previous theme until they are relaunched'
+kitty_template="$repo_root/templates/kitty/.config/kitty/kitty.conf.in"
+for token in TERMINAL_FG TERMINAL_BG; do
+	grep -Fq "@$token" "$kitty_template" ||
+		fail "the terminal does not take $token from the palette"
+	while IFS= read -r palette; do
+		grep -Eq "^$token=" "$palette" ||
+			fail "$(basename "$palette") names no $token, so its terminal borrows another theme's"
+	done < <(find "$repo_root/data/themes" -type f -name '*.conf'; printf '%s\n' "$repo_root/data/theme.conf")
+done
+
+printf 'apply-theme: swap is atomic, wallpaper reachable, reloads bounded, terminal themed\n'

@@ -20,8 +20,10 @@ set -Eeuo pipefail
 #   --no-reload    render only; do not tell anything to re-read its config
 #
 # What the caller sees change: the wallpaper, the bar, the window borders, the
-# notifications, the launcher. Programs that read their colours once at start
-# (kitty, hyprlock, nwg-bar) pick it up the next time they run.
+# notifications, the launcher, and the terminal -- open windows included, since
+# kitty re-reads its config on SIGUSR1 (which is how kitty's own
+# reload_conf_in_all_kitties does it). The two that still wait for their next
+# launch are hyprlock and nwg-bar, neither of which is on screen to reload.
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 # shellcheck source=lib/kv.sh
@@ -103,8 +105,18 @@ theme_file="$(theme_file_for "$theme")"
 if [[ -f "$manifest" ]]; then
 	while IFS=$'\t' read -r target link; do
 		[[ -n "$target" ]] || continue
-		rm -f -- "$target"
-		[[ -n "$link" ]] && ln -s -- "$link" "$target"
+		if [[ -n "$link" ]]; then
+			# Never leave the path empty, not even for a microsecond: a
+			# reload that lands in that window makes Hyprland write its own
+			# stub config over it, which costs the session 49 of its 55
+			# binds and makes the ln below fail with EEXIST. Build the new
+			# symlink beside the target and rename it into place.
+			scratch_link="$(mktemp -u -- "$target.XXXXXX")"
+			ln -s -- "$link" "$scratch_link"
+			mv -T -- "$scratch_link" "$target"
+		else
+			rm -f -- "$target"
+		fi
 	done <"$manifest"
 	rm -f -- "$manifest"
 fi
@@ -128,14 +140,16 @@ if [[ "$theme" != "$default_theme" ]]; then
 		link=''
 		[[ -L "$target" ]] && link="$(readlink -- "$target")"
 		mkdir -p -- "$(dirname -- "$target")"
-		scratch="$(mktemp)"
+		# Render beside the target, never in $TMPDIR: /tmp is tmpfs and $HOME
+		# is not, so a scratch file there makes the mv below a copy rather
+		# than a rename(2), exposing a half-written config to any reload.
+		scratch="$(mktemp -- "$target.XXXXXX")"
 		render_file "$template" "$scratch" || {
 			rm -f -- "$scratch"
 			printf 'apply-theme: %s did not render\n' "$relative" >&2
 			exit 1
 		}
-		rm -f -- "$target"
-		mv -- "$scratch" "$target"
+		mv -T -- "$scratch" "$target"
 		printf '%s\t%s\n' "$target" "$link" >>"$manifest"
 		written=$((written + 1))
 	done < <(find "$templates_dir" -type f -name '*.in' | LC_ALL=C sort)
@@ -150,14 +164,32 @@ fi
 if $reload; then
 	# The wallpaper is the largest thing on screen and the slowest to draw, so
 	# it starts first and catches up while the rest reloads.
-	if [[ -x "$HOME/.config/hypr/scripts/wallpaper.sh" ]]; then
-		pkill -x swaybg >/dev/null 2>&1 || true
+	#
+	# Tested with -f, not -x: both call sites run it through `bash` (here and
+	# hyprland.conf's `exec-once = bash $scripts/wallpaper.sh`), so the execute
+	# bit is a permission neither one needs. Guarding on -x meant that a file
+	# committed 644 -- which this one was -- silently disabled the wallpaper
+	# half of every theme switch, on every machine, with nothing reported.
+	#
+	# Killing the old swaybg belongs to wallpaper.sh, which does it holding the
+	# lock that serialises the swap; doing it out here raced that lock.
+	if [[ -f "$HOME/.config/hypr/scripts/wallpaper.sh" ]]; then
 		setsid bash "$HOME/.config/hypr/scripts/wallpaper.sh" >/dev/null 2>&1 &
 	fi
-	hyprctl reload >/dev/null 2>&1 || true
+	# Every reload below talks to another process, and a compositor whose IPC
+	# has wedged never answers: an unbounded `hyprctl reload` leaves this
+	# script blocked for the life of the session. hipurbia-welcome previews
+	# synchronously, so that block reaches the keyboard loop and the desktop
+	# stops answering keys -- the same symptom this script already caused once
+	# by other means. Bound anything that waits on another process.
+	timeout 5 hyprctl reload >/dev/null 2>&1 || true
 	# SIGUSR2 makes Waybar re-read both its config and its stylesheet.
 	pkill -SIGUSR2 -x waybar >/dev/null 2>&1 || true
-	dunstctl reload >/dev/null 2>&1 || true
+	# ...and SIGUSR1 makes kitty re-read its own, so the terminals already open
+	# take the new ground and text instead of keeping the previous theme's
+	# until they are closed. This is the signal kitty sends itself.
+	pkill -SIGUSR1 -x kitty >/dev/null 2>&1 || true
+	timeout 5 dunstctl reload >/dev/null 2>&1 || true
 fi
 
 printf 'theme: %s applied (%d overlay files)\n' "$theme" "$written"
