@@ -29,15 +29,15 @@ declare -A facts=(
 	[chassis]='laptop'
 	[virt]='none'
 	[has_battery]='yes'
-	[hostname]='lorty-workstation'
+	[hostname]='redacted-hostname'
 	[serial_number]='redacted-serial'
 	# Deliberately not a syntactically valid MAC: the point of the case is the
 	# KEY being refused, and a real-looking address would trip the repository's
 	# own privacy scanner — which is exactly the leak this allowlist prevents.
 	[mac_address]='redacted-link-layer-address'
 	[pci_bus_address]='0000:01:00.0'
-	[username]='lorty'
-	[edid]='SyncMaster'
+	[username]='redacted-username'
+	[edid]='redacted-display-id'
 )
 
 emitted="$sandbox/facts"
