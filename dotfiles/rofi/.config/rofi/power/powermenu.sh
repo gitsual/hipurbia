@@ -20,7 +20,10 @@ language="${language%%[._@]*}"
 i18n_load "$language" "${I18N_DIR:-$repo_root/i18n}" 2>/dev/null ||
 	i18n_load en "${I18N_DIR:-$repo_root/i18n}"
 
-icons="$HOME/.config/nwg-bar/icons"
+# The drawings, and the rasterizing, come from the graphical menu: librsvg no
+# longer ships a gdk-pixbuf loader, so rofi cannot open an .svg either, and one
+# rasterizer is better than two.
+icons="$("$HOME/.local/bin/hipurbia-power" --icons)"
 keys=(power.lock power.suspend power.logout power.reboot power.poweroff)
 files=(lock suspend log-out reboot power-off)
 commands=(hyprlock 'systemctl suspend' 'hyprctl dispatch exit' 'systemctl reboot' 'systemctl poweroff')
@@ -30,7 +33,7 @@ commands=(hyprlock 'systemctl suspend' 'hyprctl dispatch exit' 'systemctl reboot
 menu() {
 	local index
 	for index in "${!keys[@]}"; do
-		printf '%s\0icon\x1f%s/%s.svg\n' "$(i18n_get "${keys[$index]}")" "$icons" "${files[$index]}"
+		printf '%s\0icon\x1f%s/%s.png\n' "$(i18n_get "${keys[$index]}")" "$icons" "${files[$index]}"
 	done
 }
 
