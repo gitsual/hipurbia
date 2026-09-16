@@ -44,9 +44,9 @@ f9522fbc197ec8a3fbc9c197bfeeb839f1a5e8307f8b5718f9db53c641a3686d  dotfiles/ricer
 4c02a7e36c8884fd36380eed7dad622c7d5e6bfd7237fb70ff6f08884d1dfe8d  dotfiles/ricer/.config/nwg-bar/icons/reboot.svg
 f83792888aaa59994790ed530bb7dafcda08e3a0f3f97774839c8a3faf4dec86  dotfiles/ricer/.config/nwg-bar/icons/suspend.svg
 1b3319a09bc512d6a75e054c92845a14b089044bdce874672b8eb5e7d49c8f12  dotfiles/ricer/.config/nwg-bar/style.css
-6d51962ceca0ef7119ff1aaa28fa0f3f5279e01fe253a550066e22dd32c0e7f8  dotfiles/ricer/.local/bin/hipurbia-power
+467e56c6db1bac5d7897d69b838bf86fe0650093fcf468cf8ade5bca668f865a  dotfiles/ricer/.local/bin/hipurbia-power
 f8460c016f366d6284d40e9be371e5bfdc3f0c11ec8e37ccaf09397066eedb81  dotfiles/rofi/.config/rofi/config.rasi
-eb3c932c20e5abd28ccdb560c8949bcd7beb63865f6785243f5c991b461b1e8a  dotfiles/rofi/.config/rofi/power/powermenu.sh
+6c14428ad8eab6fc742875b992330b530a3e9002ef19cbd24a43de3f59129269  dotfiles/rofi/.config/rofi/power/powermenu.sh
 7052c1d2e4c778acbbcdafd72a91e444481be1ffef37c1e988281366081cc521  dotfiles/rofi/.config/rofi/themes/warm-night.rasi
 b6859c9e44bd1c1c8c294c047f76ff4be949518764269cd7ba07dbfda7e56e9d  dotfiles/security/.config/systemd/user/clamav-home-scan.service
 a7f6d6e31fa8111b724b1b06d46311866ea490845b7377797fca481072550e6d  dotfiles/security/.config/systemd/user/clamav-home-scan.timer

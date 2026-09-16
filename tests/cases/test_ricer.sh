@@ -55,13 +55,29 @@ for icon in lock suspend log-out reboot power-off; do
 	grep -Fq "$icon" "$generator" || fail "the generated menu never shows the $icon icon"
 done
 
+# ...and the menu hands GTK a raster, not the SVG. librsvg stopped shipping a
+# gdk-pixbuf loader, so a GTK program given an .svg path reports that it cannot
+# recognise the image format, which is what nwg-bar did for all five.
+grep -Fq 'rsvg-convert' "$generator" || fail 'the power menu never rasterizes its icons'
+grep -Fq '.svg"}' "$generator" && fail 'the power menu hands GTK an SVG path, which gdk-pixbuf cannot open'
+grep -Fq 'hipurbia-power" --icons' "$rofi_menu" ||
+	fail 'the keyboard menu rasterizes its own icons instead of sharing one rasterizer'
+
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-power.XXXXXX")"
+trap 'rm -rf -- "$sandbox"' EXIT
+HIPURBIA_REPO="$repo_root" HOME="$repo_root/dotfiles/ricer" XDG_RUNTIME_DIR="$sandbox" \
+	"$generator" --icons >/dev/null || fail 'the power menu cannot rasterize its icons'
+for icon in lock suspend log-out reboot power-off; do
+	[[ -s "$sandbox/hipurbia/icons/$icon.png" ]] || fail "rasterizing produced no $icon.png"
+done
+
 labels="$(HIPURBIA_REPO="$repo_root" HOME="$repo_root" "$generator" --lang es --print)"
 python3 -c '
 import json, sys
 bar = json.loads(sys.stdin.read())
 assert len(bar) == 5, bar
 assert all(b["exec"] for b in bar), bar
-assert all(b["icon"].endswith(".svg") for b in bar), bar
+assert all(b["icon"].endswith(".png") for b in bar), bar
 assert not any(b["label"].startswith("[") for b in bar), bar
 ' <<<"$labels" || fail 'the generated power menu is not five working entries in Spanish'
 
