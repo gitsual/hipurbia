@@ -1,4 +1,8 @@
 # path	sha256	type	dimensions
+assets/logo-mark.png	869f852b8cf354e0ea447cc3dacb2802c2b2ebe04235455ca16011f51057fc4d	image/png	512x512
+assets/logo-mark.svg	821ce53a2b99528ee98bd69b17ba4e162d99bce257d613ddeba64315f8a584c0	image/svg+xml	256x256
+assets/logo.png	b6d9e32aa6930a04c4aab2d561b78a9f1b87fec45f12616bc72d0d037e497f27	image/png	2400x640
+assets/logo.svg	500b1a0c8c3d032f7c2ddf7ef60ca829c2b21d616592c58d8d5312e860306029	image/svg+xml	1200x320
 assets/screenshots/cold-slate.png	39f73cc1c782ea4c7874408f0da99796485b8233447245898d15cc1bb944d64c	image/png	1920x1080
 assets/screenshots/ember-forge.png	7649662a6ec5f0936dd4c9da44dde5368f81589a979a1ddb57b4916105e9d1ba	image/png	1920x1080
 assets/screenshots/emerald-night.png	3534c77d50a0910cf3867c5657163d7c1e6d458c7c9ae0d58bd9fbbc80fa430e	image/png	1920x1080
@@ -17,6 +21,8 @@ dotfiles/ricer/.config/nwg-bar/icons/log-out.svg	5c374f86a7aa6d55e472809d8401d7e
 dotfiles/ricer/.config/nwg-bar/icons/power-off.svg	f9522fbc197ec8a3fbc9c197bfeeb839f1a5e8307f8b5718f9db53c641a3686d	image/svg+xml	24x24
 dotfiles/ricer/.config/nwg-bar/icons/reboot.svg	4c02a7e36c8884fd36380eed7dad622c7d5e6bfd7237fb70ff6f08884d1dfe8d	image/svg+xml	24x24
 dotfiles/ricer/.config/nwg-bar/icons/suspend.svg	f83792888aaa59994790ed530bb7dafcda08e3a0f3f97774839c8a3faf4dec86	image/svg+xml	24x24
+templates/brand/logo-mark.svg.in	048f086e11d5f1f75b00c7c87f15e643040364ce4c0ce7a76ae85ee8078c2c1b	image/svg+xml	256x256
+templates/brand/logo.svg.in	a7e489400d1921cb70b9c1e0467e1947cce804ce346cf128ef852be6e1437c10	image/svg+xml	1200x320
 templates/ricer/.config/nwg-bar/icons/lock.svg.in	50e61b5206166766044d87e43173bcf3afe8b11053c6482cbf0ae7d5f9403851	image/svg+xml	24x24
 templates/ricer/.config/nwg-bar/icons/log-out.svg.in	4641734efc38ce1ed4e5a449c2065fecaea5a9f24542ab0dba1f8a1204088c0a	image/svg+xml	24x24
 templates/ricer/.config/nwg-bar/icons/power-off.svg.in	8ae898a86e133b15737f304ba44efdb9ee361e38baa8c7a10a2382d4251bede0	image/svg+xml	24x24

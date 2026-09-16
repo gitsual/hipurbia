@@ -1,11 +1,11 @@
-<h1 align="center">hipurbia</h1>
+<div align="center">
 
-<p align="center">
-  <em>An Arch Linux workstation you can rebuild from nothing —<br>
-  where the colour scheme is a build artifact, not a mood.</em>
-</p>
+<img src="assets/logo.png" alt="hipurbia" width="720">
 
-<p align="center">
+<em>An Arch Linux workstation you can rebuild from nothing —<br>
+where the colour scheme is a build artifact, not a mood.</em>
+
+<p>
   <img alt="Arch Linux" src="https://img.shields.io/badge/Arch%20Linux-0E1513?style=for-the-badge&logo=archlinux&logoColor=E8C66A">
   <img alt="Hyprland" src="https://img.shields.io/badge/Hyprland-0E1513?style=for-the-badge&logo=wayland&logoColor=55A185">
   <img alt="8 palettes" src="https://img.shields.io/badge/8%20palettes-one%20source-0E1513?style=for-the-badge&labelColor=0E1513&color=E1777D">
@@ -13,7 +13,9 @@
   <img alt="MIT" src="https://img.shields.io/badge/license-MIT-0E1513?style=for-the-badge&labelColor=0E1513&color=6CA4B1">
 </p>
 
-![hipurbia running Verdigris Night](assets/screenshots/verdigris-night.png)
+</div>
+
+<img src="assets/screenshots/verdigris-night.png" alt="hipurbia running Verdigris Night">
 
 <div align="center">
 
@@ -22,12 +24,14 @@
 **lock** hyprlock + hypridle · **wallpaper** swaybg · **font** JetBrains Mono Nerd Font<br>
 **greeter** ReGreet in a cage kiosk · **colour** `data/theme.conf` → `templates/` → `dotfiles/`
 
-</div>
+<br>
 
-Every image on this page is a real `grim` capture taken inside the QEMU/KVM guest that
-`scripts/test-vm.sh` builds from this tree — same commit, same deploy, no mockups and no
-compositing. The palette swatches in the banner are read from the palette that is on the
-screen at the moment of the shot.
+<sub>Every image on this page is a real <code>grim</code> capture taken inside the QEMU/KVM guest that
+<code>scripts/test-vm.sh</code> builds from this tree — same commit, same deploy, no mockups and no
+compositing. The banner above is rendered from <code>data/themes/verdigris-night.conf</code> by
+<code>scripts/make-logo.sh</code>, so even the logo is a build artifact.</sub>
+
+</div>
 
 ## Eight palettes, one source of colour
 
@@ -48,19 +52,63 @@ you are looking at instead of the next one you open. Deploying does not undo any
 `~/.config/hipurbia/settings`, because restowing the default render over a live overlay used to
 undress the desktop.
 
-| | |
-|:--:|:--:|
-| ![Warm Night](assets/screenshots/warm-night.png)<br>**Warm Night** · Nocturne | ![Cold Slate](assets/screenshots/cold-slate.png)<br>**Cold Slate** · Resistance |
-| ![Verdigris Night](assets/screenshots/verdigris-night.png)<br>**Verdigris Night** · Technique | ![Ember Forge](assets/screenshots/ember-forge.png)<br>**Ember Forge** · Appetite |
-| ![Emerald Night](assets/screenshots/emerald-night.png)<br>**Emerald Night** · Quartz | ![Gilded Dusk](assets/screenshots/gilded-dusk.png)<br>**Gilded Dusk** · Nostalgia |
-| ![Moss and Stone](assets/screenshots/moss-stone.png)<br>**Moss and Stone** · Endurance | ![Wild Bloom](assets/screenshots/wild-bloom.png)<br>**Wild Bloom** · Romance |
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/warm-night.png"><img src="assets/screenshots/warm-night.png" alt="Warm Night"></a><br>
+      <b>Warm Night</b> · <sub>Nocturne</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/cold-slate.png"><img src="assets/screenshots/cold-slate.png" alt="Cold Slate"></a><br>
+      <b>Cold Slate</b> · <sub>Resistance</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/verdigris-night.png"><img src="assets/screenshots/verdigris-night.png" alt="Verdigris Night"></a><br>
+      <b>Verdigris Night</b> · <sub>Technique</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/ember-forge.png"><img src="assets/screenshots/ember-forge.png" alt="Ember Forge"></a><br>
+      <b>Ember Forge</b> · <sub>Appetite</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/emerald-night.png"><img src="assets/screenshots/emerald-night.png" alt="Emerald Night"></a><br>
+      <b>Emerald Night</b> · <sub>Quartz</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/gilded-dusk.png"><img src="assets/screenshots/gilded-dusk.png" alt="Gilded Dusk"></a><br>
+      <b>Gilded Dusk</b> · <sub>Nostalgia</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/moss-stone.png"><img src="assets/screenshots/moss-stone.png" alt="Moss and Stone"></a><br>
+      <b>Moss and Stone</b> · <sub>Endurance</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/wild-bloom.png"><img src="assets/screenshots/wild-bloom.png" alt="Wild Bloom"></a><br>
+      <b>Wild Bloom</b> · <sub>Romance</sub>
+    </td>
+  </tr>
+</table>
 
 ## The surfaces it draws itself
 
-| Power menu | Theme picker | Help pane |
-|:--:|:--:|:--:|
-| ![Power menu](assets/screenshots/overlay-power.png) | ![Theme picker](assets/screenshots/overlay-theme.png) | ![Help pane](assets/screenshots/overlay-help.png) |
-| `Super+Shift+Q` · nwg-bar, entries generated per run in the session language, icons drawn from the palette and rasterized at start | `Super+Shift+T` · the catalogue itself, read from `data/themes/`, never a copy of it | `F1`–`F5` · every bind, described in the session language, from `data/help-registry.tsv` |
+<table>
+  <tr>
+    <td width="33%" align="center"><a href="assets/screenshots/overlay-power.png"><img src="assets/screenshots/overlay-power.png" alt="Power menu"></a></td>
+    <td width="33%" align="center"><a href="assets/screenshots/overlay-theme.png"><img src="assets/screenshots/overlay-theme.png" alt="Theme picker"></a></td>
+    <td width="33%" align="center"><a href="assets/screenshots/overlay-help.png"><img src="assets/screenshots/overlay-help.png" alt="Help pane"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Power menu</b><br><sub><code>Super+Shift+Q</code> · nwg-bar, entries generated per run in the session language, icons drawn from the palette and rasterized at start</sub></td>
+    <td align="center"><b>Theme picker</b><br><sub><code>Super+Shift+T</code> · the catalogue itself, read from <code>data/themes/</code>, never a copy of it</sub></td>
+    <td align="center"><b>Help pane</b><br><sub><code>F1</code>–<code>F5</code> · every bind, described in the session language, from <code>data/help-registry.tsv</code></sub></td>
+  </tr>
+</table>
 
 Nothing in those three is a committed English render. The labels come from `i18n/`, the actions
 never do: a translation can change what a button says and cannot change what it does.
@@ -193,7 +241,7 @@ sudo -v && ./scripts/gpu-setup.sh --apply
 
 A hybrid machine gets both families plus `nvidia-prime`; a DKMS stack gets the headers of every installed kernel; Secure Boot with a DKMS module is warned about, not hidden. `--gpu FAMILY` overrides the detection only for a family the facts also see (or `generic`), and refuses anything else with exit 3. Audio device node names are rendered locally by `scripts/configure-audio.py` and are never committed.
 
-## The wallpaper is rendered too
+## The wallpaper and the logo are rendered too
 
 `scripts/make-wallpaper.sh` draws each wallpaper from `templates/wallpaper/base.svg.in` in the
 theme's own colours, and lays an ornament on top only when the theme has *earned* one. A theme
@@ -205,6 +253,17 @@ background, because the claim is wrong and saying so is the point.
 
 The default Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop
 starts it with `swaybg`, including on virtual GPUs without accelerated rendering.
+
+The banner at the top of this page goes through the same door. `scripts/make-logo.sh` renders
+`templates/brand/logo.svg.in` from a theme file into `assets/logo.svg` and rasterizes it, so the
+wordmark, the swatch row under it and the mark itself are that palette and not a memory of it:
+
+```bash
+./scripts/make-logo.sh --theme moss-stone     # the banner in any palette in the catalogue
+```
+
+The mark is the half-filled circle the status bar already uses for its theme button. The project's
+one symbol is the control that changes everything else, which felt like the honest choice.
 
 ## Optional selectors
 

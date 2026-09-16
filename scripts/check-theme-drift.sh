@@ -10,7 +10,9 @@ set -Eeuo pipefail
 # single committed twin. It is rendered once per theme into dist/, by
 # scripts/make-wallpaper.sh, and tests/cases/test_theme_ornament.sh is what
 # checks those renders resolve. A dotfile has one palette; a wallpaper has as
-# many as the catalogue offers.
+# many as the catalogue offers. templates/brand/ is the same case with one
+# theme chosen for it: scripts/make-logo.sh renders the banner into assets/,
+# and data/asset-manifest.tsv is what pins the bytes that ship.
 #
 # --render writes the renders into the checkout. It is the sanctioned way to
 # regenerate after editing data/theme.conf or a template; its output belongs
@@ -72,7 +74,7 @@ while IFS= read -r template; do
 		diff -u --label 'rendered' "$rendered" --label 'committed' "$target" | head -n 20 >&2 || true
 		status=1
 	fi
-done < <(find "$templates_dir" -path "$templates_dir/wallpaper" -prune -o -type f -name '*.in' -print | LC_ALL=C sort)
+done < <(find "$templates_dir" \( -path "$templates_dir/wallpaper" -o -path "$templates_dir/brand" \) -prune -o -type f -name '*.in' -print | LC_ALL=C sort)
 
 ((count > 0)) || {
 	printf 'no templates found under %s\n' "$templates_dir" >&2
