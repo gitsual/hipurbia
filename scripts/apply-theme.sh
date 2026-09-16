@@ -197,7 +197,17 @@ if $reload; then
 	# already open keep their colours until they are restarted, which is the
 	# one surface here that cannot be told to re-read its config: there is no
 	# signal for it and no server socket to send a command to.
+	#
+	# Rebuilt right away rather than left to the next launch: init.lua reads the
+	# cache unconditionally, so an editor started with the cache missing opens on
+	# an error instead of on the file. The recompile is a headless run of the
+	# call base46 makes when it is first installed.
 	rm -rf -- "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/base46"
+	if command -v nvim >/dev/null 2>&1; then
+		timeout 120 nvim --headless \
+			-c 'lua require("base46").load_all_highlights()' \
+			-c 'qa!' >/dev/null 2>&1 || true
+	fi
 fi
 
 printf 'theme: %s applied (%d overlay files)\n' "$theme" "$written"

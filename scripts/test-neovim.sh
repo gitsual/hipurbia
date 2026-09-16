@@ -81,10 +81,18 @@ theme_bg="$(sed -nE 's/^TERMINAL_BG=(.*)$/\1/p' "$repo_root/data/theme.conf")"
 	printf 'the palette carries no TERMINAL_BG to check the editor against\n' >&2
 	exit 1
 }
+# The answer goes to its own file rather than to stdout: a headless run still
+# prints plugin chatter (treesitter announcing a download, for one), and that
+# noise arrives glued to the hex.
+probe="$sandbox/normal-bg.txt"
 run_nvim \
-	-c 'lua local hl = vim.api.nvim_get_hl(0, { name = "Normal" }); assert(hl.bg, "Normal has no background: no theme was applied"); io.write(string.format("%06X", hl.bg))' \
+	-c "lua local hl = vim.api.nvim_get_hl(0, { name = 'Normal' }); assert(hl.bg, 'Normal has no background: no theme was applied'); local out = assert(io.open('$probe', 'w')); out:write(string.format('%06X', hl.bg)); out:close()" \
 	-c 'qa!' >"$sandbox/normal-bg.log" 2>&1
-painted="$(tr -d '[:space:]' <"$sandbox/normal-bg.log")"
+[[ -s "$probe" ]] || {
+	printf 'the editor never reported a Normal background:\n%s\n' "$(tail -5 "$sandbox/normal-bg.log")" >&2
+	exit 1
+}
+painted="$(tr -d '[:space:]' <"$probe")"
 [[ "$painted" == "$theme_bg" ]] || {
 	printf 'the editor painted Normal on %s, but the palette says %s\n' "$painted" "$theme_bg" >&2
 	exit 1
