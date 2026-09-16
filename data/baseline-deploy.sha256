@@ -27,7 +27,7 @@ ba2874b1aaff006e2fb1a45ef743f8f9071c6cba273e3d3e67fb8381fb309123  dotfiles/nvim/
 dc7ee80c2a901b39955810148d8e4e3b430b5168add5fa0bcbeed6ac86f3da79  dotfiles/nvim/.config/nvim/lua/chadrc.lua
 35fe734cc409202bf3254cb726fd9abcc09c0a7dfc42676b99d80056a1cdd6c8  dotfiles/nvim/.config/nvim/lua/configs/conform.lua
 44d9f844aa46fbfd1357f8fed00180eafbca9a87beed499fcfd5a19c75ffe8c4  dotfiles/nvim/.config/nvim/lua/configs/lazy.lua
-3b9813f1c185ff4acf1dc6129aa86a1992c4503d0de4f6e6fcda57b9b8a72750  dotfiles/nvim/.config/nvim/lua/configs/lspconfig.lua
+e6d68f9187b3d36b69e35e46fcc14c306db0b474d2f1b9df95fd27f796817035  dotfiles/nvim/.config/nvim/lua/configs/lspconfig.lua
 9a2057839d52ae5e9bda14eba75691c3383e60c3aa6426fb669e514592ddbaf4  dotfiles/nvim/.config/nvim/lua/configs/spectre.lua
 960335166abf109c5908ba78ad69b7a091128b8110fdb498a1c5887a7f957caf  dotfiles/nvim/.config/nvim/lua/custom/clipboard.lua
 8413cf1a53f0d901f36d19655f1cd6e73dfc3effe0910d77c7b993a3ae6f9ccc  dotfiles/nvim/.config/nvim/lua/custom/configs/ai_agents.lua

@@ -83,6 +83,11 @@ ssh "${ssh_opts[@]}" "hipurbia@$host_address" "CONSOLE_KEYMAP='$console_keymap' 
 set -Eeuo pipefail
 sudo mkdir -p /mnt/hipurbia
 mountpoint -q /mnt/hipurbia || sudo mount -L HIPURBIA -o ro /mnt/hipurbia
+# Extract into an empty directory, never over the previous one: tar restores
+# what the disc carries but removes nothing, so a file deleted in the tree
+# survived in the guest -- and the gates, which check the tree rather than the
+# disc, then failed over an asset that no longer exists here.
+rm -rf -- "$HOME/hipurbia"
 mkdir -p "$HOME/hipurbia"
 tar -xzf /mnt/hipurbia/repository.tar.gz -C "$HOME/hipurbia"
 cd "$HOME/hipurbia"

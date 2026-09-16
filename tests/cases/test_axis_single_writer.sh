@@ -13,10 +13,14 @@ fail() {
 	exit 1
 }
 
+# capture-desktop.sh is excluded for the same reason as the rest: it does not
+# deploy anything. It exports a language into the throwaway pane scripts it
+# runs inside the VM, so the desktop on the README is in English whatever the
+# session locale is -- a process environment, not a system axis.
 writers() {
 	find scripts lib render templates dotfiles system -type f \
 		! -name 'test-*.sh' ! -name 'open-tested-vm.sh' ! -name 'vm-*.sh' \
-		! -name 'seal-vm-image.sh' -print0 |
+		! -name 'seal-vm-image.sh' ! -name 'capture-desktop.sh' -print0 |
 		xargs -0 grep -lE -- "$1" | LC_ALL=C sort || true
 }
 
@@ -40,7 +44,7 @@ found="$(writers '(^|[^A-Z_])LANG=' | LC_ALL=C sort | tr '\n' ' ')"
 
 # Verification, interactive and sealing scripts may read an axis, and may ask
 # apply-system.sh to set one, but may never write it themselves.
-if grep -lE 'localectl set-|locale-gen|tee .*(locale|vconsole)' scripts/test-*.sh scripts/open-tested-vm.sh scripts/vm-*.sh scripts/seal-vm-image.sh 2>/dev/null | grep .; then
+if grep -lE 'localectl set-|locale-gen|tee .*(locale|vconsole)' scripts/test-*.sh scripts/open-tested-vm.sh scripts/vm-*.sh scripts/seal-vm-image.sh scripts/capture-desktop.sh 2>/dev/null | grep .; then
 	fail 'a verification script writes a language axis'
 fi
 

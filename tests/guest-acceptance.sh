@@ -66,7 +66,13 @@ for executable in hypridle nwg-bar cliphist swappy wf-recorder nwg-look qt6ct; d
   command -v "$executable" >/dev/null
 done
 test -L "$HOME/.config/hypr/hypridle.conf"
-test -L "$HOME/.config/nwg-bar/bar.json"
+# The power menu's own definition is not a stowed file: the labels follow the
+# session language, which changes without a redeploy, so the JSON is generated
+# into the runtime directory at each launch. What is stowed is the stylesheet
+# and the icons the buttons draw.
+test -L "$HOME/.config/nwg-bar/style.css"
+test -L "$HOME/.config/nwg-bar/icons/power-off.svg"
+"$HOME/.local/bin/hipurbia-power" --print | python -c 'import json,sys; assert len(json.load(sys.stdin)) == 5'
 grep -Fxq 'exec-once = hypridle' "$HOME/.config/hypr/hyprland.conf"
 # The workspace strip and the help panes work through the stowed scripts
 # with no session behind them: ten numbers, and every registered key.
