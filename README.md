@@ -112,7 +112,7 @@ undress the desktop.
     </td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Gilded Dusk</b> · <sub>Nostalgia · <code>data/themes/gilded-dusk.conf</code> · filigree</sub></td>
+    <td colspan="2" align="center"><b>Gilded Dusk</b> · <sub>Nostalgia · <code>data/themes/gilded-dusk.conf</code> · no ornament</sub></td>
   </tr>
   <tr>
     <td width="50%" align="center">
