@@ -12,7 +12,7 @@ d41c8a7443dca0a4871539a652020666549f453c6d6c10f10e49661e132d687b  dotfiles/audio
 153439fa8e31f1565fadb2fe4b5bf5bd33a064619e2354bfe2c6c720d459b3cc  dotfiles/automation/.local/bin/workstation-task-runner
 0f37a2c826a582041b95bbc4d7391cd306512556875c3c4b93bbff15cf5e9f79  dotfiles/dunst/.config/dunst/dunstrc
 88b2f14bf2cc2f9077fdb92ddfa2a554a7bb14f03c2e76ab7f7270dfd6347582  dotfiles/hypr/.config/hypr/hypridle.conf
-07b1cfb1f82d552edd87a24549800b0a2eb5222be42cb959d43b49a65c92e735  dotfiles/hypr/.config/hypr/hyprland.conf
+a1d7f9646f7e0d25b36743dfeed5146034d5316f09449da6db0ba701a228f579  dotfiles/hypr/.config/hypr/hyprland.conf
 af1bc3ab6d57ffe3680bf863df466968ed583d03ee683d40edb4e4b229835ed3  dotfiles/hypr/.config/hypr/hyprlock.conf
 163f61548eb88b3eb707121db7f12583ef7ee5e0a832f2c894c1000320c69cd6  dotfiles/hypr/.config/hypr/hyprpaper.conf
 388eeabf98a758911f2f80e75c8dade63bff3d1e33e2e59c6fcee8f7232377b6  dotfiles/hypr/.config/hypr/scripts/help-pane.sh
@@ -45,6 +45,7 @@ f9522fbc197ec8a3fbc9c197bfeeb839f1a5e8307f8b5718f9db53c641a3686d  dotfiles/ricer
 f83792888aaa59994790ed530bb7dafcda08e3a0f3f97774839c8a3faf4dec86  dotfiles/ricer/.config/nwg-bar/icons/suspend.svg
 1b3319a09bc512d6a75e054c92845a14b089044bdce874672b8eb5e7d49c8f12  dotfiles/ricer/.config/nwg-bar/style.css
 467e56c6db1bac5d7897d69b838bf86fe0650093fcf468cf8ade5bca668f865a  dotfiles/ricer/.local/bin/hipurbia-power
+6e074f0f2534ca07723f7adf54bf2ec02313ff210b66409ab2eacb5503f35b96  dotfiles/ricer/.local/bin/hipurbia-theme
 f8460c016f366d6284d40e9be371e5bfdc3f0c11ec8e37ccaf09397066eedb81  dotfiles/rofi/.config/rofi/config.rasi
 6c14428ad8eab6fc742875b992330b530a3e9002ef19cbd24a43de3f59129269  dotfiles/rofi/.config/rofi/power/powermenu.sh
 7052c1d2e4c778acbbcdafd72a91e444481be1ffef37c1e988281366081cc521  dotfiles/rofi/.config/rofi/themes/warm-night.rasi
@@ -57,7 +58,7 @@ a7f6d6e31fa8111b724b1b06d46311866ea490845b7377797fca481072550e6d  dotfiles/secur
 7120b38f5a9ec3b00e22fac420218c406c8fddd8c62ff5359a275102a70e303c  dotfiles/theme/.config/kdeglobals
 ac81224fc768b751e3c5ac3b10ff1c8ef6c6f8b00ab7fd075b40d9dfbc9417ec  dotfiles/waybar/.config/waybar/scripts/ws-refresh.sh
 ff8a9bc3e5ea8b4f7bed7d58b31552511db9b438b67740c233032a1b81efe63c  dotfiles/waybar/.config/waybar/scripts/ws-render.sh
-39a8549338ce6898b862da2895faae0188e419985d0e4590feb6d2f1af0466e5  dotfiles/waybar/.config/waybar/style.css
+005bfa1905df80b44b6cb6ed2d9ff5b0fb55edfa13688b095403164356f06f53  dotfiles/waybar/.config/waybar/style.css
 d92b7d39cd2f0ded3acd33a61edf70a3d9d9fdef9f95c4929cf9bf4d483abc31  dotfiles/waybar/.config/waybar/workspace-icons.json
-e7eb5adddc9a7de14ebaac7b228939fe653243d72b7b6feeb94ca596073bbe13  dotfiles/welcome/.local/bin/hipurbia-welcome
+2a479f6b3ed0a1be17fb61e6c32723a2ee0c5aa21d9920ee69ef4171549e883e  dotfiles/welcome/.local/bin/hipurbia-welcome
 16e0f8c1f5ed428ec0c8da4e8775f7c3ae967171ab62f337dc365c076514a411  dotfiles/wofi/.config/wofi/style.css

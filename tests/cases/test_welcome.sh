@@ -33,6 +33,21 @@ output="$(HOME="$sandbox" XDG_STATE_HOME="$sandbox/state" HIPURBIA_REPO="$repo_r
 	"$wizard" --first-run 2>&1)" || fail "--first-run failed with a marker present: $output"
 [[ -z "$output" ]] || fail "--first-run spoke when it should have stayed silent: $output"
 
+# The language is asked first and applied before anything else is drawn: every
+# screen after it comes out of the table it selects, so asking later would mean
+# running most of the tour in a language the reader may not have.
+grep -Fq 'step_language >/dev/null' "$wizard" || fail 'the wizard never asks which language to speak'
+sed -n '/^step_language()/,/^}/p' "$wizard" | grep -Fq 'setting_write locale' ||
+	fail 'the language step changes nothing the system will read'
+sed -n '/^step_language()/,/^}/p' "$wizard" | grep -Fq 'i18n_load' ||
+	fail 'the wizard keeps speaking the old language after the answer'
+language_line="$(grep -n 'step_language >/dev/null' "$wizard" | head -1 | cut -d: -f1)"
+layout_line="$(grep -n 'step_layout >/dev/null' "$wizard" | head -1 | cut -d: -f1)"
+((language_line < layout_line)) || fail 'the wizard asks the language after it has already spoken'
+while IFS= read -r locale; do
+	settings_valid locale "$locale" || fail "the wizard offers locale=$locale, which settings refuse"
+done < <(sed -nE 's/^declare -A locales=\((.*)\)$/\1/p' "$wizard" | tr ' ' '\n' | sed -E 's/^\[[a-z]+\]=//' | grep .)
+
 # Every keyboard it offers has to survive the settings validator, on both axes
 # it writes. An entry that cannot be saved is a dead end dressed as a choice.
 mapfile -t offered < <(sed -nE 's/^layouts=\((.*)\)$/\1/p' "$wizard" | tr ' ' '\n' | grep .)

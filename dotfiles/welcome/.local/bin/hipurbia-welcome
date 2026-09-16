@@ -21,6 +21,7 @@ state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia"
 marker="$state_dir/welcome-done"
 settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings"
 preview_log="$state_dir/theme-preview.log"
+locale_log="$state_dir/locale.log"
 preview_note=''
 
 if [[ "${1:-}" == --first-run ]]; then
@@ -203,6 +204,20 @@ declare -A labels=(
 )
 layouts=(es us gb fr de it pt latam)
 
+# One entry per translation table that exists, named in its own language: a
+# list of languages written in a language you do not read is a list you cannot
+# use. The locale is what the system is told; the two-letter prefix is what
+# picks the table.
+declare -A locales=([en]=en_US.UTF-8 [es]=es_ES.UTF-8)
+languages=()
+while IFS= read -r table; do
+	name="$(basename -- "$table" .conf)"
+	[[ -v locales["$name"] ]] || continue
+	languages+=("$name")
+done < <(find "$repo/i18n" -name '*.conf' -type f | LC_ALL=C sort)
+labels[en]='English'
+labels[es]='Español'
+
 themes=(warm-night)
 while IFS= read -r file; do themes+=("$(basename -- "$file" .conf)"); done \
 	< <(find "$repo/data/themes" -name '*.conf' -type f | LC_ALL=C sort)
@@ -237,6 +252,26 @@ theme_preview() {
 }
 
 # --------------------------------------------------------------------- steps
+
+# The language is asked first and applied immediately: every screen after this
+# one is drawn from the table it selects, so asking later would mean conducting
+# most of the tour in a language the reader may not have. Writing
+# /etc/locale.conf needs root, so the failure is reported rather than hidden --
+# the setting is still saved and the rest of the wizard still switches.
+step_language() {
+	local chosen
+	chosen="$(choose "$(t welcome.language.title)" \
+		"$(t welcome.language.subtitle)" \
+		"$(t welcome.language.hint)" '' "${languages[@]}")"
+	setting_write locale "${locales[$chosen]}"
+	mkdir -p -- "$state_dir"
+	if ! (cd "$repo" && ./scripts/apply-system.sh --locale) >"$locale_log" 2>&1; then
+		preview_note="$(t welcome.language.failed "$locale_log")"
+	fi
+	i18n_load "$chosen" "${I18N_DIR:-$repo/i18n}" 2>/dev/null ||
+		i18n_load en "${I18N_DIR:-$repo/i18n}"
+	printf '%s' "$chosen"
+}
 
 step_layout() {
 	local chosen
@@ -452,6 +487,7 @@ trap restore EXIT
 } >/dev/tty
 IFS= read -rsn1 </dev/tty || true
 
+step_language >/dev/null
 step_layout >/dev/null
 step_theme >/dev/null
 step_tour
