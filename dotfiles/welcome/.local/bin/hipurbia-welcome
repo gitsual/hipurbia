@@ -20,6 +20,8 @@ repo="${HIPURBIA_REPO:-$HOME/hipurbia}"
 state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia"
 marker="$state_dir/welcome-done"
 settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings"
+preview_log="$state_dir/theme-preview.log"
+preview_note=''
 
 if [[ "${1:-}" == --first-run ]]; then
 	[[ -e "$marker" ]] && exit 0
@@ -83,6 +85,10 @@ frame() {
 footer() {
 	local hint="$1"
 	printf '\n'
+	if [[ -n "$preview_note" ]]; then
+		fg "${palette[COLOR_URGENT]:-${palette[COLOR_ACCENT]}}"
+		centre "$preview_note"
+	fi
 	fg "${palette[COLOR_MUTED]}"
 	centre "$hint"
 	reset
@@ -94,12 +100,14 @@ footer() {
 choose() {
 	local title="$1" subtitle="$2" hint="$3" preview="$4"
 	shift 4
-	local items=("$@") index=0 key last=-1
+	local items=("$@") index=0 key last=-1 status
+	# Dressing the whole desktop takes the better part of a second, so it can
+	# not happen once per keypress: holding an arrow down queues one full
+	# theme application per repeat and the list stops answering for as long as
+	# the queue lasts. The preview waits for the selection to stand still, and
+	# the list itself is redrawn immediately on every key.
+	local settle=0.25
 	while true; do
-		if ((index != last)) && [[ -n "$preview" ]]; then
-			"$preview" "${items[$index]}" || true
-			last=$index
-		fi
 		{
 			frame "$title" "$subtitle"
 			local position label
@@ -117,7 +125,20 @@ choose() {
 			done
 			footer "$hint"
 		} >/dev/tty
-		IFS= read -rsn1 key </dev/tty
+		if ((index != last)) && [[ -n "$preview" ]]; then
+			status=0
+			IFS= read -rsn1 -t "$settle" key </dev/tty || status=$?
+			if ((status > 128)); then
+				# Nothing was typed while the selection stood still: this is
+				# the one the eye landed on, so show it.
+				"$preview" "${items[$index]}" || true
+				last=$index
+				continue
+			fi
+			((status == 0)) || break
+		else
+			IFS= read -rsn1 key </dev/tty
+		fi
 		case "$key" in
 		$'\x1b')
 			# An arrow key arrives as three bytes; a lone Escape as one.
@@ -176,12 +197,21 @@ done
 # you commit to it — wallpaper, bar, borders, notifications — so the choice is
 # made by looking at the room rather than by reading a name. Everything that
 # knows how to do that lives in one script; the wizard only picks the name.
-# Failures are swallowed on purpose: a compositor that is not up yet must not
-# stop the wizard.
+#
+# A failure must not stop the wizard -- a compositor that is not up yet is a
+# normal state on the first run -- but it must not pass unnoticed either. A
+# preview that silently does nothing leaves the room exactly as it was, which
+# is indistinguishable from a theme that simply looks like the previous one.
+# So the run is kept and the footer says where it is.
 theme_preview() {
 	local name="$1"
 	palette_load "$name" || return 0
-	(cd "$repo" && ./scripts/apply-theme.sh --theme "$name") >/dev/null 2>&1 || true
+	mkdir -p -- "$state_dir"
+	if (cd "$repo" && ./scripts/apply-theme.sh --theme "$name") >"$preview_log" 2>&1; then
+		preview_note=''
+	else
+		preview_note="No se pudo aplicar «$name» · detalles en $preview_log"
+	fi
 	return 0
 }
 
