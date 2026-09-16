@@ -4,6 +4,21 @@ A release carries the same workstation this repository builds, already
 provisioned, as a disk you can boot: `hipurbia.qcow2` for
 QEMU/libvirt and `hipurbia.ova` for VirtualBox and VMware.
 
+## Downloading
+
+Every artifact lives on the [releases page](https://github.com/gitsual/hipurbia/releases).
+A release carries, for each of the two formats, its numbered parts and the
+`SHA256SUMS` that covers them:
+
+| You run | Download | Then |
+|---|---|---|
+| QEMU, libvirt, virt-manager, GNOME Boxes | `hipurbia.qcow2.part*` | Reassemble, verify, boot |
+| VirtualBox | `hipurbia.ova.part*` | Reassemble, verify, **File → Import Appliance** |
+| VMware Workstation or Fusion | `hipurbia.ova.part*` | Reassemble, verify, **File → Open** |
+
+The reassembled disk is about 4.6 GiB and wants 8 GiB of RAM and 4 cores to
+feel like the machine it was captured from; it will boot on half of that.
+
 ## Reassembling
 
 GitHub refuses a release asset over 2 GiB, so each artifact ships in parts.
@@ -34,7 +49,30 @@ causes it and nothing in the guest can fix it; the compositor already asks for
 software cursors on virtual machines (`cursor { no_hardware_cursors = true }`,
 rendered whenever the facts report virtualisation). `--gl` opts back in.
 
-For VirtualBox or VMware, import the OVA and boot it; no flags to get wrong.
+### VirtualBox
+
+**File → Import Appliance**, pick `hipurbia.ova`, and take the defaults. The
+OVA declares 4 CPUs and 8 GiB; lower them on the import screen if the host
+cannot spare it. Nothing else has to be configured, and no Guest Additions are
+needed — the guest already asks for a software cursor on virtual machines, so
+the pointer behaves without them.
+
+### VMware Workstation or Fusion
+
+**File → Open**, pick `hipurbia.ova`, accept the conversion when it offers to
+relax the OVF specification check. It is the same disk; VMware is stricter
+about the descriptor than VirtualBox and says so.
+
+### Any other hypervisor
+
+`hipurbia.qcow2` is a flat qcow2 with no backing file, so it can be converted
+to whatever the host wants without dragging a chain behind it:
+
+```sh
+qemu-img convert -O vmdk hipurbia.qcow2 hipurbia.vmdk
+qemu-img convert -O vdi  hipurbia.qcow2 hipurbia.vdi
+qemu-img convert -O raw  hipurbia.qcow2 hipurbia.raw
+```
 
 ## First boot
 

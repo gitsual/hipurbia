@@ -15,6 +15,7 @@
   <img alt="MIT" src="https://img.shields.io/badge/license-MIT-0E1513?style=for-the-badge&labelColor=0E1513&color=6CA4B1">
 </p>
 
+<a href="#-three-ways-in"><strong>Get it</strong></a> ·
 <a href="#-the-eight"><strong>The eight</strong></a> ·
 <a href="#-60-second-tour"><strong>60-second tour</strong></a> ·
 <a href="#-how-colour-works"><strong>How colour works</strong></a> ·
@@ -44,6 +45,77 @@ QEMU/KVM guest that <code>scripts/test-vm.sh</code> builds from this tree — sa
 No mockups, no compositing, nothing hand-painted.</sub>
 
 </div>
+
+---
+
+## 📥 Three ways in
+
+<table>
+<tr>
+<th width="33%">Boot the image</th>
+<th width="33%">Install it on Arch</th>
+<th width="33%">Try the tree in a VM</th>
+</tr>
+<tr>
+<td valign="top">
+
+Nothing to build. The
+[releases page](https://github.com/gitsual/hipurbia/releases)
+carries the same workstation this tree builds, already provisioned, as a disk
+you can boot.
+
+```sh
+cat hipurbia.qcow2.part* >hipurbia.qcow2
+sha256sum -c SHA256SUMS
+./scripts/run-vm-image.sh
+```
+
+For **VirtualBox** or **VMware**, download `hipurbia.ova.part*` instead,
+reassemble it the same way and import the appliance — no flags to get wrong.
+Accounts are `user`/`user` and `root`/`toor`, by convention rather than by
+secret: the image ships `sshd` installed and **disabled**, so a published
+password is not a door standing open.
+
+→ [The downloadable image](docs/vm-image.md)
+
+</td>
+<td valign="top">
+
+On a machine already running Arch. Nothing is deleted: a conflicting file moves
+to a timestamped backup under `$XDG_STATE_HOME/hipurbia/backups/`.
+
+```sh
+git clone https://github.com/gitsual/hipurbia.git
+cd hipurbia
+./scripts/bootstrap.sh --dry-run
+./scripts/bootstrap.sh
+```
+
+System-level profiles are opt-in and are never applied by that command; each
+one has a dry run of its own. `bootstrap.sh --list-selectors` prints the
+optional sets and says which apply to this machine.
+
+→ [Install](#-install)
+
+</td>
+<td valign="top">
+
+Neither of the above, on any distribution with QEMU/KVM. The same guest the
+gates use: a real Arch cloud image, provisioned from the working tree.
+
+```sh
+./scripts/test-vm.sh        # headless, asserts, exits
+./scripts/test-vm.sh --gui  # a window you can click around in
+```
+
+It builds from whatever is checked out, so it is also how a change to this
+repository is tried before it reaches the image above.
+
+→ [Virtual-machine validation](docs/virtual-machine.md)
+
+</td>
+</tr>
+</table>
 
 ---
 
