@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
-# Re-take the desktop captures the README shows, one per palette, inside the
-# tested VM -- so the evidence is produced by a command like everything else
-# here, and a palette that changes is a capture that changes with it.
+# Re-take the captures the README shows, inside the tested VM -- so the
+# evidence is produced by a command like everything else here, and a palette
+# that changes is a capture that changes with it.
+#
+# Two modes, both drawing the same three-pane desktop underneath:
+#   (no argument)  one capture per palette, named after the palette
+#   --surfaces     one capture per surface the desktop draws itself, each in a
+#                  different palette, named surface-<name>
+#
+# A surface is opened by running the command its own key binding runs, read
+# out of the deployed Hyprland config at capture time: a screenshot cannot
+# then show something the key no longer does.
 #
 # Requires an already running interactive VM:
 #   ./scripts/test-vm.sh --gui      (first time: builds, accepts and boots it)
@@ -10,6 +19,11 @@ set -Eeuo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 run="${VM_WORKDIR:-$repo_root/.vm-test}/run"
+mode=palettes
+[[ "${1:-}" == --surfaces ]] && {
+	mode=surfaces
+	shift
+}
 out_dir="${1:-$repo_root/assets/screenshots}"
 # Written the way the other VM scripts write it: a literal loopback address in
 # the source reads as a leaked private address to the privacy scan.
@@ -38,14 +52,43 @@ guest true >/dev/null 2>&1 || {
 	exit 1
 }
 
-themes=(warm-night)
-while IFS= read -r file; do themes+=("$(basename -- "$file" .conf)"); done \
-	< <(find "$repo_root/data/themes" -name '*.conf' -type f | LC_ALL=C sort)
+# What to capture: a file name, the palette it wears, and how the surface on
+# top of the desktop is opened. An empty opener is the desktop by itself.
+jobs=()
+if [[ "$mode" == palettes ]]; then
+	jobs+=('warm-night|warm-night|')
+	while IFS= read -r file; do
+		theme="$(basename -- "$file" .conf)"
+		jobs+=("$theme|$theme|")
+	done < <(find "$repo_root/data/themes" -name '*.conf' -type f | LC_ALL=C sort)
+else
+	# The palettes rotate through the catalogue so the gallery shows the whole
+	# interface and the whole range of colour at the same time, and so no
+	# surface can quietly become the only one anybody ever sees in context.
+	jobs=(
+		'surface-power|warm-night|bind:SUPER SHIFT,Q'
+		'surface-power-rofi|verdigris-night|bind:SUPER SHIFT,E'
+		'surface-theme|cold-slate|bind:SUPER SHIFT,T'
+		'surface-help-hypr|ember-forge|bind:,F1'
+		'surface-help-browser|emerald-night|bind:,F2'
+		'surface-help-shell|gilded-dusk|bind:,F3'
+		'surface-help-editor|moss-stone|bind:,F4'
+		'surface-help-system|verdigris-night|bind:,F5'
+		'surface-launcher-rofi|wild-bloom|bind:SUPER,R'
+		'surface-launcher-wofi|warm-night|bind:SUPER ALT,R'
+		'surface-launcher-dmenu|cold-slate|bind:SUPER,D'
+		'surface-clipboard|ember-forge|bind:SUPER,V'
+		'surface-welcome|emerald-night|run:welcome'
+		'surface-notification|gilded-dusk|run:notification'
+		'surface-lock|moss-stone|bind:SUPER,L'
+	)
+fi
 
 mkdir -p -- "$out_dir"
-for theme in "${themes[@]}"; do
-	printf 'Capturing %s ...\n' "$theme"
-	guest "THEME=$theme bash -s" <<'GUEST'
+for job in "${jobs[@]}"; do
+	IFS='|' read -r name theme surface <<<"$job"
+	printf 'Capturing %s ...\n' "$name"
+	guest "THEME=$theme SURFACE='$surface' bash -s" <<'GUEST'
 set -Eeuo pipefail
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export HYPRLAND_INSTANCE_SIGNATURE="$(find "$XDG_RUNTIME_DIR/hypr" -maxdepth 1 -mindepth 1 -type d -printf '%T@ %f\n' | sort -rn | head -1 | cut -d' ' -f2)"
@@ -100,10 +143,102 @@ sleep 1
 pane 1 './dotfiles/ricer/.local/bin/hipurbia-theme --print'
 
 sleep 3
+
+# The surface on top, if this capture asks for one.
+#
+# bind_command answers with what a key binding actually runs, so the picture is
+# evidence about the binding rather than about a command repeated here that
+# could drift away from it. The Hyprland variables ($terminal, $scripts) are
+# expanded from their own definitions in the same file.
+bind_command() {
+	python - "$1" <<'BINDPY'
+import os, re, sys
+
+combo = sys.argv[1]
+conf = open(os.path.expanduser('~/.config/hypr/hyprland.conf')).read()
+variables = dict(re.findall(r'^\$(\w+)\s*=\s*(.+?)\s*$', conf, re.M))
+
+
+def expand(text):
+    for _ in range(6):
+        grown = re.sub(
+            r'\$(\w+)',
+            lambda m: variables.get(m.group(1), os.environ.get(m.group(1), m.group(0))),
+            text)
+        if grown == text:
+            break
+        text = grown
+    return text
+
+
+def keys(mods):
+    return ' '.join(sorted(mods.upper().split()))
+
+
+wanted_mods, wanted_key = (part.strip() for part in combo.split(',', 1))
+for line in conf.splitlines():
+    if not re.match(r'\s*bind\s*=', line):
+        continue
+    fields = [field.strip() for field in line.split('=', 1)[1].split(',')]
+    if len(fields) < 4 or fields[2] != 'exec':
+        continue
+    if keys(fields[0]) != keys(wanted_mods) or fields[1].lower() != wanted_key.lower():
+        continue
+    print(expand(','.join(fields[3:])))
+    break
+else:
+    raise SystemExit('no exec binding for ' + combo)
+BINDPY
+}
+
+# Written to a file for the same reason the panes are: `hyprctl dispatch exec`
+# splits its argument on spaces, and these commands carry quoted arguments that
+# would not survive the trip.
+open_surface() {
+	local path=/tmp/hipurbia-surface.sh
+	printf '#!/usr/bin/env bash\nexport LANG=en_US.UTF-8\ncd "$HOME"\n%s\n' "$1" >"$path"
+	chmod +x "$path"
+	hyprctl dispatch exec -- "$path" >/dev/null
+}
+
+case "${SURFACE:-}" in
+'') ;;
+bind:*)
+	combo="${SURFACE#bind:}"
+	# The clipboard menu is only worth a picture with something in it, and the
+	# history is whatever the running watcher has seen.
+	if [[ "$combo" == 'SUPER,V' ]]; then
+		printf '%s' 'data/themes/emerald-night.conf' | wl-copy
+		sleep 1
+		printf '%s' '#1F1A17' | wl-copy
+		sleep 1
+	fi
+	open_surface "$(bind_command "$combo")"
+	sleep 4
+	;;
+run:welcome)
+	open_surface 'kitty --class hipurbia-welcome -e "$HOME/.local/bin/hipurbia-welcome"'
+	sleep 6
+	;;
+run:notification)
+	# The three lines the screenshot binding itself ends on, so the notice on
+	# screen names a file that is really there.
+	shots="${XDG_SCREENSHOTS_DIR:-$HOME/Pictures/Screenshots}"
+	mkdir -p "$shots"
+	shot="$shots/screenshot_$(date +%Y%m%d_%H%M%S).png"
+	grim -g '0,0 960x540' "$shot"
+	wl-copy <"$shot"
+	notify-send 'Screenshot saved' "$shot"
+	sleep 2
+	;;
+esac
+
 grim /tmp/capture.png
+# A lock screen would swallow every capture after this one.
+pkill -x hyprlock || true
 GUEST
 	scp -q -i "$run/id_ed25519" -P "$port" -o StrictHostKeyChecking=no \
 		-o UserKnownHostsFile=/dev/null \
-		"hipurbia@$host_address:/tmp/capture.png" "$out_dir/$theme.png"
+		"hipurbia@$host_address:/tmp/capture.png" "$out_dir/$name.png"
 done
-printf 'Captured %d desktops into %s\n' "${#themes[@]}" "$out_dir"
+printf 'Captured %d images into %s\n' "${#jobs[@]}" "$out_dir"
