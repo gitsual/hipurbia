@@ -103,8 +103,18 @@ theme_file="$(theme_file_for "$theme")"
 if [[ -f "$manifest" ]]; then
 	while IFS=$'\t' read -r target link; do
 		[[ -n "$target" ]] || continue
-		rm -f -- "$target"
-		[[ -n "$link" ]] && ln -s -- "$link" "$target"
+		if [[ -n "$link" ]]; then
+			# Never leave the path empty, not even for a microsecond: a
+			# reload that lands in that window makes Hyprland write its own
+			# stub config over it, which costs the session 49 of its 55
+			# binds and makes the ln below fail with EEXIST. Build the new
+			# symlink beside the target and rename it into place.
+			scratch_link="$(mktemp -u -- "$target.XXXXXX")"
+			ln -s -- "$link" "$scratch_link"
+			mv -T -- "$scratch_link" "$target"
+		else
+			rm -f -- "$target"
+		fi
 	done <"$manifest"
 	rm -f -- "$manifest"
 fi
@@ -128,14 +138,16 @@ if [[ "$theme" != "$default_theme" ]]; then
 		link=''
 		[[ -L "$target" ]] && link="$(readlink -- "$target")"
 		mkdir -p -- "$(dirname -- "$target")"
-		scratch="$(mktemp)"
+		# Render beside the target, never in $TMPDIR: /tmp is tmpfs and $HOME
+		# is not, so a scratch file there makes the mv below a copy rather
+		# than a rename(2), exposing a half-written config to any reload.
+		scratch="$(mktemp -- "$target.XXXXXX")"
 		render_file "$template" "$scratch" || {
 			rm -f -- "$scratch"
 			printf 'apply-theme: %s did not render\n' "$relative" >&2
 			exit 1
 		}
-		rm -f -- "$target"
-		mv -- "$scratch" "$target"
+		mv -T -- "$scratch" "$target"
 		printf '%s\t%s\n' "$target" "$link" >>"$manifest"
 		written=$((written + 1))
 	done < <(find "$templates_dir" -type f -name '*.in' | LC_ALL=C sort)
