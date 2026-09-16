@@ -107,7 +107,14 @@ grep -Fq 'make-wallpaper.sh' "$repo_root/scripts/seal-vm-image.sh" ||
 # "what does picking a theme actually do".
 grep -Fq 'apply-theme.sh --theme' "$wizard" ||
 	fail 'the theme preview does not apply the theme, so choosing one shows nothing'
-grep -Fq 'pkill -x swaybg' "$repo_root/scripts/apply-theme.sh" ||
+# Replacing the running wallpaper is wallpaper.sh's job, not apply-theme.sh's:
+# it happens holding the lock that serialises concurrent previews, and doing it
+# from out here raced that lock. Follow the delegation rather than pinning the
+# kill to a file -- this assertion used to grep apply-theme.sh and passed for
+# months while the call it guarded never ran even once.
+grep -Fq 'scripts/wallpaper.sh' "$repo_root/scripts/apply-theme.sh" ||
+	fail 'applying a theme never reaches the wallpaper script'
+grep -Fq 'pkill -x swaybg' "$repo_root/dotfiles/hypr/.config/hypr/scripts/wallpaper.sh" ||
 	fail 'applying a theme cannot replace the running wallpaper'
 
 # The key with the Windows logo on it is what the tour must call it. "SUPER" is
