@@ -8,9 +8,18 @@ keep=false
 cleanup() {
 	if $keep; then
 		printf 'Neovim test sandbox kept at %s\n' "$sandbox"
-	else
-		rm -rf -- "$sandbox"
+		return
 	fi
+	# A plugin build is spawned asynchronously and can outlive the editor that
+	# started it: a `make` or a `cargo` still writing into lazy/ turns a single
+	# removal into "Directory not empty", and the trap then fails a run whose
+	# test had already passed. Give the build a moment to finish instead.
+	local attempt
+	for attempt in 1 2 3 4 5; do
+		rm -rf -- "$sandbox" 2>/dev/null && return
+		sleep "$attempt"
+	done
+	printf 'Neovim test sandbox could not be removed; left at %s\n' "$sandbox" >&2
 }
 trap cleanup EXIT
 
