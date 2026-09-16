@@ -31,8 +31,15 @@ mkdir -p -- "$sandbox/.config"
 
 # Every package that carries a palette-dependent template, laid out the way a
 # real session lays it out.
+# A directory under templates/ is a Stow package when dotfiles/ has its twin.
+# The others render somewhere else entirely -- system/ into /etc, wallpaper/
+# and brand/ into generated artefacts -- and naming them one by one here meant
+# that adding a third such directory broke this test instead of being ignored
+# by it.
 mapfile -t packages < <(find "$repo_root/templates" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' |
-	grep -vx -e wallpaper -e system | LC_ALL=C sort)
+	while IFS= read -r name; do
+		[[ -d "$repo_root/dotfiles/$name" ]] && printf '%s\n' "$name"
+	done | LC_ALL=C sort)
 stow --dir="$repo_root/dotfiles" --target="$sandbox" --no-folding "${packages[@]}"
 
 run() {
