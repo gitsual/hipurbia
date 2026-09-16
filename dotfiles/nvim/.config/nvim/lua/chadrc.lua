@@ -6,7 +6,11 @@
 local M = {}
 
 M.base46 = {
-	theme = "penumbra_dark",
+	-- Not one of the themes base46 ships: this one is rendered from the
+	-- desktop palette into lua/themes/hipurbia.lua, so the editor changes
+	-- colour with everything else instead of staying the one surface that
+	-- ignored the theme.
+	theme = "hipurbia",
 
 	-- hl_override = {
 	-- 	Comment = { italic = true },

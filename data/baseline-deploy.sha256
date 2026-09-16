@@ -24,7 +24,7 @@ da2bd4e135e304b68ce0d70d074eba9afc476a17c77d5e1c34806735421066bb  dotfiles/kitty
 29a57c607a4e1415422b6fdc4f1be89dcc7dc30af840a3921933f4bbc1236c8d  dotfiles/nvim/.config/nvim/.stylua.toml
 087c5fa638f8f9fa84ffdc1f74e55e1ffafa35e5ce44c04943555d75e91ce9de  dotfiles/nvim/.config/nvim/init.lua
 ba2874b1aaff006e2fb1a45ef743f8f9071c6cba273e3d3e67fb8381fb309123  dotfiles/nvim/.config/nvim/lazy-lock.json
-894ca19dbca292cf2afb6a9298acf7ed4f34f254cf40dc8e17c2e471e5f2b44e  dotfiles/nvim/.config/nvim/lua/chadrc.lua
+dc7ee80c2a901b39955810148d8e4e3b430b5168add5fa0bcbeed6ac86f3da79  dotfiles/nvim/.config/nvim/lua/chadrc.lua
 35fe734cc409202bf3254cb726fd9abcc09c0a7dfc42676b99d80056a1cdd6c8  dotfiles/nvim/.config/nvim/lua/configs/conform.lua
 44d9f844aa46fbfd1357f8fed00180eafbca9a87beed499fcfd5a19c75ffe8c4  dotfiles/nvim/.config/nvim/lua/configs/lazy.lua
 3b9813f1c185ff4acf1dc6129aa86a1992c4503d0de4f6e6fcda57b9b8a72750  dotfiles/nvim/.config/nvim/lua/configs/lspconfig.lua
@@ -38,6 +38,7 @@ af3994ef8c9cb44374819c49a6d882c50260226eb4c579845f332c104c170429  dotfiles/nvim/
 2dbdb419b89ff973088c27787913b67721548fd619bfa7c33e41ba2baf909b90  dotfiles/nvim/.config/nvim/lua/mappings.lua
 b79eec5b1fc081aacc33c09d9ee41554d2e5ff6bde83b36360d98eeef8e1d8d1  dotfiles/nvim/.config/nvim/lua/options.lua
 678211fcda42157bf799f21704a9fdf2f16146370ebdb910f18efc5731e52a71  dotfiles/nvim/.config/nvim/lua/plugins/init.lua
+0c6430d0fcf197bf74b9ef850557988efe251c80dc9bbfa33e58ff1a5f3efe70  dotfiles/nvim/.config/nvim/lua/themes/hipurbia.lua
 045956c9ee14710fb4f06f92abb4a8e24c04213faede93163fc6af0fce41e611  dotfiles/ricer/.config/nwg-bar/icons/lock.svg
 5c374f86a7aa6d55e472809d8401d7ec0b3b4d818b667bd3afc56555e3e23c9e  dotfiles/ricer/.config/nwg-bar/icons/log-out.svg
 f9522fbc197ec8a3fbc9c197bfeeb839f1a5e8307f8b5718f9db53c641a3686d  dotfiles/ricer/.config/nwg-bar/icons/power-off.svg
