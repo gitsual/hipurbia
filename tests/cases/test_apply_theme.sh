@@ -185,3 +185,17 @@ for token in TERMINAL_FG TERMINAL_BG; do
 done
 
 printf 'apply-theme: swap is atomic, wallpaper reachable, reloads bounded, terminal themed\n'
+
+# Deploying must not undress the desktop. A non-default theme lives as an
+# overlay written OVER the stowed symlinks, and --restow points every one of
+# them back at the committed default render: the settings file went on saying
+# verdigris-night while the terminal came back warm-night, which is the one
+# mismatch nobody looks for because the setting is right.
+# shellcheck disable=SC2016  # the pattern is literal shell source to search for
+grep -Fq 'apply-theme.sh" --theme "$theme"' "$repo_root/scripts/deploy.sh" ||
+	fail 'deploying leaves the chosen theme off the desktop'
+deploy_stow="$(grep -n 'restow' "$repo_root/scripts/deploy.sh" | head -1 | cut -d: -f1)"
+deploy_theme="$(grep -n 'apply-theme.sh" --theme' "$repo_root/scripts/deploy.sh" | head -1 | cut -d: -f1)"
+((deploy_stow < deploy_theme)) ||
+	fail 'deploy reapplies the theme before it restows, so restowing wins'
+
