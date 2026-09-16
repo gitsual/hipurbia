@@ -31,6 +31,27 @@ fi
 	exit 1
 }
 
+# ------------------------------------------------------------------ language
+
+# Every line the wizard says comes from the same tables the help panes and the
+# power menu read. It used to hold its own Spanish, so a session set to English
+# got a Spanish tour -- the one program a stranger meets first, in a language
+# they may not have.
+# shellcheck source=lib/kv.sh
+source "$repo/lib/kv.sh"
+# shellcheck source=lib/i18n.sh
+source "$repo/lib/i18n.sh"
+language="${HIPURBIA_LANG:-${LANG:-en}}"
+language="${language%%[._@]*}"
+i18n_load "$language" "${I18N_DIR:-$repo/i18n}" 2>/dev/null ||
+	i18n_load en "${I18N_DIR:-$repo/i18n}"
+
+# t KEY [ARG...] — the text, with {1}, {2} ... filled in. An unknown key is
+# not fatal: i18n_get prints the key in brackets, which is a louder trace on
+# screen than an aborted wizard would be, and the gate below never lets one
+# reach a release.
+t() { i18n_format "$@" || true; }
+
 # ---------------------------------------------------------------- appearance
 
 # The wizard wears the theme it is offering, so a colour that is unreadable is
@@ -210,7 +231,7 @@ theme_preview() {
 	if (cd "$repo" && ./scripts/apply-theme.sh --theme "$name") >"$preview_log" 2>&1; then
 		preview_note=''
 	else
-		preview_note="No se pudo aplicar «$name» · detalles en $preview_log"
+		preview_note="$(t welcome.theme.failed "$name" "$preview_log")"
 	fi
 	return 0
 }
@@ -219,9 +240,9 @@ theme_preview() {
 
 step_layout() {
 	local chosen
-	chosen="$(choose 'Teclado · Keyboard' \
-		'La distribución que usan la consola y el escritorio.' \
-		'↑ ↓ para moverte · Enter para elegir' '' "${layouts[@]}")"
+	chosen="$(choose "$(t welcome.layout.title)" \
+		"$(t welcome.layout.subtitle)" \
+		"$(t welcome.layout.hint)" '' "${layouts[@]}")"
 	setting_write xkb_layout "$chosen"
 	setting_write keymap "$chosen"
 	(cd "$repo" && ./scripts/render-config.sh --deploy) >/dev/null 2>&1 || true
@@ -231,16 +252,16 @@ step_layout() {
 
 step_theme() {
 	local chosen
-	chosen="$(choose 'Tema · Theme' \
-		'Se aplica mientras eliges: mira el fondo y la barra.' \
-		'↑ ↓ para previsualizar · Enter para quedártelo' theme_preview "${themes[@]}")"
+	chosen="$(choose "$(t welcome.theme.title)" \
+		"$(t welcome.theme.subtitle)" \
+		"$(t welcome.theme.hint)" theme_preview "${themes[@]}")"
 	printf '%s' "$chosen"
 }
 
 # The key marked with the Windows logo is what every guide calls SUPER. Nobody
 # looking at their keyboard for the first time knows that, and a tour that opens
 # with a name the hardware does not use has already lost the reader.
-SUPER='Windows'
+SUPER="$(t welcome.super)"
 
 tour_total=10
 tour_step=0
@@ -248,7 +269,7 @@ tour_step=0
 # stage TITLE — the frame every tour step shares, with its place in the queue.
 stage() {
 	tour_step=$((tour_step + 1))
-	frame "Paso $tour_step de $tour_total" "$1"
+	frame "$(t welcome.step "$tour_step" "$tour_total")" "$1"
 }
 
 # note TITLE LINE... — a step that only has to be read. Some of what a desktop
@@ -262,7 +283,7 @@ note() {
 		fg "${palette[COLOR_FG]}"
 		local line
 		for line in "$@"; do centre "$line"; done
-		footer 'Enter para continuar'
+		footer "$(t welcome.continue)"
 		reset
 	} >/dev/tty
 	IFS= read -rsn1 </dev/tty || true
@@ -283,7 +304,7 @@ wait_for() {
 		IFS='|' read -ra line <<<"$instruction"
 		local part
 		for part in "${line[@]}"; do centre "$part"; done
-		footer 'Enter para saltar este paso'
+		footer "$(t welcome.skip)"
 	} >/dev/tty
 	while ((SECONDS < deadline)); do
 		if "$@" >/dev/null 2>&1; then
@@ -345,68 +366,65 @@ step_tour() {
 	local before volume_before
 	before="$(window_count)"
 
-	wait_for 'Abrir una terminal' \
-		"Pulsa $SUPER + Enter.|Aparecerá otra ventana junto a esta: el escritorio|coloca las ventanas solo, sin que las arrastres." \
+	wait_for "$(t welcome.tour.terminal.title)" \
+		"$(t welcome.tour.terminal.body "$SUPER")" \
 		120 more_windows_than "$before"
 
 	before="$(window_count)"
-	wait_for 'Cerrar una ventana' \
-		"Pulsa $SUPER + Q sobre la terminal que acabas de abrir.|Cierra SIEMPRE la ventana que tiene el foco." \
+	wait_for "$(t welcome.tour.close.title)" \
+		"$(t welcome.tour.close.body "$SUPER")" \
 		120 fewer_windows_than "$before"
 
-	wait_for 'Cambiar de escritorio' \
-		"Pulsa $SUPER + 2.|Tienes diez escritorios numerados; la barra de arriba|te dice en cuál estás." \
+	wait_for "$(t welcome.tour.workspace.title)" \
+		"$(t welcome.tour.workspace.body "$SUPER")" \
 		120 left_first_workspace
 
-	wait_for 'Llevarte una ventana contigo' \
-		"Con $SUPER + Enter abre una terminal aquí,|y luego pulsa $SUPER + Shift + 3.|La ventana se va al escritorio 3 y tú te quedas." \
+	wait_for "$(t welcome.tour.carry.title)" \
+		"$(t welcome.tour.carry.body "$SUPER")" \
 		180 window_moved_away
 
-	wait_for 'La ayuda siempre está ahí' \
-		'Pulsa F1: los atajos de Hyprland, en tu idioma.|F2 el navegador, F3 la consola, F4 el editor, F5 el sistema.' \
+	wait_for "$(t welcome.tour.help.title)" \
+		"$(t welcome.tour.help.body)" \
 		120 help_pane_open
 
-	wait_for 'Y se cierra con Escape' \
-		'Pulsa Escape para cerrar el panel de ayuda.|Escape cierra el panel; no lo confundas con cerrar la ventana.' \
+	wait_for "$(t welcome.tour.escape.title)" \
+		"$(t welcome.tour.escape.body)" \
 		120 help_pane_closed
 
-	note 'La barra de arriba' \
-		'A la izquierda: los escritorios y el título de la ventana.' \
-		'En el centro: la hora y el tiempo de tu ciudad.' \
-		'A la derecha: red, sonido, bluetooth, CPU, memoria, disco.' \
-		'' \
-		'Pincha el módulo de red y te enseña tu dirección IP' \
-		'y el nombre de la interfaz. Pásale el ratón por encima' \
-		'para ver además cuánto sube y cuánto baja.'
+	# The one step with no gesture to detect, so its lines are split on the
+	# same separator wait_for uses rather than being a separate argument each.
+	local bar_lines
+	IFS='|' read -ra bar_lines <<<"$(t welcome.tour.bar.body)"
+	note "$(t welcome.tour.bar.title)" "${bar_lines[@]}"
 
 	volume_before="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null || printf 'none')"
-	wait_for 'El sonido' \
-		'Sube o baja el volumen con las teclas de tu teclado,|o pincha el altavoz de la barra para abrir el mezclador|y elegir por qué salida suena cada programa.' \
+	wait_for "$(t welcome.tour.sound.title)" \
+		"$(t welcome.tour.sound.body)" \
 		120 volume_changed "$volume_before"
 
 	# The part no desktop tour usually teaches, and the only part that makes
 	# this a distribution rather than a wallpaper: the package manager. It is
 	# taught in both directions on purpose — installing is easy to try and
 	# frightening to undo, so the removal is the step that actually lands.
-	wait_for 'Instalar un programa' \
-		'Escribe en una terminal:|  sudo pacman -S chromium|La contraseña es la misma con la que has entrado.|pacman baja el navegador y sus dependencias.' \
+	wait_for "$(t welcome.tour.install.title)" \
+		"$(t welcome.tour.install.body)" \
 		1200 package_installed chromium
 
-	wait_for 'Y desinstalarlo' \
-		'Ahora:|  sudo pacman -Rns chromium|-R lo quita, -n borra sus ficheros de configuración|y -s se lleva las dependencias que ya no usa nadie.' \
+	wait_for "$(t welcome.tour.remove.title)" \
+		"$(t welcome.tour.remove.body)" \
 		600 package_removed chromium
 
 	{
-		frame 'Listo' 'Ya sabes lo suficiente para romper cosas con criterio.'
+		frame "$(t welcome.done.title)" "$(t welcome.done.subtitle)"
 		fg "${palette[COLOR_FG]}"
-		centre "F1 a F5 abren los paneles de ayuda; Escape los cierra."
-		centre "$SUPER + R abre el lanzador. $SUPER + Q cierra la ventana."
-		centre "$SUPER + Shift + E apaga, reinicia o cierra la sesión."
+		centre "$(t welcome.done.help)"
+		centre "$(t welcome.done.keys "$SUPER")"
+		centre "$(t welcome.done.power "$SUPER")"
 		centre ''
 		fg "${palette[COLOR_FG_DIM]}"
-		centre 'Vuelve a este asistente cuando quieras: hipurbia-welcome'
-		centre 'Cambia de tema sin él: scripts/apply-theme.sh --theme NOMBRE'
-		footer 'Enter para empezar'
+		centre "$(t welcome.done.rerun)"
+		centre "$(t welcome.done.theme)"
+		footer "$(t welcome.done.hint)"
 		reset
 	} >/dev/tty
 	IFS= read -rsn1 </dev/tty || true
@@ -426,10 +444,10 @@ restore() {
 trap restore EXIT
 
 {
-	frame 'Bienvenido' 'Arch Linux, montado a mano y explicado.'
+	frame "$(t welcome.intro.title)" "$(t welcome.intro.subtitle)"
 	fg "${palette[COLOR_FG]}"
-	centre 'Tres preguntas y una vuelta guiada. Un minuto.'
-	footer 'Enter para empezar · Ctrl-C para salir'
+	centre "$(t welcome.intro.body)"
+	footer "$(t welcome.intro.hint)"
 	reset
 } >/dev/tty
 IFS= read -rsn1 </dev/tty || true

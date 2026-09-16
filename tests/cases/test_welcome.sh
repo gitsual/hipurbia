@@ -145,12 +145,24 @@ sed -n '/^theme_preview()/,/^}/p' "$wizard" | grep -Fq 'preview_note=' ||
 sed -n '/^footer()/,/^}/p' "$wizard" | grep -Fq 'preview_note' ||
 	fail 'the preview failure is recorded but never shown to the person choosing'
 
+# Not one line of it is in the wizard any more. It used to hold its own
+# Spanish, so a session set to English met a Spanish tour -- the first program a
+# stranger sees, in a language they may not have.
+grep -Fq 'i18n_load' "$wizard" || fail 'the wizard does not read the translation tables'
+grep -nE "(centre|footer|frame|wait_for|note) +'[^']*[áéíóúñ¿¡]" "$wizard" &&
+	fail 'the wizard still says something in Spanish of its own'
+
 # The key with the Windows logo on it is what the tour must call it. "SUPER" is
 # what the documentation calls it and what nobody can find on their keyboard,
 # and a first tour that opens with a name the hardware does not use has already
-# lost its reader.
-grep -qE '(^|[^$])SUPER \+ ' "$wizard" && fail 'the tour names a key that is not written on the keyboard'
-grep -Fq "SUPER='Windows'" "$wizard" || fail 'the tour has no name for the modifier key'
+# lost its reader. The name is now a translation like any other, so it is the
+# tables that are asked.
+for table in "$repo_root"/i18n/*.conf; do
+	language="$(basename -- "$table" .conf)"
+	grep -qE '^welcome\.[a-z.]+=.*[^{]SUPER' "$table" &&
+		fail "the $language tour names a key that is not written on the keyboard"
+	grep -q '^welcome.super=' "$table" || fail "the $language tour has no name for the modifier key"
+done
 
 # Every step is a step the reader can be told apart from the others, and the
 # counter it prints is the number of steps there actually are: a tour that says
@@ -172,12 +184,13 @@ done < <(sed -nE "s/^$(printf '\t\t')[0-9]+ ([a-z_]+).*/\1/p" <<<"$tour" | LC_AL
 # without: closing a window, carrying one to another desktop, the panels and
 # the key that dismisses them, the bar, the volume, and the package manager in
 # both directions. A tour that only opens things teaches half a system.
-# Matched against the source, where the modifier is still the variable, so the
-# literal below is not a shell expansion waiting to happen.
-# shellcheck disable=SC2016
-for taught in '$SUPER + Q' '$SUPER + Shift + 3' 'Escape para cerrar' 'pacman -S chromium' \
+# Matched against the Spanish table, where the modifier is the {1} the wizard
+# fills in, so the literals below are text and not a shell expansion waiting to
+# happen. Every language is checked for the key; only one is checked for the
+# words, because the words are what a translator is free to rewrite.
+for taught in '{1} + Q' '{1} + Shift + 3' 'Escape para cerrar' 'pacman -S chromium' \
 	'pacman -Rns chromium' 'dirección IP' 'volumen'; do
-	grep -Fq "$taught" "$wizard" || fail "the tour never teaches: $taught"
+	grep -Fq "$taught" "$repo_root/i18n/es.conf" || fail "the tour never teaches: $taught"
 done
 
 # And the detectors are RUN, not grepped for.
