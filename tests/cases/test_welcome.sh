@@ -117,6 +117,32 @@ grep -Fq 'scripts/wallpaper.sh' "$repo_root/scripts/apply-theme.sh" ||
 grep -Fq 'pkill -x swaybg' "$repo_root/dotfiles/hypr/.config/hypr/scripts/wallpaper.sh" ||
 	fail 'applying a theme cannot replace the running wallpaper'
 
+# Applying a palette everywhere was measured at 529-989 ms in the VM. Running
+# it once per keypress means holding an arrow down queues one full application
+# per key repeat, and the list answers nothing until the queue drains -- a
+# frozen desktop reached through the wizard rather than through the script.
+# The preview must therefore wait for the selection to stand still, which in a
+# read loop is a bounded read that falls through to the preview on timeout.
+grep -Eq 'read -rsn1 -t "\$settle"' "$wizard" ||
+	fail 'the wizard previews on every keypress; hold an arrow and the list stops answering'
+# ...and the drawing must not be behind that wait: the list itself has to be on
+# screen before the timer starts, or the debounce just moves the freeze.
+draw_line="$(grep -n 'footer "\$hint"' "$wizard" | head -1 | cut -d: -f1)"
+settle_line="$(grep -n 'read -rsn1 -t "\$settle"' "$wizard" | head -1 | cut -d: -f1)"
+((draw_line < settle_line)) ||
+	fail 'the wizard waits before it draws, so the debounce hides the selection instead of the delay'
+
+# A preview that fails silently is worse than one that fails loudly: the room
+# stays exactly as it was, which looks identical to a theme that happens to
+# resemble the previous one. Keep the run and say where it is.
+sed -n '/^theme_preview()/,/^}/p' "$wizard" | grep -Fq '|| true' &&
+	fail 'the theme preview swallows apply-theme failures without a trace'
+sed -n '/^theme_preview()/,/^}/p' "$wizard" | grep -Fq 'preview_note=' ||
+	fail 'the theme preview reports nothing when it cannot dress the desktop'
+grep -Fq 'preview_note' "$(printf '%s' "$wizard")" &&
+	sed -n '/^footer()/,/^}/p' "$wizard" | grep -Fq 'preview_note' ||
+	fail 'the preview failure is recorded but never shown to the person choosing'
+
 # The key with the Windows logo on it is what the tour must call it. "SUPER" is
 # what the documentation calls it and what nobody can find on their keyboard,
 # and a first tour that opens with a name the hardware does not use has already
