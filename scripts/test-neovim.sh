@@ -71,6 +71,25 @@ if grep -Eiq "$error_pattern" "$sync_log" "$startup_log"; then
 	exit 1
 fi
 
+# The editor's colours are rendered from the palette like every other themed
+# surface, and "it started without erroring" does not prove that arrived: a
+# base46 theme that fails to resolve falls back rather than shouting. So ask
+# the running editor what colour it actually painted, and compare it with the
+# palette this tree ships.
+theme_bg="$(sed -nE 's/^TERMINAL_BG=(.*)$/\1/p' "$repo_root/data/theme.conf")"
+[[ -n "$theme_bg" ]] || {
+	printf 'the palette carries no TERMINAL_BG to check the editor against\n' >&2
+	exit 1
+}
+run_nvim \
+	-c 'lua local hl = vim.api.nvim_get_hl(0, { name = "Normal" }); assert(hl.bg, "Normal has no background: no theme was applied"); io.write(string.format("%06X", hl.bg))' \
+	-c 'qa!' >"$sandbox/normal-bg.log" 2>&1
+painted="$(tr -d '[:space:]' <"$sandbox/normal-bg.log")"
+[[ "$painted" == "$theme_bg" ]] || {
+	printf 'the editor painted Normal on %s, but the palette says %s\n' "$painted" "$theme_bg" >&2
+	exit 1
+}
+
 origin="$(git -C "$data_home/nvim/lazy/cmp-async-path" remote get-url origin)"
 [[ "$origin" == 'https://github.com/FelipeLema/cmp-async-path.git' ]]
 python - "$config_home/nvim/lazy-lock.json" <<'PY'
@@ -83,4 +102,4 @@ assert "cmp-path" not in lock, "obsolete cmp-path still present in lockfile"
 PY
 [[ "$(sha256sum "$source_lock" | cut -d' ' -f1)" == "$source_lock_hash" ]]
 
-printf 'Neovim clean install: passed in %d sync attempt(s); cmp-async-path origin=%s\n' "$sync_attempt" "$origin"
+printf 'Neovim clean install: passed in %d sync attempt(s); Normal painted on #%s from the palette; cmp-async-path origin=%s\n' "$sync_attempt" "$painted" "$origin"

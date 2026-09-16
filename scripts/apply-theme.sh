@@ -190,6 +190,14 @@ if $reload; then
 	# until they are closed. This is the signal kitty sends itself.
 	pkill -SIGUSR1 -x kitty >/dev/null 2>&1 || true
 	timeout 5 dunstctl reload >/dev/null 2>&1 || true
+	# base46 compiles its highlights once and caches the bytecode. The theme
+	# file just re-rendered keeps its name, so nothing in that cache looks
+	# stale to it and the next editor would start in the previous palette.
+	# Dropping the cache costs one recompile at the next launch. Editors
+	# already open keep their colours until they are restarted, which is the
+	# one surface here that cannot be told to re-read its config: there is no
+	# signal for it and no server socket to send a command to.
+	rm -rf -- "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/base46"
 fi
 
 printf 'theme: %s applied (%d overlay files)\n' "$theme" "$written"
