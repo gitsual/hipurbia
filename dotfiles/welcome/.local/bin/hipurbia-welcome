@@ -20,6 +20,9 @@ repo="${HIPURBIA_REPO:-$HOME/hipurbia}"
 state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia"
 marker="$state_dir/welcome-done"
 settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings"
+preview_log="$state_dir/theme-preview.log"
+locale_log="$state_dir/locale.log"
+preview_note=''
 
 if [[ "${1:-}" == --first-run ]]; then
 	[[ -e "$marker" ]] && exit 0
@@ -28,6 +31,27 @@ fi
 	printf 'The portfolio checkout is not at %s; set HIPURBIA_REPO.\n' "$repo" >&2
 	exit 1
 }
+
+# ------------------------------------------------------------------ language
+
+# Every line the wizard says comes from the same tables the help panes and the
+# power menu read. It used to hold its own Spanish, so a session set to English
+# got a Spanish tour -- the one program a stranger meets first, in a language
+# they may not have.
+# shellcheck source=lib/kv.sh
+source "$repo/lib/kv.sh"
+# shellcheck source=lib/i18n.sh
+source "$repo/lib/i18n.sh"
+language="${HIPURBIA_LANG:-${LANG:-en}}"
+language="${language%%[._@]*}"
+i18n_load "$language" "${I18N_DIR:-$repo/i18n}" 2>/dev/null ||
+	i18n_load en "${I18N_DIR:-$repo/i18n}"
+
+# t KEY [ARG...] — the text, with {1}, {2} ... filled in. An unknown key is
+# not fatal: i18n_get prints the key in brackets, which is a louder trace on
+# screen than an aborted wizard would be, and the gate below never lets one
+# reach a release.
+t() { i18n_format "$@" || true; }
 
 # ---------------------------------------------------------------- appearance
 
@@ -83,6 +107,10 @@ frame() {
 footer() {
 	local hint="$1"
 	printf '\n'
+	if [[ -n "$preview_note" ]]; then
+		fg "${palette[COLOR_URGENT]:-${palette[COLOR_ACCENT]}}"
+		centre "$preview_note"
+	fi
 	fg "${palette[COLOR_MUTED]}"
 	centre "$hint"
 	reset
@@ -94,12 +122,14 @@ footer() {
 choose() {
 	local title="$1" subtitle="$2" hint="$3" preview="$4"
 	shift 4
-	local items=("$@") index=0 key last=-1
+	local items=("$@") index=0 key last=-1 status
+	# Dressing the whole desktop takes the better part of a second, so it can
+	# not happen once per keypress: holding an arrow down queues one full
+	# theme application per repeat and the list stops answering for as long as
+	# the queue lasts. The preview waits for the selection to stand still, and
+	# the list itself is redrawn immediately on every key.
+	local settle=0.25
 	while true; do
-		if ((index != last)) && [[ -n "$preview" ]]; then
-			"$preview" "${items[$index]}" || true
-			last=$index
-		fi
 		{
 			frame "$title" "$subtitle"
 			local position label
@@ -117,7 +147,20 @@ choose() {
 			done
 			footer "$hint"
 		} >/dev/tty
-		IFS= read -rsn1 key </dev/tty
+		if ((index != last)) && [[ -n "$preview" ]]; then
+			status=0
+			IFS= read -rsn1 -t "$settle" key </dev/tty || status=$?
+			if ((status > 128)); then
+				# Nothing was typed while the selection stood still: this is
+				# the one the eye landed on, so show it.
+				"$preview" "${items[$index]}" || true
+				last=$index
+				continue
+			fi
+			((status == 0)) || break
+		else
+			IFS= read -rsn1 key </dev/tty
+		fi
 		case "$key" in
 		$'\x1b')
 			# An arrow key arrives as three bytes; a lone Escape as one.
@@ -161,6 +204,20 @@ declare -A labels=(
 )
 layouts=(es us gb fr de it pt latam)
 
+# One entry per translation table that exists, named in its own language: a
+# list of languages written in a language you do not read is a list you cannot
+# use. The locale is what the system is told; the two-letter prefix is what
+# picks the table.
+declare -A locales=([en]=en_US.UTF-8 [es]=es_ES.UTF-8)
+languages=()
+while IFS= read -r table; do
+	name="$(basename -- "$table" .conf)"
+	[[ -v locales["$name"] ]] || continue
+	languages+=("$name")
+done < <(find "$repo/i18n" -name '*.conf' -type f | LC_ALL=C sort)
+labels[en]='English'
+labels[es]='Español'
+
 themes=(warm-night)
 while IFS= read -r file; do themes+=("$(basename -- "$file" .conf)"); done \
 	< <(find "$repo/data/themes" -name '*.conf' -type f | LC_ALL=C sort)
@@ -176,22 +233,58 @@ done
 # you commit to it — wallpaper, bar, borders, notifications — so the choice is
 # made by looking at the room rather than by reading a name. Everything that
 # knows how to do that lives in one script; the wizard only picks the name.
-# Failures are swallowed on purpose: a compositor that is not up yet must not
-# stop the wizard.
+#
+# A failure must not stop the wizard -- a compositor that is not up yet is a
+# normal state on the first run -- but it must not pass unnoticed either. A
+# preview that silently does nothing leaves the room exactly as it was, which
+# is indistinguishable from a theme that simply looks like the previous one.
+# So the run is kept and the footer says where it is.
 theme_preview() {
 	local name="$1"
 	palette_load "$name" || return 0
-	(cd "$repo" && ./scripts/apply-theme.sh --theme "$name") >/dev/null 2>&1 || true
+	mkdir -p -- "$state_dir"
+	if (cd "$repo" && ./scripts/apply-theme.sh --theme "$name") >"$preview_log" 2>&1; then
+		preview_note=''
+	else
+		preview_note="$(t welcome.theme.failed "$name" "$preview_log")"
+	fi
 	return 0
 }
 
 # --------------------------------------------------------------------- steps
 
+# The language is asked first and applied immediately: every screen after this
+# one is drawn from the table it selects, so asking later would mean conducting
+# most of the tour in a language the reader may not have. Writing
+# /etc/locale.conf needs root, so the failure is reported rather than hidden --
+# the setting is still saved and the rest of the wizard still switches.
+step_language() {
+	local chosen
+	chosen="$(choose "$(t welcome.language.title)" \
+		"$(t welcome.language.subtitle)" \
+		"$(t welcome.language.hint)" '' "${languages[@]}")"
+	setting_write locale "${locales[$chosen]}"
+	mkdir -p -- "$state_dir"
+	if ! (cd "$repo" && ./scripts/apply-system.sh --locale) >"$locale_log" 2>&1; then
+		preview_note="$(t welcome.language.failed "$locale_log")"
+	fi
+	i18n_load "$chosen" "${I18N_DIR:-$repo/i18n}" 2>/dev/null ||
+		i18n_load en "${I18N_DIR:-$repo/i18n}"
+	# The wizard can change its own language mid-run; the bar, the launcher and
+	# the panes cannot. They read LANG once, from the session, and the session
+	# reads /etc/locale.conf once, at login. Saying so is the difference
+	# between a setting that looks broken and one that is merely not finished.
+	if [[ -z "$preview_note" && "${LANG%%[._@]*}" != "$chosen" ]]; then
+		preview_note="$(t welcome.language.relogin)"
+	fi
+	printf '%s' "$chosen"
+}
+
 step_layout() {
 	local chosen
-	chosen="$(choose 'Teclado · Keyboard' \
-		'La distribución que usan la consola y el escritorio.' \
-		'↑ ↓ para moverte · Enter para elegir' '' "${layouts[@]}")"
+	chosen="$(choose "$(t welcome.layout.title)" \
+		"$(t welcome.layout.subtitle)" \
+		"$(t welcome.layout.hint)" '' "${layouts[@]}")"
 	setting_write xkb_layout "$chosen"
 	setting_write keymap "$chosen"
 	(cd "$repo" && ./scripts/render-config.sh --deploy) >/dev/null 2>&1 || true
@@ -201,16 +294,16 @@ step_layout() {
 
 step_theme() {
 	local chosen
-	chosen="$(choose 'Tema · Theme' \
-		'Se aplica mientras eliges: mira el fondo y la barra.' \
-		'↑ ↓ para previsualizar · Enter para quedártelo' theme_preview "${themes[@]}")"
+	chosen="$(choose "$(t welcome.theme.title)" \
+		"$(t welcome.theme.subtitle)" \
+		"$(t welcome.theme.hint)" theme_preview "${themes[@]}")"
 	printf '%s' "$chosen"
 }
 
 # The key marked with the Windows logo is what every guide calls SUPER. Nobody
 # looking at their keyboard for the first time knows that, and a tour that opens
 # with a name the hardware does not use has already lost the reader.
-SUPER='Windows'
+SUPER="$(t welcome.super)"
 
 tour_total=10
 tour_step=0
@@ -218,7 +311,7 @@ tour_step=0
 # stage TITLE — the frame every tour step shares, with its place in the queue.
 stage() {
 	tour_step=$((tour_step + 1))
-	frame "Paso $tour_step de $tour_total" "$1"
+	frame "$(t welcome.step "$tour_step" "$tour_total")" "$1"
 }
 
 # note TITLE LINE... — a step that only has to be read. Some of what a desktop
@@ -232,7 +325,7 @@ note() {
 		fg "${palette[COLOR_FG]}"
 		local line
 		for line in "$@"; do centre "$line"; done
-		footer 'Enter para continuar'
+		footer "$(t welcome.continue)"
 		reset
 	} >/dev/tty
 	IFS= read -rsn1 </dev/tty || true
@@ -253,7 +346,7 @@ wait_for() {
 		IFS='|' read -ra line <<<"$instruction"
 		local part
 		for part in "${line[@]}"; do centre "$part"; done
-		footer 'Enter para saltar este paso'
+		footer "$(t welcome.skip)"
 	} >/dev/tty
 	while ((SECONDS < deadline)); do
 		if "$@" >/dev/null 2>&1; then
@@ -315,68 +408,65 @@ step_tour() {
 	local before volume_before
 	before="$(window_count)"
 
-	wait_for 'Abrir una terminal' \
-		"Pulsa $SUPER + Enter.|Aparecerá otra ventana junto a esta: el escritorio|coloca las ventanas solo, sin que las arrastres." \
+	wait_for "$(t welcome.tour.terminal.title)" \
+		"$(t welcome.tour.terminal.body "$SUPER")" \
 		120 more_windows_than "$before"
 
 	before="$(window_count)"
-	wait_for 'Cerrar una ventana' \
-		"Pulsa $SUPER + Q sobre la terminal que acabas de abrir.|Cierra SIEMPRE la ventana que tiene el foco." \
+	wait_for "$(t welcome.tour.close.title)" \
+		"$(t welcome.tour.close.body "$SUPER")" \
 		120 fewer_windows_than "$before"
 
-	wait_for 'Cambiar de escritorio' \
-		"Pulsa $SUPER + 2.|Tienes diez escritorios numerados; la barra de arriba|te dice en cuál estás." \
+	wait_for "$(t welcome.tour.workspace.title)" \
+		"$(t welcome.tour.workspace.body "$SUPER")" \
 		120 left_first_workspace
 
-	wait_for 'Llevarte una ventana contigo' \
-		"Con $SUPER + Enter abre una terminal aquí,|y luego pulsa $SUPER + Shift + 3.|La ventana se va al escritorio 3 y tú te quedas." \
+	wait_for "$(t welcome.tour.carry.title)" \
+		"$(t welcome.tour.carry.body "$SUPER")" \
 		180 window_moved_away
 
-	wait_for 'La ayuda siempre está ahí' \
-		'Pulsa F1: los atajos de Hyprland, en tu idioma.|F2 el navegador, F3 la consola, F4 el editor, F5 el sistema.' \
+	wait_for "$(t welcome.tour.help.title)" \
+		"$(t welcome.tour.help.body)" \
 		120 help_pane_open
 
-	wait_for 'Y se cierra con Escape' \
-		'Pulsa Escape para cerrar el panel de ayuda.|Escape cierra el panel; no lo confundas con cerrar la ventana.' \
+	wait_for "$(t welcome.tour.escape.title)" \
+		"$(t welcome.tour.escape.body)" \
 		120 help_pane_closed
 
-	note 'La barra de arriba' \
-		'A la izquierda: los escritorios y el título de la ventana.' \
-		'En el centro: la hora y el tiempo de tu ciudad.' \
-		'A la derecha: red, sonido, bluetooth, CPU, memoria, disco.' \
-		'' \
-		'Pincha el módulo de red y te enseña tu dirección IP' \
-		'y el nombre de la interfaz. Pásale el ratón por encima' \
-		'para ver además cuánto sube y cuánto baja.'
+	# The one step with no gesture to detect, so its lines are split on the
+	# same separator wait_for uses rather than being a separate argument each.
+	local bar_lines
+	IFS='|' read -ra bar_lines <<<"$(t welcome.tour.bar.body)"
+	note "$(t welcome.tour.bar.title)" "${bar_lines[@]}"
 
 	volume_before="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null || printf 'none')"
-	wait_for 'El sonido' \
-		'Sube o baja el volumen con las teclas de tu teclado,|o pincha el altavoz de la barra para abrir el mezclador|y elegir por qué salida suena cada programa.' \
+	wait_for "$(t welcome.tour.sound.title)" \
+		"$(t welcome.tour.sound.body)" \
 		120 volume_changed "$volume_before"
 
 	# The part no desktop tour usually teaches, and the only part that makes
 	# this a distribution rather than a wallpaper: the package manager. It is
 	# taught in both directions on purpose — installing is easy to try and
 	# frightening to undo, so the removal is the step that actually lands.
-	wait_for 'Instalar un programa' \
-		'Escribe en una terminal:|  sudo pacman -S chromium|La contraseña es la misma con la que has entrado.|pacman baja el navegador y sus dependencias.' \
+	wait_for "$(t welcome.tour.install.title)" \
+		"$(t welcome.tour.install.body)" \
 		1200 package_installed chromium
 
-	wait_for 'Y desinstalarlo' \
-		'Ahora:|  sudo pacman -Rns chromium|-R lo quita, -n borra sus ficheros de configuración|y -s se lleva las dependencias que ya no usa nadie.' \
+	wait_for "$(t welcome.tour.remove.title)" \
+		"$(t welcome.tour.remove.body)" \
 		600 package_removed chromium
 
 	{
-		frame 'Listo' 'Ya sabes lo suficiente para romper cosas con criterio.'
+		frame "$(t welcome.done.title)" "$(t welcome.done.subtitle)"
 		fg "${palette[COLOR_FG]}"
-		centre "F1 a F5 abren los paneles de ayuda; Escape los cierra."
-		centre "$SUPER + R abre el lanzador. $SUPER + Q cierra la ventana."
-		centre "$SUPER + Shift + E apaga, reinicia o cierra la sesión."
+		centre "$(t welcome.done.help)"
+		centre "$(t welcome.done.keys "$SUPER")"
+		centre "$(t welcome.done.power "$SUPER")"
 		centre ''
 		fg "${palette[COLOR_FG_DIM]}"
-		centre 'Vuelve a este asistente cuando quieras: hipurbia-welcome'
-		centre 'Cambia de tema sin él: scripts/apply-theme.sh --theme NOMBRE'
-		footer 'Enter para empezar'
+		centre "$(t welcome.done.rerun)"
+		centre "$(t welcome.done.theme)"
+		footer "$(t welcome.done.hint)"
 		reset
 	} >/dev/tty
 	IFS= read -rsn1 </dev/tty || true
@@ -396,14 +486,15 @@ restore() {
 trap restore EXIT
 
 {
-	frame 'Bienvenido' 'Arch Linux, montado a mano y explicado.'
+	frame "$(t welcome.intro.title)" "$(t welcome.intro.subtitle)"
 	fg "${palette[COLOR_FG]}"
-	centre 'Tres preguntas y una vuelta guiada. Un minuto.'
-	footer 'Enter para empezar · Ctrl-C para salir'
+	centre "$(t welcome.intro.body)"
+	footer "$(t welcome.intro.hint)"
 	reset
 } >/dev/tty
 IFS= read -rsn1 </dev/tty || true
 
+step_language >/dev/null
 step_layout >/dev/null
 step_theme >/dev/null
 step_tour

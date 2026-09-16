@@ -12,7 +12,7 @@ d41c8a7443dca0a4871539a652020666549f453c6d6c10f10e49661e132d687b  dotfiles/audio
 153439fa8e31f1565fadb2fe4b5bf5bd33a064619e2354bfe2c6c720d459b3cc  dotfiles/automation/.local/bin/workstation-task-runner
 0f37a2c826a582041b95bbc4d7391cd306512556875c3c4b93bbff15cf5e9f79  dotfiles/dunst/.config/dunst/dunstrc
 88b2f14bf2cc2f9077fdb92ddfa2a554a7bb14f03c2e76ab7f7270dfd6347582  dotfiles/hypr/.config/hypr/hypridle.conf
-5a14c7433ab6e7472002b7b6c498122a244370675b383f782ad01406eb744e04  dotfiles/hypr/.config/hypr/hyprland.conf
+a1d7f9646f7e0d25b36743dfeed5146034d5316f09449da6db0ba701a228f579  dotfiles/hypr/.config/hypr/hyprland.conf
 af1bc3ab6d57ffe3680bf863df466968ed583d03ee683d40edb4e4b229835ed3  dotfiles/hypr/.config/hypr/hyprlock.conf
 163f61548eb88b3eb707121db7f12583ef7ee5e0a832f2c894c1000320c69cd6  dotfiles/hypr/.config/hypr/hyprpaper.conf
 388eeabf98a758911f2f80e75c8dade63bff3d1e33e2e59c6fcee8f7232377b6  dotfiles/hypr/.config/hypr/scripts/help-pane.sh
@@ -26,7 +26,7 @@ da2bd4e135e304b68ce0d70d074eba9afc476a17c77d5e1c34806735421066bb  dotfiles/kitty
 ba2874b1aaff006e2fb1a45ef743f8f9071c6cba273e3d3e67fb8381fb309123  dotfiles/nvim/.config/nvim/lazy-lock.json
 894ca19dbca292cf2afb6a9298acf7ed4f34f254cf40dc8e17c2e471e5f2b44e  dotfiles/nvim/.config/nvim/lua/chadrc.lua
 35fe734cc409202bf3254cb726fd9abcc09c0a7dfc42676b99d80056a1cdd6c8  dotfiles/nvim/.config/nvim/lua/configs/conform.lua
-3e07056c7e17f7c5a3e863586cb28d9b78689e7b8f7451efe6f7d9315c968a96  dotfiles/nvim/.config/nvim/lua/configs/lazy.lua
+44d9f844aa46fbfd1357f8fed00180eafbca9a87beed499fcfd5a19c75ffe8c4  dotfiles/nvim/.config/nvim/lua/configs/lazy.lua
 3b9813f1c185ff4acf1dc6129aa86a1992c4503d0de4f6e6fcda57b9b8a72750  dotfiles/nvim/.config/nvim/lua/configs/lspconfig.lua
 9a2057839d52ae5e9bda14eba75691c3383e60c3aa6426fb669e514592ddbaf4  dotfiles/nvim/.config/nvim/lua/configs/spectre.lua
 960335166abf109c5908ba78ad69b7a091128b8110fdb498a1c5887a7f957caf  dotfiles/nvim/.config/nvim/lua/custom/clipboard.lua
@@ -38,10 +38,16 @@ af3994ef8c9cb44374819c49a6d882c50260226eb4c579845f332c104c170429  dotfiles/nvim/
 2dbdb419b89ff973088c27787913b67721548fd619bfa7c33e41ba2baf909b90  dotfiles/nvim/.config/nvim/lua/mappings.lua
 b79eec5b1fc081aacc33c09d9ee41554d2e5ff6bde83b36360d98eeef8e1d8d1  dotfiles/nvim/.config/nvim/lua/options.lua
 678211fcda42157bf799f21704a9fdf2f16146370ebdb910f18efc5731e52a71  dotfiles/nvim/.config/nvim/lua/plugins/init.lua
-747a9640f6cfed7e6ba420c0b8c40b4aa53edb5f850c83711b5d608b01fc21c0  dotfiles/ricer/.config/nwg-bar/bar.json
+045956c9ee14710fb4f06f92abb4a8e24c04213faede93163fc6af0fce41e611  dotfiles/ricer/.config/nwg-bar/icons/lock.svg
+5c374f86a7aa6d55e472809d8401d7ec0b3b4d818b667bd3afc56555e3e23c9e  dotfiles/ricer/.config/nwg-bar/icons/log-out.svg
+f9522fbc197ec8a3fbc9c197bfeeb839f1a5e8307f8b5718f9db53c641a3686d  dotfiles/ricer/.config/nwg-bar/icons/power-off.svg
+4c02a7e36c8884fd36380eed7dad622c7d5e6bfd7237fb70ff6f08884d1dfe8d  dotfiles/ricer/.config/nwg-bar/icons/reboot.svg
+f83792888aaa59994790ed530bb7dafcda08e3a0f3f97774839c8a3faf4dec86  dotfiles/ricer/.config/nwg-bar/icons/suspend.svg
 1b3319a09bc512d6a75e054c92845a14b089044bdce874672b8eb5e7d49c8f12  dotfiles/ricer/.config/nwg-bar/style.css
+467e56c6db1bac5d7897d69b838bf86fe0650093fcf468cf8ade5bca668f865a  dotfiles/ricer/.local/bin/hipurbia-power
+6e074f0f2534ca07723f7adf54bf2ec02313ff210b66409ab2eacb5503f35b96  dotfiles/ricer/.local/bin/hipurbia-theme
 f8460c016f366d6284d40e9be371e5bfdc3f0c11ec8e37ccaf09397066eedb81  dotfiles/rofi/.config/rofi/config.rasi
-7d57c3d361514100ecc1fbaeb67cbafbd47a87cf36eed54207a39ee229bf3e9d  dotfiles/rofi/.config/rofi/power/powermenu.sh
+6c14428ad8eab6fc742875b992330b530a3e9002ef19cbd24a43de3f59129269  dotfiles/rofi/.config/rofi/power/powermenu.sh
 7052c1d2e4c778acbbcdafd72a91e444481be1ffef37c1e988281366081cc521  dotfiles/rofi/.config/rofi/themes/warm-night.rasi
 b6859c9e44bd1c1c8c294c047f76ff4be949518764269cd7ba07dbfda7e56e9d  dotfiles/security/.config/systemd/user/clamav-home-scan.service
 a7f6d6e31fa8111b724b1b06d46311866ea490845b7377797fca481072550e6d  dotfiles/security/.config/systemd/user/clamav-home-scan.timer
@@ -52,7 +58,7 @@ a7f6d6e31fa8111b724b1b06d46311866ea490845b7377797fca481072550e6d  dotfiles/secur
 7120b38f5a9ec3b00e22fac420218c406c8fddd8c62ff5359a275102a70e303c  dotfiles/theme/.config/kdeglobals
 ac81224fc768b751e3c5ac3b10ff1c8ef6c6f8b00ab7fd075b40d9dfbc9417ec  dotfiles/waybar/.config/waybar/scripts/ws-refresh.sh
 ff8a9bc3e5ea8b4f7bed7d58b31552511db9b438b67740c233032a1b81efe63c  dotfiles/waybar/.config/waybar/scripts/ws-render.sh
-39a8549338ce6898b862da2895faae0188e419985d0e4590feb6d2f1af0466e5  dotfiles/waybar/.config/waybar/style.css
+005bfa1905df80b44b6cb6ed2d9ff5b0fb55edfa13688b095403164356f06f53  dotfiles/waybar/.config/waybar/style.css
 d92b7d39cd2f0ded3acd33a61edf70a3d9d9fdef9f95c4929cf9bf4d483abc31  dotfiles/waybar/.config/waybar/workspace-icons.json
-9b1799ebf97740de86812e6aad6808255df5ffb024b7c1484d7a7214b5758644  dotfiles/welcome/.local/bin/hipurbia-welcome
+d03ae7eaff1d4de9f52d2141d38ab5e4eabe345d9dac188fc2016c3c036d1a4e  dotfiles/welcome/.local/bin/hipurbia-welcome
 16e0f8c1f5ed428ec0c8da4e8775f7c3ae967171ab62f337dc365c076514a411  dotfiles/wofi/.config/wofi/style.css

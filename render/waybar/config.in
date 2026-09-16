@@ -19,6 +19,7 @@
 @?has_backlight=yes@    "backlight",
 @?has_battery=yes@    "battery",
     "pulseaudio",
+    "custom/theme",
     "custom/power"
   ],
   "custom/ws": {"exec": "$HOME/.config/waybar/scripts/ws-render.sh", "return-type": "json", "signal": 1, "format": "{}", "on-scroll-up": "hyprctl dispatch workspace e-1", "on-scroll-down": "hyprctl dispatch workspace e+1"},
@@ -38,5 +39,6 @@
 @?setting_weather_location=auto@  "custom/weather": {"exec": "curl -sf -m 5 'wttr.in/?format=1'", "interval": 1800, "format": "{}", "tooltip": false},
 @?setting_weather_location!=auto@  "custom/weather": {"exec": "curl -sf -m 5 'wttr.in/@SETTING_WEATHER_LOCATION@?format=1'", "interval": 1800, "format": "{}", "tooltip": false},
   "custom/updates": {"exec": "checkupdates | wc -l", "format": "󰏔 {}", "interval": 3600, "on-click": "kitty -e sudo pacman -Syu"},
+  "custom/theme": {"format": "◐", "on-click": "$HOME/.local/bin/hipurbia-theme", "tooltip": false},
   "custom/power": {"format": "⏻", "on-click": "$HOME/.config/rofi/power/powermenu.sh", "tooltip": false}
 }

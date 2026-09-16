@@ -31,8 +31,15 @@ mkdir -p -- "$sandbox/.config"
 
 # Every package that carries a palette-dependent template, laid out the way a
 # real session lays it out.
+# A directory under templates/ is a Stow package when dotfiles/ has its twin.
+# The others render somewhere else entirely -- system/ into /etc, wallpaper/
+# and brand/ into generated artefacts -- and naming them one by one here meant
+# that adding a third such directory broke this test instead of being ignored
+# by it.
 mapfile -t packages < <(find "$repo_root/templates" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' |
-	grep -vx -e wallpaper -e system | LC_ALL=C sort)
+	while IFS= read -r name; do
+		[[ -d "$repo_root/dotfiles/$name" ]] && printf '%s\n' "$name"
+	done | LC_ALL=C sort)
 stow --dir="$repo_root/dotfiles" --target="$sandbox" --no-folding "${packages[@]}"
 
 run() {
@@ -185,3 +192,17 @@ for token in TERMINAL_FG TERMINAL_BG; do
 done
 
 printf 'apply-theme: swap is atomic, wallpaper reachable, reloads bounded, terminal themed\n'
+
+# Deploying must not undress the desktop. A non-default theme lives as an
+# overlay written OVER the stowed symlinks, and --restow points every one of
+# them back at the committed default render: the settings file went on saying
+# verdigris-night while the terminal came back warm-night, which is the one
+# mismatch nobody looks for because the setting is right.
+# shellcheck disable=SC2016  # the pattern is literal shell source to search for
+grep -Fq 'apply-theme.sh" --theme "$theme"' "$repo_root/scripts/deploy.sh" ||
+	fail 'deploying leaves the chosen theme off the desktop'
+deploy_stow="$(grep -n 'restow' "$repo_root/scripts/deploy.sh" | head -1 | cut -d: -f1)"
+deploy_theme="$(grep -n 'apply-theme.sh" --theme' "$repo_root/scripts/deploy.sh" | head -1 | cut -d: -f1)"
+((deploy_stow < deploy_theme)) ||
+	fail 'deploy reapplies the theme before it restows, so restowing wins'
+

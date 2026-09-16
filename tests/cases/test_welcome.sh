@@ -33,6 +33,21 @@ output="$(HOME="$sandbox" XDG_STATE_HOME="$sandbox/state" HIPURBIA_REPO="$repo_r
 	"$wizard" --first-run 2>&1)" || fail "--first-run failed with a marker present: $output"
 [[ -z "$output" ]] || fail "--first-run spoke when it should have stayed silent: $output"
 
+# The language is asked first and applied before anything else is drawn: every
+# screen after it comes out of the table it selects, so asking later would mean
+# running most of the tour in a language the reader may not have.
+grep -Fq 'step_language >/dev/null' "$wizard" || fail 'the wizard never asks which language to speak'
+sed -n '/^step_language()/,/^}/p' "$wizard" | grep -Fq 'setting_write locale' ||
+	fail 'the language step changes nothing the system will read'
+sed -n '/^step_language()/,/^}/p' "$wizard" | grep -Fq 'i18n_load' ||
+	fail 'the wizard keeps speaking the old language after the answer'
+language_line="$(grep -n 'step_language >/dev/null' "$wizard" | head -1 | cut -d: -f1)"
+layout_line="$(grep -n 'step_layout >/dev/null' "$wizard" | head -1 | cut -d: -f1)"
+((language_line < layout_line)) || fail 'the wizard asks the language after it has already spoken'
+while IFS= read -r locale; do
+	settings_valid locale "$locale" || fail "the wizard offers locale=$locale, which settings refuse"
+done < <(sed -nE 's/^declare -A locales=\((.*)\)$/\1/p' "$wizard" | tr ' ' '\n' | sed -E 's/^\[[a-z]+\]=//' | grep .)
+
 # Every keyboard it offers has to survive the settings validator, on both axes
 # it writes. An entry that cannot be saved is a dead end dressed as a choice.
 mapfile -t offered < <(sed -nE 's/^layouts=\((.*)\)$/\1/p' "$wizard" | tr ' ' '\n' | grep .)
@@ -117,12 +132,52 @@ grep -Fq 'scripts/wallpaper.sh' "$repo_root/scripts/apply-theme.sh" ||
 grep -Fq 'pkill -x swaybg' "$repo_root/dotfiles/hypr/.config/hypr/scripts/wallpaper.sh" ||
 	fail 'applying a theme cannot replace the running wallpaper'
 
+# Applying a palette everywhere was measured at 529-989 ms in the VM. Running
+# it once per keypress means holding an arrow down queues one full application
+# per key repeat, and the list answers nothing until the queue drains -- a
+# frozen desktop reached through the wizard rather than through the script.
+# The preview must therefore wait for the selection to stand still, which in a
+# read loop is a bounded read that falls through to the preview on timeout.
+# shellcheck disable=SC2016  # the patterns are literal shell source to search for
+grep -Eq 'read -rsn1 -t "\$settle"' "$wizard" ||
+	fail 'the wizard previews on every keypress; hold an arrow and the list stops answering'
+# ...and the drawing must not be behind that wait: the list itself has to be on
+# screen before the timer starts, or the debounce just moves the freeze.
+# shellcheck disable=SC2016  # idem
+draw_line="$(grep -n 'footer "\$hint"' "$wizard" | head -1 | cut -d: -f1)"
+# shellcheck disable=SC2016  # idem
+settle_line="$(grep -n 'read -rsn1 -t "\$settle"' "$wizard" | head -1 | cut -d: -f1)"
+((draw_line < settle_line)) ||
+	fail 'the wizard waits before it draws, so the debounce hides the selection instead of the delay'
+
+# A preview that fails silently is worse than one that fails loudly: the room
+# stays exactly as it was, which looks identical to a theme that happens to
+# resemble the previous one. Keep the run and say where it is.
+sed -n '/^theme_preview()/,/^}/p' "$wizard" | grep -Fq '|| true' &&
+	fail 'the theme preview swallows apply-theme failures without a trace'
+sed -n '/^theme_preview()/,/^}/p' "$wizard" | grep -Fq 'preview_note=' ||
+	fail 'the theme preview reports nothing when it cannot dress the desktop'
+sed -n '/^footer()/,/^}/p' "$wizard" | grep -Fq 'preview_note' ||
+	fail 'the preview failure is recorded but never shown to the person choosing'
+
+# Not one line of it is in the wizard any more. It used to hold its own
+# Spanish, so a session set to English met a Spanish tour -- the first program a
+# stranger sees, in a language they may not have.
+grep -Fq 'i18n_load' "$wizard" || fail 'the wizard does not read the translation tables'
+grep -nE "(centre|footer|frame|wait_for|note) +'[^']*[áéíóúñ¿¡]" "$wizard" &&
+	fail 'the wizard still says something in Spanish of its own'
+
 # The key with the Windows logo on it is what the tour must call it. "SUPER" is
 # what the documentation calls it and what nobody can find on their keyboard,
 # and a first tour that opens with a name the hardware does not use has already
-# lost its reader.
-grep -qE '(^|[^$])SUPER \+ ' "$wizard" && fail 'the tour names a key that is not written on the keyboard'
-grep -Fq "SUPER='Windows'" "$wizard" || fail 'the tour has no name for the modifier key'
+# lost its reader. The name is now a translation like any other, so it is the
+# tables that are asked.
+for table in "$repo_root"/i18n/*.conf; do
+	language="$(basename -- "$table" .conf)"
+	grep -qE '^welcome\.[a-z.]+=.*[^{]SUPER' "$table" &&
+		fail "the $language tour names a key that is not written on the keyboard"
+	grep -q '^welcome.super=' "$table" || fail "the $language tour has no name for the modifier key"
+done
 
 # Every step is a step the reader can be told apart from the others, and the
 # counter it prints is the number of steps there actually are: a tour that says
@@ -144,12 +199,13 @@ done < <(sed -nE "s/^$(printf '\t\t')[0-9]+ ([a-z_]+).*/\1/p" <<<"$tour" | LC_AL
 # without: closing a window, carrying one to another desktop, the panels and
 # the key that dismisses them, the bar, the volume, and the package manager in
 # both directions. A tour that only opens things teaches half a system.
-# Matched against the source, where the modifier is still the variable, so the
-# literal below is not a shell expansion waiting to happen.
-# shellcheck disable=SC2016
-for taught in '$SUPER + Q' '$SUPER + Shift + 3' 'Escape para cerrar' 'pacman -S chromium' \
+# Matched against the Spanish table, where the modifier is the {1} the wizard
+# fills in, so the literals below are text and not a shell expansion waiting to
+# happen. Every language is checked for the key; only one is checked for the
+# words, because the words are what a translator is free to rewrite.
+for taught in '{1} + Q' '{1} + Shift + 3' 'Escape para cerrar' 'pacman -S chromium' \
 	'pacman -Rns chromium' 'dirección IP' 'volumen'; do
-	grep -Fq "$taught" "$wizard" || fail "the tour never teaches: $taught"
+	grep -Fq "$taught" "$repo_root/i18n/es.conf" || fail "the tour never teaches: $taught"
 done
 
 # And the detectors are RUN, not grepped for.

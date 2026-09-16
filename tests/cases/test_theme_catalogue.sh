@@ -64,6 +64,7 @@ done
 # Legibility is not a matter of taste: body text and the accent have to clear
 # a contrast floor against the background they sit on.
 python - "${themes[@]}" <<'PY'
+import math
 import sys
 from pathlib import Path
 
@@ -85,6 +86,28 @@ def ratio(a: str, b: str) -> float:
 
 
 FLOORS = (("COLOR_FG", 7.0), ("COLOR_FG_DIM", 4.5), ("COLOR_ACCENT", 3.0), ("TERMINAL_FG", 7.0))
+
+# Two roles painted the same colour are one role with two names. emerald-night
+# shipped COLOR_MUTED identical to COLOR_FG_DIM and COLOR_INFO a hair from
+# COLOR_ACCENT, so a footer hint and a dimmed subtitle came out the same, and
+# so did an accent and a notice -- distinctions every other theme makes.
+# Contrast against the background cannot see this: these pairs sit at similar
+# luminance by design and differ in hue, so they are compared by perceptual
+# distance instead. The floor is well under the closest pair the catalogue
+# ships (79.8, moss-stone accent against info); it is there to catch roles
+# that collapse, not to arbitrate taste.
+SEPARATIONS = ((("COLOR_FG_DIM", "COLOR_MUTED"), 60.0), (("COLOR_ACCENT", "COLOR_INFO"), 60.0))
+
+
+def distance(a: str, b: str) -> float:
+    """Redmean: a cheap approximation of perceived difference between two sRGB colours."""
+    first = [int(a[i:i + 2], 16) for i in (0, 2, 4)]
+    second = [int(b[i:i + 2], 16) for i in (0, 2, 4)]
+    mean_red = (first[0] + second[0]) / 2
+    weights = (2 + mean_red / 256, 4.0, 2 + (255 - mean_red) / 256)
+    return math.sqrt(sum(w * (x - y) ** 2 for w, x, y in zip(weights, first, second)))
+
+
 failed = False
 for path in sys.argv[1:]:
     values = dict(
@@ -98,6 +121,11 @@ for path in sys.argv[1:]:
         measured = ratio(values[key], background)
         if measured < floor:
             print(f"{name}: {key} is {measured:.1f}:1 against its background, under the {floor}:1 floor", file=sys.stderr)
+            failed = True
+    for (one, other), floor in SEPARATIONS:
+        apart = distance(values[one], values[other])
+        if apart < floor:
+            print(f"{name}: {one} and {other} are {apart:.0f} apart, under the {floor:.0f} floor; they read as one colour", file=sys.stderr)
             failed = True
 sys.exit(1 if failed else 0)
 PY

@@ -87,7 +87,9 @@ bind = , F5, exec, $scripts/help-pane.sh --pane system
 # @help: hypr help.hypr.power
 bind = SUPER SHIFT, E, exec, $HOME/.config/rofi/power/powermenu.sh
 # @help: hypr help.hypr.power_bar
-bind = SUPER SHIFT, Q, exec, nwg-bar
+bind = SUPER SHIFT, Q, exec, $HOME/.local/bin/hipurbia-power
+# @help: hypr help.hypr.theme
+bind = SUPER SHIFT, T, exec, $HOME/.local/bin/hipurbia-theme
 # @help: hypr help.hypr.clipboard
 bind = SUPER, V, exec, cliphist list | rofi -dmenu -i -p Clipboard | cliphist decode | wl-copy
 # @help: hypr help.hypr.reload

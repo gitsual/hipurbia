@@ -44,6 +44,15 @@ for sync_attempt in 1 2 3; do
 		break
 	fi
 	mv -- "$sync_log" "$sandbox/lazy-sync.attempt-$sync_attempt.log"
+	# Every attempt reuses this sandbox, which is what makes the retry cheap --
+	# and what made it useless. A build killed part way through leaves a
+	# truncated shared library behind, `make` sees the file and rebuilds
+	# nothing, and the next attempt maps the same corpse and dies on it before
+	# it reaches any work: attempt 1 failed a thousand log lines in, attempts 2
+	# and 3 failed after two hundred. Drop the compiled artefacts so a retry
+	# retries the build; the cargo target directories survive, so it relinks
+	# rather than starting over.
+	find "$data_home/nvim/lazy" -name '*.so' -type f -delete 2>/dev/null || true
 	sleep "$((sync_attempt * 5))"
 done
 if ! $sync_ok; then
