@@ -27,8 +27,9 @@ for file in system.qcow2 seed.iso repository.iso id_ed25519; do
 done
 # Refresh the guest's repository copy so the opened VM runs the current tree,
 # not the tree that was present when the overlay was accepted.
-tar --exclude=.git --exclude=.vm-test -czf "$run/repository.tar.gz" -C "$repo_root" .
-xorriso -as mkisofs -quiet -output "$run/repository.iso" -volid HIPURBIA -joliet -rock "$run/repository.tar.gz"
+# shellcheck source=lib/repository-iso.sh
+source "$repo_root/lib/repository-iso.sh"
+repository_iso "$repo_root" "$run"
 bash "$repo_root/scripts/vm-desktop.sh"
 bash "$repo_root/scripts/vm-keyboard.sh"
 if [[ -f "$pidfile" ]] && kill -0 "$(<"$pidfile")" 2>/dev/null; then
