@@ -81,6 +81,27 @@ fi
 
 stow --dir="$repo_root/dotfiles" --target="$HOME" --no-folding --restow "${selected[@]}"
 printf 'deployed: %s\n' "${selected[*]}"
+
+# Restowing points every themed file back at the committed default render, and
+# a non-default theme lives as an overlay written OVER those symlinks. Deploying
+# therefore undressed the desktop: the settings file still said verdigris-night
+# and the terminal came back warm-night, which is the one mismatch nobody looks
+# for because the setting is right. Put the chosen palette back on.
+# Read with pipefail in force: sed exits non-zero when the settings file does
+# not exist yet, which is the ordinary case on a first deploy, and a pipeline
+# that fails there would take the whole deploy with it.
+settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings"
+theme=''
+if [[ -r "$settings_file" ]]; then
+	theme="$(sed -nE 's/^theme=(.*)$/\1/p' "$settings_file" | tail -1)"
+fi
+if [[ -n "$theme" && "$theme" != warm-night ]]; then
+	if "$repo_root/scripts/apply-theme.sh" --theme "$theme" >/dev/null; then
+		printf 'theme reapplied: %s\n' "$theme"
+	else
+		printf 'deploy: the desktop is deployed but %s could not be reapplied\n' "$theme" >&2
+	fi
+fi
 if [[ -d "$backup_root" ]]; then
 	printf 'backup: %s\n' "$backup_root"
 fi

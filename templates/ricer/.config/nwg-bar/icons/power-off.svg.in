@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- nwg-bar power menu icon, rendered from data/theme.conf. One stroke weight,
+     one palette, one viewBox: the desktop draws its own power icons because
+     the shipped icon themes do not carry these names at a size a 64px button
+     can use, and the three that resolved came from three different themes. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64"
+     fill="none" stroke="#@COLOR_FG@" stroke-width="1.6"
+     stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 3.2v7.2"/>
+  <path d="M7.4 6.4a6.6 6.6 0 1 0 9.2 0"/>
+</svg>

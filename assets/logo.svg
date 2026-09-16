@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The banner, rendered from the palette like every other themed surface.
+     The mark is the half-filled circle the status bar already uses for the
+     theme button: the project's one symbol is the control that changes it. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320" role="img" aria-label="hipurbia">
+  <defs>
+    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1C2B27"/>
+      <stop offset="1" stop-color="#090E0D"/>
+    </linearGradient>
+    <clipPath id="left-half"><rect x="0" y="0" width="120" height="240"/></clipPath>
+  </defs>
+
+  <rect width="1200" height="320" fill="url(#field)"/>
+  <rect x="0" y="0" width="1200" height="2" fill="#E8C66A" opacity="0.55"/>
+
+  <g transform="translate(120 160)">
+    <g transform="translate(-120 -120)">
+      <circle cx="120" cy="120" r="66" fill="#E8C66A" clip-path="url(#left-half)"/>
+      <circle cx="120" cy="120" r="66" fill="none" stroke="#E8C66A" stroke-width="7"/>
+      <circle cx="120" cy="120" r="94" fill="none" stroke="#E8C66A" stroke-width="2" opacity="0.30"/>
+    </g>
+  </g>
+
+  <text x="268" y="150" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
+        font-size="86" font-weight="700" letter-spacing="-2" fill="#D9E2DD">hipurbia</text>
+  <text x="272" y="200" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
+        font-size="25" letter-spacing="1" fill="#8A9A93">the colour scheme is a build artifact</text>
+  <text x="272" y="240" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
+        font-size="21" letter-spacing="3" fill="#E8C66A">Verdigris Night · Technique</text>
+
+  <g transform="translate(272 268)">
+    <rect x="0"   y="0" width="52" height="14" rx="3" fill="#0E1513" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
+    <rect x="60"  y="0" width="52" height="14" rx="3" fill="#2C3F39" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
+    <rect x="120" y="0" width="52" height="14" rx="3" fill="#D9E2DD" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
+    <rect x="180" y="0" width="52" height="14" rx="3" fill="#E8C66A" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
+    <rect x="240" y="0" width="52" height="14" rx="3" fill="#A8904A" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
+    <rect x="300" y="0" width="52" height="14" rx="3" fill="#5FB3A1" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
+    <rect x="360" y="0" width="52" height="14" rx="3" fill="#6E93C8" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
+    <rect x="420" y="0" width="52" height="14" rx="3" fill="#C5654E" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
+  </g>
+</svg>

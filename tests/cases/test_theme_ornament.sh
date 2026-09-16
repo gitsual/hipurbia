@@ -80,7 +80,7 @@ rendered="$(grep -c ' + ' "$work/log" || true)"
 # refused, and the refusal names the reason rather than rendering a plain
 # wallpaper and saying nothing.
 sed -E 's/^# @aesthetic: .*$/# @aesthetic: Nowhere/' \
-	"$repo_root/data/themes/gilded-dusk.conf" >"$work/pretender.conf"
+	"$repo_root/data/themes/verdigris-night.conf" >"$work/pretender.conf"
 grep -q 'Nowhere' "$work/pretender.conf" || fail 'the fixture did not take the unknown aesthetic'
 if "$repo_root/scripts/make-wallpaper.sh" --theme "$work/pretender.conf" --no-raster \
 	--out "$work" >"$work/pretend.log" 2>&1; then

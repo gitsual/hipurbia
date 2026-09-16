@@ -89,8 +89,9 @@ runcmd:
 USERDATA
 xorriso -as mkisofs -quiet -output "$run/seed.iso" -volid cidata -joliet -rock "$run/user-data" "$run/meta-data"
 
-tar --exclude=.git --exclude=.vm-test --exclude=.vm-image --exclude=dist -czf "$run/repository.tar.gz" -C "$repo_root" .
-xorriso -as mkisofs -quiet -output "$run/repository.iso" -volid HIPURBIA -joliet -rock "$run/repository.tar.gz"
+# shellcheck source=lib/repository-iso.sh
+source "$repo_root/lib/repository-iso.sh"
+repository_iso "$repo_root" "$run"
 qemu-img create -q -f qcow2 -F qcow2 -b "$base" "$run/system.qcow2" 32G
 
 port="${VM_SSH_PORT:-}"

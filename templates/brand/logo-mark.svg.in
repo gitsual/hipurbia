@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The mark alone, square, for anywhere the wordmark does not fit. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="hipurbia">
+  <defs>
+    <clipPath id="left-half"><rect x="0" y="0" width="128" height="256"/></clipPath>
+  </defs>
+  <rect width="256" height="256" rx="46" fill="#@COLOR_BG@"/>
+  <circle cx="128" cy="128" r="72" fill="#@COLOR_ACCENT@" clip-path="url(#left-half)"/>
+  <circle cx="128" cy="128" r="72" fill="none" stroke="#@COLOR_ACCENT@" stroke-width="8"/>
+  <circle cx="128" cy="128" r="101" fill="none" stroke="#@COLOR_ACCENT@" stroke-width="3" opacity="0.30"/>
+</svg>
