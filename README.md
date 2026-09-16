@@ -15,7 +15,7 @@ where the colour scheme is a build artifact, not a mood.</em>
 
 </div>
 
-<img src="assets/screenshots/verdigris-night.png" alt="hipurbia running Verdigris Night">
+<a href="#eight-palettes-one-source-of-colour"><img src="assets/wallpapers/all-eight.png" alt="The eight wallpapers, one per palette"></a>
 
 <div align="center">
 
@@ -26,10 +26,12 @@ where the colour scheme is a build artifact, not a mood.</em>
 
 <br>
 
-<sub>Every image on this page is a real <code>grim</code> capture taken inside the QEMU/KVM guest that
-<code>scripts/test-vm.sh</code> builds from this tree — same commit, same deploy, no mockups and no
-compositing. The banner above is rendered from <code>data/themes/verdigris-night.conf</code> by
-<code>scripts/make-logo.sh</code>, so even the logo is a build artifact.</sub>
+<sub>Two kinds of image on this page, and no third kind. The wallpapers and the banner are
+<b>rendered</b> — <code>scripts/make-wallpaper.sh --all</code> and <code>scripts/make-logo.sh</code> turn
+<code>data/themes/*.conf</code> into SVG and then into pixels, so the artwork is a build artifact like
+everything else here. Every desktop below is a <b>real <code>grim</code> capture</b> taken inside the
+QEMU/KVM guest that <code>scripts/test-vm.sh</code> builds from this tree — same commit, same deploy.
+No mockups, no compositing, nothing hand-painted.</sub>
 
 </div>
 
@@ -54,44 +56,96 @@ undress the desktop.
 
 <table>
   <tr>
-    <td width="50%" align="center">
-      <a href="assets/screenshots/warm-night.png"><img src="assets/screenshots/warm-night.png" alt="Warm Night"></a><br>
-      <b>Warm Night</b> · <sub>Nocturne</sub>
-    </td>
-    <td width="50%" align="center">
-      <a href="assets/screenshots/cold-slate.png"><img src="assets/screenshots/cold-slate.png" alt="Cold Slate"></a><br>
-      <b>Cold Slate</b> · <sub>Resistance</sub>
-    </td>
+    <td width="50%" align="center"><sub><b>rendered</b> — <code>make-wallpaper.sh</code></sub></td>
+    <td width="50%" align="center"><sub><b>captured</b> — <code>grim</code>, inside the VM</sub></td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="assets/screenshots/verdigris-night.png"><img src="assets/screenshots/verdigris-night.png" alt="Verdigris Night"></a><br>
-      <b>Verdigris Night</b> · <sub>Technique</sub>
+      <a href="assets/wallpapers/warm-night.png"><img src="assets/wallpapers/warm-night.png" alt="Warm Night wallpaper"></a>
     </td>
     <td width="50%" align="center">
-      <a href="assets/screenshots/ember-forge.png"><img src="assets/screenshots/ember-forge.png" alt="Ember Forge"></a><br>
-      <b>Ember Forge</b> · <sub>Appetite</sub>
+      <a href="assets/screenshots/warm-night.png"><img src="assets/screenshots/warm-night.png" alt="Warm Night desktop"></a>
     </td>
   </tr>
   <tr>
-    <td width="50%" align="center">
-      <a href="assets/screenshots/emerald-night.png"><img src="assets/screenshots/emerald-night.png" alt="Emerald Night"></a><br>
-      <b>Emerald Night</b> · <sub>Quartz</sub>
-    </td>
-    <td width="50%" align="center">
-      <a href="assets/screenshots/gilded-dusk.png"><img src="assets/screenshots/gilded-dusk.png" alt="Gilded Dusk"></a><br>
-      <b>Gilded Dusk</b> · <sub>Nostalgia</sub>
-    </td>
+    <td colspan="2" align="center"><b>Warm Night</b> · <sub>Nocturne · <code>data/themes/warm-night.conf</code> · no ornament — the base composition on its own</sub></td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="assets/screenshots/moss-stone.png"><img src="assets/screenshots/moss-stone.png" alt="Moss and Stone"></a><br>
-      <b>Moss and Stone</b> · <sub>Endurance</sub>
+      <a href="assets/wallpapers/cold-slate.png"><img src="assets/wallpapers/cold-slate.png" alt="Cold Slate wallpaper"></a>
     </td>
     <td width="50%" align="center">
-      <a href="assets/screenshots/wild-bloom.png"><img src="assets/screenshots/wild-bloom.png" alt="Wild Bloom"></a><br>
-      <b>Wild Bloom</b> · <sub>Romance</sub>
+      <a href="assets/screenshots/cold-slate.png"><img src="assets/screenshots/cold-slate.png" alt="Cold Slate desktop"></a>
     </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><b>Cold Slate</b> · <sub>Resistance · <code>data/themes/cold-slate.conf</code> · no ornament</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="assets/wallpapers/ember-forge.png"><img src="assets/wallpapers/ember-forge.png" alt="Ember Forge wallpaper"></a>
+    </td>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/ember-forge.png"><img src="assets/screenshots/ember-forge.png" alt="Ember Forge desktop"></a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><b>Ember Forge</b> · <sub>Appetite · <code>data/themes/ember-forge.conf</code> · filigree</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="assets/wallpapers/emerald-night.png"><img src="assets/wallpapers/emerald-night.png" alt="Emerald Night wallpaper"></a>
+    </td>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/emerald-night.png"><img src="assets/screenshots/emerald-night.png" alt="Emerald Night desktop"></a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><b>Emerald Night</b> · <sub>Quartz · <code>data/themes/emerald-night.conf</code> · no ornament</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="assets/wallpapers/gilded-dusk.png"><img src="assets/wallpapers/gilded-dusk.png" alt="Gilded Dusk wallpaper"></a>
+    </td>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/gilded-dusk.png"><img src="assets/screenshots/gilded-dusk.png" alt="Gilded Dusk desktop"></a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><b>Gilded Dusk</b> · <sub>Nostalgia · <code>data/themes/gilded-dusk.conf</code> · filigree</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="assets/wallpapers/moss-stone.png"><img src="assets/wallpapers/moss-stone.png" alt="Moss and Stone wallpaper"></a>
+    </td>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/moss-stone.png"><img src="assets/screenshots/moss-stone.png" alt="Moss and Stone desktop"></a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><b>Moss and Stone</b> · <sub>Endurance · <code>data/themes/moss-stone.conf</code> · vein</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="assets/wallpapers/verdigris-night.png"><img src="assets/wallpapers/verdigris-night.png" alt="Verdigris Night wallpaper"></a>
+    </td>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/verdigris-night.png"><img src="assets/screenshots/verdigris-night.png" alt="Verdigris Night desktop"></a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><b>Verdigris Night</b> · <sub>Technique · <code>data/themes/verdigris-night.conf</code> · constellation</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="assets/wallpapers/wild-bloom.png"><img src="assets/wallpapers/wild-bloom.png" alt="Wild Bloom wallpaper"></a>
+    </td>
+    <td width="50%" align="center">
+      <a href="assets/screenshots/wild-bloom.png"><img src="assets/screenshots/wild-bloom.png" alt="Wild Bloom desktop"></a>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><b>Wild Bloom</b> · <sub>Romance · <code>data/themes/wild-bloom.conf</code> · vine</sub></td>
   </tr>
 </table>
 
@@ -253,6 +307,15 @@ background, because the claim is wrong and saying so is the point.
 
 The default Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop
 starts it with `swaybg`, including on virtual GPUs without accelerated rendering.
+
+The eight at the top of this page are not a curated selection, they are the whole catalogue:
+one command redraws every one of them at 4K from the theme files alone, and the copies under
+`assets/wallpapers/` are those renders scaled down for the web.
+
+```bash
+./scripts/make-wallpaper.sh --all          # every theme, SVG + 3840×2160 PNG, into dist/wallpapers
+./scripts/make-wallpaper.sh --theme wild-bloom --no-raster
+```
 
 The banner at the top of this page goes through the same door. `scripts/make-logo.sh` renders
 `templates/brand/logo.svg.in` from a theme file into `assets/logo.svg` and rasterizes it, so the
