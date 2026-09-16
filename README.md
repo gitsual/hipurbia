@@ -40,6 +40,14 @@ bar, borders, notifications, launcher and every open terminal — and choosing t
 restores the symlinks byte for byte. Every colour must also exist in `data/palette-corpus.tsv`:
 a colour with no cause is slop.
 
+The terminal is part of that, not an exception to it: `templates/kitty/.config/kitty/kitty.conf.in`
+carries `TERMINAL_FG` and `TERMINAL_BG` like every other themed file, and the terminals already
+open re-read it on `SIGUSR1` — the signal kitty sends itself — so the palette lands in the window
+you are looking at instead of the next one you open. Deploying does not undo any of this:
+`deploy.sh` restows the committed defaults and then reapplies the theme named in
+`~/.config/hipurbia/settings`, because restowing the default render over a live overlay used to
+undress the desktop.
+
 | | |
 |:--:|:--:|
 | ![Warm Night](assets/screenshots/warm-night.png)<br>**Warm Night** · Nocturne | ![Cold Slate](assets/screenshots/cold-slate.png)<br>**Cold Slate** · Resistance |
@@ -66,7 +74,7 @@ A reproducible, security-reviewed version of my real Arch Linux workstation: Way
 
 | Layer | Components | Engineering focus |
 |---|---|---|
-| Desktop | Hyprland, Waybar, Kitty, Dunst | Keyboard-first tiling and one coherent warm-night palette |
+| Desktop | Hyprland, Waybar, Kitty, Dunst | Keyboard-first tiling and one palette at a time, rendered rather than hand-edited |
 | Launchers | Rofi, dmenu, Wofi | Three real entry points, consistently styled where supported |
 | Editor | Neovim, NvChad, Avante, LSP, Treesitter | Locked plugins, Wayland clipboard and one integrated AI interface |
 | Audio | PipeWire, PipeWire-Pulse, WirePlumber | 48/96 kHz graph, underrun headroom and selectable Bluetooth policy |
@@ -185,7 +193,18 @@ sudo -v && ./scripts/gpu-setup.sh --apply
 
 A hybrid machine gets both families plus `nvidia-prime`; a DKMS stack gets the headers of every installed kernel; Secure Boot with a DKMS module is warned about, not hidden. `--gpu FAMILY` overrides the detection only for a family the facts also see (or `generic`), and refuses anything else with exit 3. Audio device node names are rendered locally by `scripts/configure-audio.py` and are never committed.
 
-The original Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop starts it with `swaybg`, including on virtual GPUs without accelerated rendering.
+## The wallpaper is rendered too
+
+`scripts/make-wallpaper.sh` draws each wallpaper from `templates/wallpaper/base.svg.in` in the
+theme's own colours, and lays an ornament on top only when the theme has *earned* one. A theme
+declares its layer with `# @ornament:`, and the script refuses the claim unless the pairing is an
+affinity in the corpus matrix (distance ≤ 2) or the theme names an aesthetic from
+`data/aesthetics.tsv` that permits ornament and actually carries its canonical colours. A theme
+that asks for filigree it cannot justify fails the build; it is not quietly downgraded to a plain
+background, because the claim is wrong and saying so is the point.
+
+The default Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop
+starts it with `swaybg`, including on virtual GPUs without accelerated rendering.
 
 ## Optional selectors
 
