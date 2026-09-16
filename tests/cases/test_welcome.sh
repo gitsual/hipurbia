@@ -123,11 +123,14 @@ grep -Fq 'pkill -x swaybg' "$repo_root/dotfiles/hypr/.config/hypr/scripts/wallpa
 # frozen desktop reached through the wizard rather than through the script.
 # The preview must therefore wait for the selection to stand still, which in a
 # read loop is a bounded read that falls through to the preview on timeout.
+# shellcheck disable=SC2016  # the patterns are literal shell source to search for
 grep -Eq 'read -rsn1 -t "\$settle"' "$wizard" ||
 	fail 'the wizard previews on every keypress; hold an arrow and the list stops answering'
 # ...and the drawing must not be behind that wait: the list itself has to be on
 # screen before the timer starts, or the debounce just moves the freeze.
+# shellcheck disable=SC2016  # idem
 draw_line="$(grep -n 'footer "\$hint"' "$wizard" | head -1 | cut -d: -f1)"
+# shellcheck disable=SC2016  # idem
 settle_line="$(grep -n 'read -rsn1 -t "\$settle"' "$wizard" | head -1 | cut -d: -f1)"
 ((draw_line < settle_line)) ||
 	fail 'the wizard waits before it draws, so the debounce hides the selection instead of the delay'
@@ -139,8 +142,7 @@ sed -n '/^theme_preview()/,/^}/p' "$wizard" | grep -Fq '|| true' &&
 	fail 'the theme preview swallows apply-theme failures without a trace'
 sed -n '/^theme_preview()/,/^}/p' "$wizard" | grep -Fq 'preview_note=' ||
 	fail 'the theme preview reports nothing when it cannot dress the desktop'
-grep -Fq 'preview_note' "$(printf '%s' "$wizard")" &&
-	sed -n '/^footer()/,/^}/p' "$wizard" | grep -Fq 'preview_note' ||
+sed -n '/^footer()/,/^}/p' "$wizard" | grep -Fq 'preview_note' ||
 	fail 'the preview failure is recorded but never shown to the person choosing'
 
 # The key with the Windows logo on it is what the tour must call it. "SUPER" is

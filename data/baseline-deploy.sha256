@@ -26,7 +26,7 @@ da2bd4e135e304b68ce0d70d074eba9afc476a17c77d5e1c34806735421066bb  dotfiles/kitty
 ba2874b1aaff006e2fb1a45ef743f8f9071c6cba273e3d3e67fb8381fb309123  dotfiles/nvim/.config/nvim/lazy-lock.json
 894ca19dbca292cf2afb6a9298acf7ed4f34f254cf40dc8e17c2e471e5f2b44e  dotfiles/nvim/.config/nvim/lua/chadrc.lua
 35fe734cc409202bf3254cb726fd9abcc09c0a7dfc42676b99d80056a1cdd6c8  dotfiles/nvim/.config/nvim/lua/configs/conform.lua
-3e07056c7e17f7c5a3e863586cb28d9b78689e7b8f7451efe6f7d9315c968a96  dotfiles/nvim/.config/nvim/lua/configs/lazy.lua
+44d9f844aa46fbfd1357f8fed00180eafbca9a87beed499fcfd5a19c75ffe8c4  dotfiles/nvim/.config/nvim/lua/configs/lazy.lua
 3b9813f1c185ff4acf1dc6129aa86a1992c4503d0de4f6e6fcda57b9b8a72750  dotfiles/nvim/.config/nvim/lua/configs/lspconfig.lua
 9a2057839d52ae5e9bda14eba75691c3383e60c3aa6426fb669e514592ddbaf4  dotfiles/nvim/.config/nvim/lua/configs/spectre.lua
 960335166abf109c5908ba78ad69b7a091128b8110fdb498a1c5887a7f957caf  dotfiles/nvim/.config/nvim/lua/custom/clipboard.lua
@@ -54,5 +54,5 @@ ac81224fc768b751e3c5ac3b10ff1c8ef6c6f8b00ab7fd075b40d9dfbc9417ec  dotfiles/wayba
 ff8a9bc3e5ea8b4f7bed7d58b31552511db9b438b67740c233032a1b81efe63c  dotfiles/waybar/.config/waybar/scripts/ws-render.sh
 39a8549338ce6898b862da2895faae0188e419985d0e4590feb6d2f1af0466e5  dotfiles/waybar/.config/waybar/style.css
 d92b7d39cd2f0ded3acd33a61edf70a3d9d9fdef9f95c4929cf9bf4d483abc31  dotfiles/waybar/.config/waybar/workspace-icons.json
-9b1799ebf97740de86812e6aad6808255df5ffb024b7c1484d7a7214b5758644  dotfiles/welcome/.local/bin/hipurbia-welcome
+561aae0675456e6723420353120b8f79ccfe1ecc80caad2aa655895bdbcd1e61  dotfiles/welcome/.local/bin/hipurbia-welcome
 16e0f8c1f5ed428ec0c8da4e8775f7c3ae967171ab62f337dc365c076514a411  dotfiles/wofi/.config/wofi/style.css
