@@ -9,7 +9,7 @@
      field is transparent and the wordmark takes the accent rather than the
      foreground: accent is the one token in every palette that carries enough
      chroma to hold against both. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 632 280" width="632" height="280" role="img" aria-label="vivac">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 650 280" width="650" height="280" role="img" aria-label="vivac">
   <defs>
     <radialGradient id="halo"><stop stop-color="#@COLOR_ACCENT@" stop-opacity=".30"/><stop offset="1" stop-color="#@COLOR_ACCENT@" stop-opacity="0"/></radialGradient>
     <linearGradient id="moon" x2=".7" y2="1"><stop stop-color="#@COLOR_FG@"/><stop offset="1" stop-color="#@COLOR_ACCENT@"/></linearGradient>
@@ -34,5 +34,5 @@
   <text x="264" y="162" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
         font-size="86" font-weight="700" letter-spacing="-2" fill="#@COLOR_ACCENT@">vivac</text>
   <text x="268" y="204" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
-        font-size="20" letter-spacing="4" fill="#@COLOR_MUTED@">@THEME_TITLE@ · @THEME_ESSENCE@</text>
+        font-size="20" letter-spacing="4" fill="#@COLOR_MUTED@">rebuild it from nothing</text>
 </svg>

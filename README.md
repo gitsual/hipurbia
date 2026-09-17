@@ -1,9 +1,10 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="vivac" width="456">
+<img src="assets/logo.png" alt="vivac" width="469">
 
 <p>
-<em>An Arch Linux workstation you can rebuild from nothing.</em><br>
+<em>A <strong>vivac</strong> is the camp you pitch from what you carry and strike at dawn.<br>
+This is an Arch Linux workstation you can rebuild from nothing.</em><br>
 <strong>Eight palettes, one source of colour. The wallpaper, the bar, the borders and the banner on this page are all build artifacts — nothing here is hand-painted.</strong>
 </p>
 
