@@ -20,12 +20,12 @@ language="${language%%[._@]*}"
 i18n_load "$language" "${I18N_DIR:-$repo/i18n}" 2>/dev/null ||
 	i18n_load en "${I18N_DIR:-$repo/i18n}"
 
-names=(warm-night)
+names=(bad-romance)
 while IFS= read -r file; do names+=("$(basename -- "$file" .conf)"); done \
 	< <(find "$repo/data/themes" -name '*.conf' -type f | LC_ALL=C sort)
 
 file_for() {
-	if [[ "$1" == warm-night ]]; then
+	if [[ "$1" == bad-romance ]]; then
 		printf '%s' "$repo/data/theme.conf"
 	else
 		printf '%s' "$repo/data/themes/$1.conf"

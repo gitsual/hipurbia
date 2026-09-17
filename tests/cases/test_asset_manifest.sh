@@ -14,7 +14,7 @@ trap 'rm -rf -- "$sandbox"' EXIT
 # A minimal tree with one real asset is enough: the gate's three failure modes
 # are independent of how many assets are listed.
 mkdir -p -- "$sandbox/assets"
-fixture="$repo_root/assets/screenshots/verdigris-night.png"
+fixture="$repo_root/assets/screenshots/cosmos.png"
 cp -- "$fixture" "$sandbox/assets/fixture.png"
 manifest="$sandbox/manifest.tsv"
 
@@ -31,7 +31,7 @@ run_gate --update >/dev/null
 run_gate >/dev/null || fail 'baseline: a freshly generated manifest must verify'
 
 # Scenario 1 — an asset exists in the tree but is not listed.
-cp -- "$repo_root/dotfiles/hypr/.local/share/wallpapers/warm-night.png" "$sandbox/assets/stray.png"
+cp -- "$repo_root/dotfiles/hypr/.local/share/wallpapers/bad-romance.png" "$sandbox/assets/stray.png"
 if run_gate >/dev/null 2>&1; then
 	fail 'scenario 1: gate accepted a stray unlisted binary'
 fi

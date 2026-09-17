@@ -22,7 +22,7 @@ settings_defaults() {
 		[keymap]=es
 		[xkb_layout]=es
 		[ime]=none
-		[theme]=warm-night
+		[theme]=bad-romance
 		[weather_location]=auto
 	)
 }

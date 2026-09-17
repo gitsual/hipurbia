@@ -37,7 +37,7 @@ settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/setti
 state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia"
 manifest="$state_dir/theme-overlay"
 templates_dir="${TEMPLATES_DIR:-$repo_root/templates}"
-default_theme='warm-night'
+default_theme='bad-romance'
 
 theme_file_for() {
 	if [[ "$1" == "$default_theme" ]]; then

@@ -26,7 +26,7 @@ usage() {
 Usage: scripts/make-wallpaper.sh [--theme NAME]... [--all] [--out DIR] [--no-raster]
 
 Render one wallpaper per theme (SVG always, PNG when a rasterizer exists).
-  --theme NAME  a name from data/themes/, or 'warm-night' for the default
+  --theme NAME  a name from data/themes/, or 'bad-romance' for the default
   --theme FILE  a path ending in .conf, for a theme outside the catalogue
   --all         every theme in the catalogue, default included
   --out DIR     where to write (default: dist/wallpapers)
@@ -69,7 +69,7 @@ done
 theme_path() {
 	case "$1" in
 	*.conf) printf '%s' "$1" ;;
-	warm-night) printf '%s' "$repo_root/data/theme.conf" ;;
+	bad-romance) printf '%s' "$repo_root/data/theme.conf" ;;
 	*) printf '%s' "$repo_root/data/themes/$1.conf" ;;
 	esac
 }
@@ -114,12 +114,12 @@ ornament_for() {
 }
 
 if $all; then
-	themes=(warm-night)
+	themes=(bad-romance)
 	while IFS= read -r file; do
 		themes+=("$(basename -- "$file" .conf)")
 	done < <(find "$repo_root/data/themes" -name '*.conf' -type f | LC_ALL=C sort)
 fi
-((${#themes[@]})) || themes=(warm-night)
+((${#themes[@]})) || themes=(bad-romance)
 
 mkdir -p -- "$out_dir"
 rasterizer=''
@@ -136,7 +136,7 @@ fi
 for theme in "${themes[@]}"; do
 	file="$(theme_path "$theme")"
 	# A theme given as a path is named by its file; a theme given by name keeps
-	# the name, so the default stays 'warm-night' and not 'theme'.
+	# the name, so the default stays 'bad-romance' and not 'theme'.
 	if [[ "$theme" == *.conf ]]; then theme="$(basename -- "$file" .conf)"; fi
 	[[ -f "$file" ]] || {
 		printf 'no theme named %s\n' "$theme" >&2

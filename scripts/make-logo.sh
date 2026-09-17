@@ -16,7 +16,7 @@ source "$repo_root/lib/kv.sh"
 # shellcheck source=lib/render.sh
 source "$repo_root/lib/render.sh"
 
-theme='verdigris-night'
+theme='cosmos'
 out_dir="$repo_root/assets"
 raster=true
 
@@ -25,7 +25,7 @@ usage() {
 Usage: scripts/make-logo.sh [--theme NAME] [--out DIR] [--no-raster]
 
 Render assets/logo.svg and assets/logo-mark.svg, plus their PNGs.
-  --theme NAME  a name from data/themes/, or 'warm-night' for the default
+  --theme NAME  a name from data/themes/, or 'bad-romance' for the default
   --out DIR     where to write (default: assets)
   --no-raster   write the SVGs only, skip the PNG pass
 USAGE
@@ -63,7 +63,7 @@ while (($#)); do
 done
 
 case "$theme" in
-warm-night) file="$repo_root/data/theme.conf" ;;
+bad-romance) file="$repo_root/data/theme.conf" ;;
 *) file="$repo_root/data/themes/$theme.conf" ;;
 esac
 [[ -f "$file" ]] || {

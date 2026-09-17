@@ -27,7 +27,7 @@
   <text x="272" y="200" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
         font-size="25" letter-spacing="1" fill="#8A9A93">the colour scheme is a build artifact</text>
   <text x="272" y="240" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
-        font-size="21" letter-spacing="3" fill="#E8C66A">Verdigris Night · Technique</text>
+        font-size="21" letter-spacing="3" fill="#E8C66A">Cosmos · Technique</text>
 
   <g transform="translate(272 268)">
     <rect x="0"   y="0" width="52" height="14" rx="3" fill="#0E1513" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>

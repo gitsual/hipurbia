@@ -59,7 +59,7 @@ fi
 # The bundled wallpaper and everything under assets/ — the README captures and
 # the rendered banner — are the only binaries this repository ships on purpose;
 # every byte of them is still pinned by data/asset-manifest.tsv.
-if find . \( -path ./.git -o -path ./.vm-test -o -path ./.vm-image -o -path ./dist -o -path ./.audit -o -path './tests/fixtures/*/sysroot/sys' \) -prune -o -type f ! -path './dotfiles/hypr/.local/share/wallpapers/warm-night.png' ! -path './assets/*.png' -print0 | xargs -0 file | grep -Ev 'text|empty|SVG|JSON|Python script|shell script' >/dev/null; then
+if find . \( -path ./.git -o -path ./.vm-test -o -path ./.vm-image -o -path ./dist -o -path ./.audit -o -path './tests/fixtures/*/sysroot/sys' \) -prune -o -type f ! -path './dotfiles/hypr/.local/share/wallpapers/bad-romance.png' ! -path './assets/*.png' -print0 | xargs -0 file | grep -Ev 'text|empty|SVG|JSON|Python script|shell script' >/dev/null; then
 	printf '%s\n' 'unexpected binary file found' >&2
 	exit 1
 fi

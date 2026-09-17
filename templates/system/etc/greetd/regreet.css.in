@@ -1,4 +1,4 @@
-/* ReGreet, Warm Night palette. Rendered from data/theme.conf into
+/* ReGreet, Bad Romance palette. Rendered from data/theme.conf into
    system/etc/greetd/regreet.css; installed next to regreet.toml. */
 window { background-color: #@COLOR_BG@; color: #@COLOR_FG@; }
 .background { background-color: #@COLOR_BG@; }

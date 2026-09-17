@@ -60,7 +60,7 @@ done
 
 # The theme list is read from the catalogue, never copied into the wizard: a
 # second list is a second thing to forget to update.
-grep -qE '^themes=\(warm-night\)$' "$wizard" ||
+grep -qE '^themes=\(bad-romance\)$' "$wizard" ||
 	fail 'the wizard seeds its theme list with something other than the default alone'
 grep -Fq 'data/themes' "$wizard" || fail 'the wizard does not read the catalogue'
 
@@ -68,15 +68,15 @@ grep -Fq 'data/themes' "$wizard" || fail 'the wizard does not read the catalogue
 # already there: the second answer replaces the first rather than joining it.
 settings_file="$sandbox/.config/hipurbia/settings"
 mkdir -p -- "$(dirname -- "$settings_file")"
-printf 'theme=warm-night\nxkb_layout=us\n' >"$settings_file"
+printf 'theme=bad-romance\nxkb_layout=us\n' >"$settings_file"
 HOME="$sandbox" XDG_CONFIG_HOME="$sandbox/.config" HIPURBIA_REPO="$repo_root" \
-	bash -c 'source "$0"; settings_file="$1"; setting_write xkb_layout fr; setting_write theme cold-slate' \
+	bash -c 'source "$0"; settings_file="$1"; setting_write xkb_layout fr; setting_write theme metropolis' \
 	<(sed -n '/^setting_write()/,/^}/p' "$wizard") "$settings_file" ||
 	fail 'setting_write failed on an existing file'
 (($(grep -c '^xkb_layout=' "$settings_file") == 1)) || fail 'setting_write duplicated a key'
 settings_load "$settings_file" || fail 'the loader cannot read what the wizard wrote'
 [[ "${SETTINGS[xkb_layout]}" == fr ]] || fail "the loader read xkb_layout=${SETTINGS[xkb_layout]}, not fr"
-[[ "${SETTINGS[theme]}" == cold-slate ]] || fail "the loader read theme=${SETTINGS[theme]}, not cold-slate"
+[[ "${SETTINGS[theme]}" == metropolis ]] || fail "the loader read theme=${SETTINGS[theme]}, not metropolis"
 
 # Started exactly once by the session, with the flag that makes it a no-op the
 # second time, and floated so it is not tiled behind the bar on first sight.
@@ -92,7 +92,7 @@ grep -Fq 'welcome' "$repo_root/scripts/deploy.sh" || fail 'the wizard is never d
 paper="$repo_root/dotfiles/hypr/.config/hypr/scripts/wallpaper.sh"
 grep -Fq 'hipurbia/settings' "$paper" || fail 'the wallpaper ignores the chosen theme'
 grep -Fq 'make-wallpaper.sh' "$paper" || fail 'a theme without a committed image would have no wallpaper'
-grep -Fq 'warm-night.png' "$paper" || fail 'the wallpaper has no fallback when nothing can be drawn'
+grep -Fq 'bad-romance.png' "$paper" || fail 'the wallpaper has no fallback when nothing can be drawn'
 
 # ...and the fallback must stay a fallback. The wallpaper is the ONLY themed
 # file drawn at run time rather than committed, so the base profile has to

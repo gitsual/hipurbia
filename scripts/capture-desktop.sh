@@ -56,7 +56,7 @@ guest true >/dev/null 2>&1 || {
 # top of the desktop is opened. An empty opener is the desktop by itself.
 jobs=()
 if [[ "$mode" == palettes ]]; then
-	jobs+=('warm-night|warm-night|')
+	jobs+=('bad-romance|bad-romance|')
 	while IFS= read -r file; do
 		theme="$(basename -- "$file" .conf)"
 		jobs+=("$theme|$theme|")
@@ -66,21 +66,21 @@ else
 	# interface and the whole range of colour at the same time, and so no
 	# surface can quietly become the only one anybody ever sees in context.
 	jobs=(
-		'surface-power|warm-night|bind:SUPER SHIFT,Q'
-		'surface-power-rofi|verdigris-night|bind:SUPER SHIFT,E'
-		'surface-theme|cold-slate|bind:SUPER SHIFT,T'
-		'surface-help-hypr|ember-forge|bind:,F1'
-		'surface-help-browser|emerald-night|bind:,F2'
-		'surface-help-shell|gilded-dusk|bind:,F3'
-		'surface-help-editor|moss-stone|bind:,F4'
-		'surface-help-system|verdigris-night|bind:,F5'
-		'surface-launcher-rofi|wild-bloom|bind:SUPER,R'
-		'surface-launcher-wofi|warm-night|bind:SUPER ALT,R'
-		'surface-launcher-dmenu|cold-slate|bind:SUPER,D'
-		'surface-clipboard|ember-forge|bind:SUPER,V'
-		'surface-welcome|emerald-night|run:welcome'
-		'surface-notification|gilded-dusk|run:notification'
-		'surface-lock|moss-stone|bind:SUPER,L'
+		'surface-power|bad-romance|bind:SUPER SHIFT,Q'
+		'surface-power-rofi|cosmos|bind:SUPER SHIFT,E'
+		'surface-theme|metropolis|bind:SUPER SHIFT,T'
+		'surface-help-hypr|carmen|bind:,F1'
+		'surface-help-browser|northern-lights|bind:,F2'
+		'surface-help-shell|gatsby|bind:,F3'
+		'surface-help-editor|the-hermit|bind:,F4'
+		'surface-help-system|cosmos|bind:,F5'
+		'surface-launcher-rofi|persephone|bind:SUPER,R'
+		'surface-launcher-wofi|bad-romance|bind:SUPER ALT,R'
+		'surface-launcher-dmenu|metropolis|bind:SUPER,D'
+		'surface-clipboard|carmen|bind:SUPER,V'
+		'surface-welcome|northern-lights|run:welcome'
+		'surface-notification|gatsby|run:notification'
+		'surface-lock|the-hermit|bind:SUPER,L'
 	)
 fi
 
@@ -232,7 +232,7 @@ bind:*)
 		# does not exit, it stays alive owning the selection, and a copy left
 		# attached to this SSH channel keeps it open for as long as the
 		# selection lasts -- which is the rest of the session.
-		printf '%s' 'data/themes/emerald-night.conf' >/tmp/hipurbia-clip-1
+		printf '%s' 'data/themes/northern-lights.conf' >/tmp/hipurbia-clip-1
 		setsid wl-copy </tmp/hipurbia-clip-1 >/dev/null 2>&1 &
 		sleep 1
 		printf '%s' '#1F1A17' >/tmp/hipurbia-clip-2

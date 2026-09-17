@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160">
-<title>Warm Night — Nocturne</title>
-<desc>Original geometric night landscape in plum, coral and muted gold, designed for the Warm Night Arch desktop.</desc>
+<title>Bad Romance — Nocturne</title>
+<desc>Original geometric night landscape in plum, coral and muted gold, designed for the Bad Romance Arch desktop.</desc>
 <defs>
  <linearGradient id="sky" x2="1" y2="1"><stop stop-color="#18131b"/><stop offset=".55" stop-color="#2d1f2d"/><stop offset="1" stop-color="#50323d"/></linearGradient>
  <radialGradient id="halo"><stop stop-color="#e1777d" stop-opacity=".22"/><stop offset="1" stop-color="#e1777d" stop-opacity="0"/></radialGradient>
@@ -19,5 +19,5 @@
 <path d="M0 1770 620 1560 1230 1800 2000 1450 2840 1780 3840 1510V2160H0Z" fill="#3b2a38"/>
 <path d="M0 1980 930 1780 1670 2000 2710 1640 3840 1920V2160H0Z" fill="url(#front)"/>
 <path d="m1670 2000 1040-360 1130 280" fill="none" stroke="#979367" stroke-opacity=".25" stroke-width="2"/>
-<g fill="#e8d5ab" opacity=".7" font-family="sans-serif"><text x="180" y="1930" font-size="34" letter-spacing="12">WARM NIGHT</text><text x="183" y="1974" font-size="15" letter-spacing="6" opacity=".55">N O C T U R N E</text></g>
+<g fill="#e8d5ab" opacity=".7" font-family="sans-serif"><text x="180" y="1930" font-size="34" letter-spacing="12">BAD ROMANCE</text><text x="183" y="1974" font-size="15" letter-spacing="6" opacity=".55">N O C T U R N E</text></g>
 </svg>

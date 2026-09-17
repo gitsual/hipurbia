@@ -61,7 +61,7 @@ t() { i18n_format "$@" || true; }
 declare -A palette=()
 palette_load() {
 	local name="$1" file key value
-	if [[ "$name" == warm-night ]]; then file="$repo/data/theme.conf"; else file="$repo/data/themes/$name.conf"; fi
+	if [[ "$name" == bad-romance ]]; then file="$repo/data/theme.conf"; else file="$repo/data/themes/$name.conf"; fi
 	[[ -f "$file" ]] || return 1
 	palette=()
 	while IFS='=' read -r key value; do
@@ -218,14 +218,14 @@ done < <(find "$repo/i18n" -name '*.conf' -type f | LC_ALL=C sort)
 labels[en]='English'
 labels[es]='Español'
 
-themes=(warm-night)
+themes=(bad-romance)
 while IFS= read -r file; do themes+=("$(basename -- "$file" .conf)"); done \
 	< <(find "$repo/data/themes" -name '*.conf' -type f | LC_ALL=C sort)
 for name in "${themes[@]}"; do
 	title="$(sed -nE 's/^# @title: (.*)$/\1/p' \
-		"$([[ "$name" == warm-night ]] && printf '%s' "$repo/data/theme.conf" || printf '%s' "$repo/data/themes/$name.conf")")"
+		"$([[ "$name" == bad-romance ]] && printf '%s' "$repo/data/theme.conf" || printf '%s' "$repo/data/themes/$name.conf")")"
 	essence="$(sed -nE 's/^# @essence: (.*)$/\1/p' \
-		"$([[ "$name" == warm-night ]] && printf '%s' "$repo/data/theme.conf" || printf '%s' "$repo/data/themes/$name.conf")")"
+		"$([[ "$name" == bad-romance ]] && printf '%s' "$repo/data/theme.conf" || printf '%s' "$repo/data/themes/$name.conf")")"
 	printf -v "labels[$name]" '%-18s ·  %s' "$title" "$essence"
 done
 
@@ -475,7 +475,7 @@ step_tour() {
 # ----------------------------------------------------------------------- run
 
 palette_load "$(sed -nE 's/^theme=(.*)$/\1/p' "$settings_file" 2>/dev/null | tail -1)" ||
-	palette_load warm-night
+	palette_load bad-romance
 
 printf '\033[?25l'
 restore() {

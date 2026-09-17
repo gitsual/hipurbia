@@ -13,13 +13,13 @@ source "$repo_root/lib/kv.sh"
 source "$repo_root/lib/settings.sh"
 
 settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings}"
-theme='warm-night'
+theme='bad-romance'
 [[ -f "$settings_file" ]] && {
 	settings_load "$settings_file"
 	theme="${SETTINGS[theme]:-$theme}"
 }
 theme_file="$repo_root/data/theme.conf"
-[[ "$theme" != warm-night ]] && theme_file="$repo_root/data/themes/$theme.conf"
+[[ "$theme" != bad-romance ]] && theme_file="$repo_root/data/themes/$theme.conf"
 [[ -f "$theme_file" ]] || {
 	printf 'No such theme: %s\n' "$theme" >&2
 	exit 1

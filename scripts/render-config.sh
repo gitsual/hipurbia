@@ -82,7 +82,7 @@ settings_load "$settings_file"
 # committed dotfile was rendered from, so choosing nothing changes nothing.
 if [[ -n "${THEME_FILE:-}" ]]; then
 	theme="$THEME_FILE"
-elif [[ "${SETTINGS[theme]}" == warm-night ]]; then
+elif [[ "${SETTINGS[theme]}" == bad-romance ]]; then
 	theme="$repo_root/data/theme.conf"
 else
 	theme="$repo_root/data/themes/${SETTINGS[theme]}.conf"

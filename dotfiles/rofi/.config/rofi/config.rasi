@@ -10,4 +10,4 @@ configuration {
     display-run: " Run";
     display-window: " Windows";
 }
-@theme "~/.config/rofi/themes/warm-night.rasi"
+@theme "~/.config/rofi/themes/bad-romance.rasi"

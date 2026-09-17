@@ -87,14 +87,14 @@ def ratio(a: str, b: str) -> float:
 
 FLOORS = (("COLOR_FG", 7.0), ("COLOR_FG_DIM", 4.5), ("COLOR_ACCENT", 3.0), ("TERMINAL_FG", 7.0))
 
-# Two roles painted the same colour are one role with two names. emerald-night
+# Two roles painted the same colour are one role with two names. northern-lights
 # shipped COLOR_MUTED identical to COLOR_FG_DIM and COLOR_INFO a hair from
 # COLOR_ACCENT, so a footer hint and a dimmed subtitle came out the same, and
 # so did an accent and a notice -- distinctions every other theme makes.
 # Contrast against the background cannot see this: these pairs sit at similar
 # luminance by design and differ in hue, so they are compared by perceptual
 # distance instead. The floor is well under the closest pair the catalogue
-# ships (79.8, moss-stone accent against info); it is there to catch roles
+# ships (79.8, the-hermit accent against info); it is there to catch roles
 # that collapse, not to arbitrate taste.
 SEPARATIONS = ((("COLOR_FG_DIM", "COLOR_MUTED"), 60.0), (("COLOR_ACCENT", "COLOR_INFO"), 60.0))
 

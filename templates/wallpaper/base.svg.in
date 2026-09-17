@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- The shared composition of every wallpaper in the catalogue: an original
      geometric night landscape, drawn once and dressed in whichever palette the
-     theme carries. It is the shipped Warm Night piece turned into tokens, so a
+     theme carries. It is the shipped Bad Romance piece turned into tokens, so a
      new theme inherits the composition instead of inventing a worse one.
      The closing </svg> is deliberately absent: an ornament fragment is
      appended first, and scripts/make-wallpaper.sh closes the document. -->

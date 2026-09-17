@@ -165,60 +165,60 @@ captured inside the VM. Same commit, same deploy, same palette file.
     <td width="50%" align="center"><sub><b>captured</b> — <code>grim</code>, inside the VM</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><a href="assets/wallpapers/warm-night.png"><img src="assets/wallpapers/warm-night.png" alt="Warm Night wallpaper"></a></td>
-    <td width="50%" align="center"><a href="assets/screenshots/warm-night.png"><img src="assets/screenshots/warm-night.png" alt="Warm Night desktop"></a></td>
+    <td width="50%" align="center"><a href="assets/wallpapers/bad-romance.png"><img src="assets/wallpapers/bad-romance.png" alt="Bad Romance wallpaper"></a></td>
+    <td width="50%" align="center"><a href="assets/screenshots/bad-romance.png"><img src="assets/screenshots/bad-romance.png" alt="Bad Romance desktop"></a></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Warm Night</b> · <sub>Nocturne · <code>data/themes/warm-night.conf</code> · no ornament — the base composition alone</sub></td>
+    <td colspan="2" align="center"><b>Bad Romance</b> · <sub>Nocturne · <code>data/themes/bad-romance.conf</code> · no ornament — the base composition alone</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><a href="assets/wallpapers/cold-slate.png"><img src="assets/wallpapers/cold-slate.png" alt="Cold Slate wallpaper"></a></td>
-    <td width="50%" align="center"><a href="assets/screenshots/cold-slate.png"><img src="assets/screenshots/cold-slate.png" alt="Cold Slate desktop"></a></td>
+    <td width="50%" align="center"><a href="assets/wallpapers/metropolis.png"><img src="assets/wallpapers/metropolis.png" alt="Metropolis wallpaper"></a></td>
+    <td width="50%" align="center"><a href="assets/screenshots/metropolis.png"><img src="assets/screenshots/metropolis.png" alt="Metropolis desktop"></a></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Cold Slate</b> · <sub>Resistance · <code>data/themes/cold-slate.conf</code> · no ornament</sub></td>
+    <td colspan="2" align="center"><b>Metropolis</b> · <sub>Resistance · <code>data/themes/metropolis.conf</code> · no ornament</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><a href="assets/wallpapers/ember-forge.png"><img src="assets/wallpapers/ember-forge.png" alt="Ember Forge wallpaper"></a></td>
-    <td width="50%" align="center"><a href="assets/screenshots/ember-forge.png"><img src="assets/screenshots/ember-forge.png" alt="Ember Forge desktop"></a></td>
+    <td width="50%" align="center"><a href="assets/wallpapers/carmen.png"><img src="assets/wallpapers/carmen.png" alt="Carmen wallpaper"></a></td>
+    <td width="50%" align="center"><a href="assets/screenshots/carmen.png"><img src="assets/screenshots/carmen.png" alt="Carmen desktop"></a></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Ember Forge</b> · <sub>Appetite · <code>data/themes/ember-forge.conf</code> · filigree</sub></td>
+    <td colspan="2" align="center"><b>Carmen</b> · <sub>Appetite · <code>data/themes/carmen.conf</code> · no ornament</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><a href="assets/wallpapers/emerald-night.png"><img src="assets/wallpapers/emerald-night.png" alt="Emerald Night wallpaper"></a></td>
-    <td width="50%" align="center"><a href="assets/screenshots/emerald-night.png"><img src="assets/screenshots/emerald-night.png" alt="Emerald Night desktop"></a></td>
+    <td width="50%" align="center"><a href="assets/wallpapers/northern-lights.png"><img src="assets/wallpapers/northern-lights.png" alt="Northern Lights wallpaper"></a></td>
+    <td width="50%" align="center"><a href="assets/screenshots/northern-lights.png"><img src="assets/screenshots/northern-lights.png" alt="Northern Lights desktop"></a></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Emerald Night</b> · <sub>Quartz · <code>data/themes/emerald-night.conf</code> · no ornament</sub></td>
+    <td colspan="2" align="center"><b>Northern Lights</b> · <sub>Quartz · <code>data/themes/northern-lights.conf</code> · no ornament</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><a href="assets/wallpapers/gilded-dusk.png"><img src="assets/wallpapers/gilded-dusk.png" alt="Gilded Dusk wallpaper"></a></td>
-    <td width="50%" align="center"><a href="assets/screenshots/gilded-dusk.png"><img src="assets/screenshots/gilded-dusk.png" alt="Gilded Dusk desktop"></a></td>
+    <td width="50%" align="center"><a href="assets/wallpapers/gatsby.png"><img src="assets/wallpapers/gatsby.png" alt="Gatsby wallpaper"></a></td>
+    <td width="50%" align="center"><a href="assets/screenshots/gatsby.png"><img src="assets/screenshots/gatsby.png" alt="Gatsby desktop"></a></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Gilded Dusk</b> · <sub>Nostalgia · <code>data/themes/gilded-dusk.conf</code> · no ornament</sub></td>
+    <td colspan="2" align="center"><b>Gatsby</b> · <sub>Nostalgia · <code>data/themes/gatsby.conf</code> · no ornament</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><a href="assets/wallpapers/moss-stone.png"><img src="assets/wallpapers/moss-stone.png" alt="Moss and Stone wallpaper"></a></td>
-    <td width="50%" align="center"><a href="assets/screenshots/moss-stone.png"><img src="assets/screenshots/moss-stone.png" alt="Moss and Stone desktop"></a></td>
+    <td width="50%" align="center"><a href="assets/wallpapers/the-hermit.png"><img src="assets/wallpapers/the-hermit.png" alt="The Hermit wallpaper"></a></td>
+    <td width="50%" align="center"><a href="assets/screenshots/the-hermit.png"><img src="assets/screenshots/the-hermit.png" alt="The Hermit desktop"></a></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Moss and Stone</b> · <sub>Endurance · <code>data/themes/moss-stone.conf</code> · vein</sub></td>
+    <td colspan="2" align="center"><b>The Hermit</b> · <sub>Endurance · <code>data/themes/the-hermit.conf</code> · no ornament</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><a href="assets/wallpapers/verdigris-night.png"><img src="assets/wallpapers/verdigris-night.png" alt="Verdigris Night wallpaper"></a></td>
-    <td width="50%" align="center"><a href="assets/screenshots/verdigris-night.png"><img src="assets/screenshots/verdigris-night.png" alt="Verdigris Night desktop"></a></td>
+    <td width="50%" align="center"><a href="assets/wallpapers/cosmos.png"><img src="assets/wallpapers/cosmos.png" alt="Cosmos wallpaper"></a></td>
+    <td width="50%" align="center"><a href="assets/screenshots/cosmos.png"><img src="assets/screenshots/cosmos.png" alt="Cosmos desktop"></a></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Verdigris Night</b> · <sub>Technique · <code>data/themes/verdigris-night.conf</code> · constellation</sub></td>
+    <td colspan="2" align="center"><b>Cosmos</b> · <sub>Technique · <code>data/themes/cosmos.conf</code> · constellation</sub></td>
   </tr>
   <tr>
-    <td width="50%" align="center"><a href="assets/wallpapers/wild-bloom.png"><img src="assets/wallpapers/wild-bloom.png" alt="Wild Bloom wallpaper"></a></td>
-    <td width="50%" align="center"><a href="assets/screenshots/wild-bloom.png"><img src="assets/screenshots/wild-bloom.png" alt="Wild Bloom desktop"></a></td>
+    <td width="50%" align="center"><a href="assets/wallpapers/persephone.png"><img src="assets/wallpapers/persephone.png" alt="Persephone wallpaper"></a></td>
+    <td width="50%" align="center"><a href="assets/screenshots/persephone.png"><img src="assets/screenshots/persephone.png" alt="Persephone desktop"></a></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Wild Bloom</b> · <sub>Romance · <code>data/themes/wild-bloom.conf</code> · vine</sub></td>
+    <td colspan="2" align="center"><b>Persephone</b> · <sub>Romance · <code>data/themes/persephone.conf</code> · vine</sub></td>
   </tr>
 </table>
 
@@ -325,17 +325,17 @@ affinity in the corpus matrix (distance ≤ 2) or the theme names an aesthetic f
 `data/aesthetics.tsv` that permits ornament and actually carries its canonical colours. A theme
 that asks for filigree it cannot justify fails the build; it is not quietly downgraded to a plain
 background, because the claim is wrong and saying so is the point. Three of the eight carry a
-layer, and one gave its layer back — over Gilded Dusk's lighter field the filigree read as stray
+layer, and one gave its layer back — over Gatsby's lighter field the filigree read as stray
 lines rather than as part of the picture, so the claim was removed instead of dimmed.
 
-The default Warm Night · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop
+The default Bad Romance · Nocturne wallpaper is bundled as SVG source and a 4K PNG. The desktop
 starts it with `swaybg`, including on virtual GPUs without accelerated rendering. The eight at
 the top of this page are not a curated selection, they are the whole catalogue:
 
 ```bash
 ./scripts/make-wallpaper.sh --all          # every theme, SVG + 3840×2160 PNG, into dist/wallpapers
-./scripts/make-wallpaper.sh --theme wild-bloom --no-raster
-./scripts/make-logo.sh --theme moss-stone  # the banner, in any palette in the catalogue
+./scripts/make-wallpaper.sh --theme persephone --no-raster
+./scripts/make-logo.sh --theme the-hermit  # the banner, in any palette in the catalogue
 ```
 
 `scripts/make-logo.sh` renders `templates/brand/logo.svg.in` from a theme file into

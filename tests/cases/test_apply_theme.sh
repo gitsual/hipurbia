@@ -71,11 +71,11 @@ done
 
 # Applying a real one: every palette-dependent file becomes a real file, and
 # holds a colour from the palette that was asked for rather than the default's.
-run --theme ember-forge --no-reload >/dev/null
+run --theme carmen --no-reload >/dev/null
 # Told apart by their BACKGROUND, not their accent: an accent is the canonical
 # hex of an aesthetic in data/aesthetics.tsv, so two themes rooted in the same
 # aesthetic share one on purpose and would make this assertion pass by accident.
-background="$(sed -nE 's/^COLOR_BG=(.*)$/\1/p' "$repo_root/data/themes/ember-forge.conf")"
+background="$(sed -nE 's/^COLOR_BG=(.*)$/\1/p' "$repo_root/data/themes/carmen.conf")"
 default_background="$(sed -nE 's/^COLOR_BG=(.*)$/\1/p' "$repo_root/data/theme.conf")"
 [[ -n "$background" && "$background" != "$default_background" ]] || fail 'the fixture theme is indistinguishable from the default'
 carried=0
@@ -87,14 +87,14 @@ done
 
 # Switching again must not accumulate: the previous overlay is undone first, so
 # no file is left holding the palette before last.
-run --theme cold-slate --no-reload >/dev/null
+run --theme metropolis --no-reload >/dev/null
 for target in "${!before[@]}"; do
 	grep -qiF "$background" "$target" && fail "$target still carries the previous theme's background"
 done
 
 # And back to the default: every symlink returns, pointing exactly where it
 # pointed, and the overlay record is gone rather than merely emptied.
-run --theme warm-night --no-reload >/dev/null
+run --theme bad-romance --no-reload >/dev/null
 for target in "${!before[@]}"; do
 	[[ -L "$target" ]] || fail "$target did not go back to being a Stow symlink"
 	[[ "$(readlink -- "$target")" == "${before[$target]}" ]] ||
@@ -196,7 +196,7 @@ printf 'apply-theme: swap is atomic, wallpaper reachable, reloads bounded, termi
 # Deploying must not undress the desktop. A non-default theme lives as an
 # overlay written OVER the stowed symlinks, and --restow points every one of
 # them back at the committed default render: the settings file went on saying
-# verdigris-night while the terminal came back warm-night, which is the one
+# cosmos while the terminal came back bad-romance, which is the one
 # mismatch nobody looks for because the setting is right.
 # shellcheck disable=SC2016  # the pattern is literal shell source to search for
 grep -Fq 'apply-theme.sh" --theme "$theme"' "$repo_root/scripts/deploy.sh" ||

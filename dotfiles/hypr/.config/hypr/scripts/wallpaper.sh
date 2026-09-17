@@ -24,9 +24,9 @@ lock="${XDG_RUNTIME_DIR:-/tmp}/hipurbia-wallpaper.lock"
 exec 9>"$lock"
 flock 9
 
-theme=warm-night
+theme=bad-romance
 [[ -f "$settings" ]] && theme="$(sed -nE 's/^theme=(.+)$/\1/p' "$settings" | tail -1)"
-[[ -n "$theme" ]] || theme=warm-night
+[[ -n "$theme" ]] || theme=bad-romance
 
 image="$wallpapers/$theme.png"
 # A drawing used to be kept forever, because the condition was "the file is
@@ -39,7 +39,7 @@ image="$wallpapers/$theme.png"
 # and regenerating it would write through that link into the repository. A
 # committed render is check-theme-drift.sh's business, not this script's.
 theme_file="$repo/data/themes/$theme.conf"
-[[ "$theme" == warm-night ]] && theme_file="$repo/data/theme.conf"
+[[ "$theme" == bad-romance ]] && theme_file="$repo/data/theme.conf"
 stale=false
 if [[ ! -f "$image" ]]; then
 	stale=true
@@ -53,7 +53,7 @@ if $stale && [[ -x "$repo/scripts/make-wallpaper.sh" ]]; then
 fi
 # A theme with no drawing of its own is still a usable desktop; a missing file
 # handed to swaybg is not.
-[[ -f "$image" ]] || image="$wallpapers/warm-night.png"
+[[ -f "$image" ]] || image="$wallpapers/bad-romance.png"
 
 pkill -x swaybg >/dev/null 2>&1 || true
 # swaybg outlives this script, so it must not inherit the lock: a waiting
