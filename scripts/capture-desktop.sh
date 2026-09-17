@@ -80,13 +80,29 @@ else
 		'surface-clipboard|ember-forge|bind:SUPER,V'
 		'surface-welcome|emerald-night|run:welcome'
 		'surface-notification|gilded-dusk|run:notification'
-		'surface-lock|moss-stone|bind:SUPER,L'
+		# The lock screen is deliberately absent. Under this VM hyprlock v0.9.6
+		# draws a black field whatever `background { color }` says: substituting
+		# the deployed colour with pure red produced a capture with no red in it
+		# and the same number of distinct colours as before. Its widgets do wear
+		# the palette, so the failure is the background alone, and it is not the
+		# screen being asleep -- dpmsStatus reads 1 on both sides of the capture.
+		# Whether a real GPU behaves the same is untested, and a gallery entry
+		# that may be a VM artefact is worse than no entry: restore this line
+		# once the lock has been seen wearing a palette on hardware.
 	)
 fi
+
+# HIPURBIA_ONLY limits the run to the named jobs, comma separated, so a capture
+# that has to be redone does not cost the fifteen that were already right.
+only="${HIPURBIA_ONLY:-}"
+taken=0
 
 mkdir -p -- "$out_dir"
 for job in "${jobs[@]}"; do
 	IFS='|' read -r name theme surface <<<"$job"
+	if [[ -n "$only" && ",$only," != *",$name,"* ]]; then
+		continue
+	fi
 	printf 'Capturing %s ...\n' "$name"
 	guest "THEME=$theme SURFACE='$surface' bash -s" <<'GUEST'
 set -Eeuo pipefail
@@ -104,6 +120,18 @@ cd "$HOME/hipurbia"
 # request, and kitty answers a request to close a window running an editor with
 # a confirmation dialog -- which is itself a window, and stays on the picture.
 pkill -x kitty || true
+# ...and so does every surface the previous capture opened. A launcher is a
+# layer surface, not a client, so the wait below never sees it: an undismissed
+# rofi from one job sat on top of the thirteen captures that followed it,
+# wearing the palette of the job that opened it while the desktop underneath
+# changed colour. Kill them by name, before the count is taken.
+for surface in rofi wofi dmenu nwg-bar hyprpicker; do
+	pkill -x "$surface" || true
+done
+# hyprlock is the exception: it is asked to unlock, never killed. See the note
+# where this run dismisses its own lock.
+pkill -USR1 -x hyprlock || true
+sleep 1
 for _ in $(seq 20); do
 	[[ "$(hyprctl -j clients | python -c 'import json,sys; print(len(json.load(sys.stdin)))')" == 0 ]] && break
 	sleep 0.5
@@ -208,9 +236,15 @@ bind:*)
 	# The clipboard menu is only worth a picture with something in it, and the
 	# history is whatever the running watcher has seen.
 	if [[ "$combo" == 'SUPER,V' ]]; then
-		printf '%s' 'data/themes/emerald-night.conf' | wl-copy
+		# Detached for the same reason the screenshot notice below is: wl-copy
+		# does not exit, it stays alive owning the selection, and a copy left
+		# attached to this SSH channel keeps it open for as long as the
+		# selection lasts -- which is the rest of the session.
+		printf '%s' 'data/themes/emerald-night.conf' >/tmp/hipurbia-clip-1
+		setsid wl-copy </tmp/hipurbia-clip-1 >/dev/null 2>&1 &
 		sleep 1
-		printf '%s' '#1F1A17' | wl-copy
+		printf '%s' '#1F1A17' >/tmp/hipurbia-clip-2
+		setsid wl-copy </tmp/hipurbia-clip-2 >/dev/null 2>&1 &
 		sleep 1
 	fi
 	open_surface "$(bind_command "$combo")"
@@ -227,18 +261,33 @@ run:notification)
 	mkdir -p "$shots"
 	shot="$shots/screenshot_$(date +%Y%m%d_%H%M%S).png"
 	grim -g '0,0 960x540' "$shot"
-	wl-copy <"$shot"
+	# wl-copy does not exit: it stays alive owning the selection. Run through the
+	# same SSH channel as everything else it would inherit this session's stdout
+	# and the channel would never close, so the capture that follows never runs.
+	setsid wl-copy <"$shot" >/dev/null 2>&1 &
 	notify-send 'Screenshot saved' "$shot"
 	sleep 2
 	;;
 esac
 
 grim /tmp/capture.png
-# A lock screen would swallow every capture after this one.
-pkill -x hyprlock || true
+# A lock screen would swallow every capture after this one. Dismissed with
+# SIGUSR1, which is hyprlock's own unlock signal, never with a plain kill: a
+# lock that dies rather than unlocks leaves Hyprland showing "your lockscreen
+# app died" over everything, and that state outlives the run that caused it.
+# The documented way out of it, `hyprctl eval hl.clear_crashed_lockscreen()`,
+# only exists under the Lua config manager, which this desktop does not use --
+# so the state is unrecoverable short of restarting the compositor. Do not
+# enter it.
+pkill -USR1 -x hyprlock || true
+for _ in $(seq 20); do
+	pgrep -x hyprlock >/dev/null || break
+	sleep 0.5
+done
 GUEST
 	scp -q -i "$run/id_ed25519" -P "$port" -o StrictHostKeyChecking=no \
 		-o UserKnownHostsFile=/dev/null \
 		"hipurbia@$host_address:/tmp/capture.png" "$out_dir/$name.png"
+	taken=$((taken + 1))
 done
-printf 'Captured %d images into %s\n' "${#jobs[@]}" "$out_dir"
+printf 'Captured %d images into %s\n' "$taken" "$out_dir"
