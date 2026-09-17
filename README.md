@@ -5,7 +5,7 @@
 <p>
 <em>A <strong>vivac</strong> is the camp you pitch from what you carry and strike at dawn.<br>
 This is an Arch Linux workstation you can rebuild from nothing.</em><br>
-<strong>Eight palettes, one source of colour. The wallpaper, the bar, the borders and the banner on this page are all build artifacts — nothing here is hand-painted.</strong>
+<strong>What you carry is one file — twenty-odd lines of colour. The wallpaper, the bar, the borders and this banner are rendered from it, none of them painted by hand. There are eight such files.</strong>
 </p>
 
 <p>
