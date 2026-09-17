@@ -224,21 +224,66 @@ captured inside the VM. Same commit, same deploy, same palette file.
 
 ### The surfaces it draws itself
 
+Every picture below is the same three-pane desktop with one surface opened on top of it, each
+in a different palette. The surface is not launched by a command repeated here: the capture
+script reads the deployed Hyprland config and runs whatever that key is bound to, so a
+screenshot cannot show something the key no longer does.
+
 <table>
   <tr>
-    <td width="33%" align="center"><a href="assets/screenshots/overlay-power.png"><img src="assets/screenshots/overlay-power.png" alt="Power menu"></a></td>
-    <td width="33%" align="center"><a href="assets/screenshots/overlay-theme.png"><img src="assets/screenshots/overlay-theme.png" alt="Theme picker"></a></td>
-    <td width="33%" align="center"><a href="assets/screenshots/overlay-help.png"><img src="assets/screenshots/overlay-help.png" alt="Help pane"></a></td>
+    <td width="33%" align="center"><a href="assets/screenshots/surface-power.png"><img src="assets/screenshots/surface-power.png" alt="Power menu"></a></td>
+    <td width="33%" align="center"><a href="assets/screenshots/surface-power-rofi.png"><img src="assets/screenshots/surface-power-rofi.png" alt="Power menu through rofi"></a></td>
+    <td width="33%" align="center"><a href="assets/screenshots/surface-theme.png"><img src="assets/screenshots/surface-theme.png" alt="Theme picker"></a></td>
   </tr>
   <tr>
     <td align="center"><b>Power menu</b><br><sub><code>Super+Shift+Q</code> · nwg-bar, entries generated per run in the session language, icons drawn from the palette and rasterized at start</sub></td>
+    <td align="center"><b>Power menu, the other one</b><br><sub><code>Super+Shift+E</code> · the same actions through rofi, for a session that never had nwg-bar</sub></td>
     <td align="center"><b>Theme picker</b><br><sub><code>Super+Shift+T</code> · the catalogue itself, read from <code>data/themes/</code>, never a copy of it</sub></td>
-    <td align="center"><b>Help pane</b><br><sub><code>F1</code>–<code>F5</code> · every bind, described in the session language, from <code>data/help-registry.tsv</code></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="assets/screenshots/surface-help-hypr.png"><img src="assets/screenshots/surface-help-hypr.png" alt="Help pane: Hyprland"></a></td>
+    <td align="center"><a href="assets/screenshots/surface-help-browser.png"><img src="assets/screenshots/surface-help-browser.png" alt="Help pane: browser"></a></td>
+    <td align="center"><a href="assets/screenshots/surface-help-shell.png"><img src="assets/screenshots/surface-help-shell.png" alt="Help pane: shell"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Help · Hyprland</b><br><sub><code>F1</code> · every bind, described in the session language, from <code>data/help-registry.tsv</code></sub></td>
+    <td align="center"><b>Help · browser</b><br><sub><code>F2</code> · a live bind the registry does not carry shows up as <code>UNREGISTERED</code></sub></td>
+    <td align="center"><b>Help · shell</b><br><sub><code>F3</code> · selecting a row acts on the registry's action, never on its description</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="assets/screenshots/surface-help-editor.png"><img src="assets/screenshots/surface-help-editor.png" alt="Help pane: editor"></a></td>
+    <td align="center"><a href="assets/screenshots/surface-help-system.png"><img src="assets/screenshots/surface-help-system.png" alt="Help pane: system"></a></td>
+    <td align="center"><a href="assets/screenshots/surface-launcher-rofi.png"><img src="assets/screenshots/surface-launcher-rofi.png" alt="Application launcher"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Help · editor</b><br><sub><code>F4</code> · the editor's keys, from the same registry as the compositor's</sub></td>
+    <td align="center"><b>Help · system</b><br><sub><code>F5</code> · rows whose action is a document open the file under <code>docs/</code></sub></td>
+    <td align="center"><b>Launcher</b><br><sub><code>Super+R</code> · <code>rofi -show drun</code>, themed from the palette like everything else</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="assets/screenshots/surface-launcher-wofi.png"><img src="assets/screenshots/surface-launcher-wofi.png" alt="Wofi launcher"></a></td>
+    <td align="center"><a href="assets/screenshots/surface-launcher-dmenu.png"><img src="assets/screenshots/surface-launcher-dmenu.png" alt="dmenu launcher"></a></td>
+    <td align="center"><a href="assets/screenshots/surface-clipboard.png"><img src="assets/screenshots/surface-clipboard.png" alt="Clipboard history"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Launcher, second opinion</b><br><sub><code>Super+Alt+R</code> · <code>wofi</code>, because a launcher you dislike should not be the only one</sub></td>
+    <td align="center"><b>Launcher, last resort</b><br><sub><code>Super+D</code> · <code>dmenu_run</code>, its colours handed over on the command line by the render</sub></td>
+    <td align="center"><b>Clipboard history</b><br><sub><code>Super+V</code> · <code>cliphist</code> through rofi; picking a row puts it back on the clipboard</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="assets/screenshots/surface-welcome.png"><img src="assets/screenshots/surface-welcome.png" alt="Welcome wizard"></a></td>
+    <td align="center"><a href="assets/screenshots/surface-notification.png"><img src="assets/screenshots/surface-notification.png" alt="Notification"></a></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Welcome</b><br><sub>first login · a terminal wizard on purpose: a desktop driven from the keyboard should not open by handing you a mouse</sub></td>
+    <td align="center"><b>Notification</b><br><sub><code>Super+Shift+S</code> · dunst, naming the file the screenshot script actually wrote</sub></td>
+    <td></td>
   </tr>
 </table>
 
-Nothing in those three is a committed English render. The labels come from `i18n/`, the actions
-never do: a translation can change what a button says and cannot change what it does.
+Nothing here is a committed English render. The labels come from `i18n/`, the actions never do:
+a translation can change what a button says and cannot change what it does.
 
 ---
 
