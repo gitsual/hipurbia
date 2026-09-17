@@ -5,15 +5,15 @@
 # CONSOLE_KEYMAP is exported by the caller.
 set -Eeuo pipefail
 sudo pacman -Syu --noconfirm
-sudo mkdir -p /mnt/hipurbia
-sudo mount -L HIPURBIA -o ro /mnt/hipurbia
-mkdir -p "$HOME/hipurbia"
-tar -xzf /mnt/hipurbia/repository.tar.gz -C "$HOME/hipurbia"
-cd "$HOME/hipurbia"
+sudo mkdir -p /mnt/vivac
+sudo mount -L VIVAC -o ro /mnt/vivac
+mkdir -p "$HOME/vivac"
+tar -xzf /mnt/vivac/repository.tar.gz -C "$HOME/vivac"
+cd "$HOME/vivac"
 # Three language axes with three distinguishable values, so each assertion
 # below can only be satisfied by its own writer.
-mkdir -p "$HOME/.config/hipurbia"
-printf 'locale=es_ES.UTF-8\nkeymap=%s\nxkb_layout=fr\nime=fcitx5\n' "$CONSOLE_KEYMAP" >"$HOME/.config/hipurbia/settings"
+mkdir -p "$HOME/.config/vivac"
+printf 'locale=es_ES.UTF-8\nkeymap=%s\nxkb_layout=fr\nime=fcitx5\n' "$CONSOLE_KEYMAP" >"$HOME/.config/vivac/settings"
 ./scripts/bootstrap.sh --noconfirm --desktop-login --vm --desktop --ime --ricer --gui-greeter --apps
 ./scripts/apply-system.sh --locale --keymap
 grep -Fxq 'LANG=es_ES.UTF-8' /etc/locale.conf
@@ -28,9 +28,9 @@ grep -Fxq '    kb_layout = fr' "$HOME/.config/hypr/generated/input.conf"
 greeter_plan="$(./scripts/apply-system.sh --dry-run --greeter)"
 grep -q 'LANG=es_ES.UTF-8 XKB_DEFAULT_LAYOUT=fr cage -s -- regreet' <<<"$greeter_plan"
 pacman -Qq greetd-regreet cage >/dev/null
-mkdir -p /tmp/hipurbia-runtime
-chmod 700 /tmp/hipurbia-runtime
-XDG_RUNTIME_DIR=/tmp/hipurbia-runtime Hyprland --verify-config -c "$HOME/.config/hypr/hyprland.conf"
+mkdir -p /tmp/vivac-runtime
+chmod 700 /tmp/vivac-runtime
+XDG_RUNTIME_DIR=/tmp/vivac-runtime Hyprland --verify-config -c "$HOME/.config/hypr/hyprland.conf"
 for fragment in hardware monitors input; do
   test -f "$HOME/.config/hypr/generated/$fragment.conf"
   test ! -L "$HOME/.config/hypr/generated/$fragment.conf"
@@ -72,7 +72,7 @@ test -L "$HOME/.config/hypr/hypridle.conf"
 # and the icons the buttons draw.
 test -L "$HOME/.config/nwg-bar/style.css"
 test -L "$HOME/.config/nwg-bar/icons/power-off.svg"
-"$HOME/.local/bin/hipurbia-power" --print | python -c 'import json,sys; assert len(json.load(sys.stdin)) == 5'
+"$HOME/.local/bin/vivac-power" --print | python -c 'import json,sys; assert len(json.load(sys.stdin)) == 5'
 grep -Fxq 'exec-once = hypridle' "$HOME/.config/hypr/hyprland.conf"
 # The workspace strip and the help panes work through the stowed scripts
 # with no session behind them: ten numbers, and every registered key.

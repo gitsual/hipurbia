@@ -110,8 +110,8 @@ image_user='user'
 ssh-keygen -q -t ed25519 -N '' -f "$run/id_ed25519"
 public_key="$(<"$run/id_ed25519.pub")"
 cat >"$run/meta-data" <<'META'
-instance-id: hipurbia-image
-local-hostname: hipurbia
+instance-id: vivac-image
+local-hostname: vivac
 META
 cat >"$run/user-data" <<USERDATA
 #cloud-config
@@ -214,7 +214,7 @@ kill -0 "$qemu_pid" 2>/dev/null && {
 	exit 1
 }
 
-artifact="$output_dir/hipurbia.qcow2"
+artifact="$output_dir/vivac.qcow2"
 printf '%s\n' 'Flattening the overlay into a standalone image...'
 qemu-img convert -O qcow2 -c "$run/build.qcow2" "$artifact.part"
 mv -- "$artifact.part" "$artifact"

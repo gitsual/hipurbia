@@ -13,13 +13,13 @@ set -Eeuo pipefail
 #
 #   --first-run   do nothing at all when the tour has already been taken
 #
-# Rerun it whenever you like: `hipurbia-welcome` with no arguments starts
+# Rerun it whenever you like: `vivac-welcome` with no arguments starts
 # from the top and changes only what you confirm.
 
-repo="${HIPURBIA_REPO:-$HOME/hipurbia}"
-state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia"
+repo="${VIVAC_REPO:-$HOME/vivac}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/vivac"
 marker="$state_dir/welcome-done"
-settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings"
+settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/vivac/settings"
 preview_log="$state_dir/theme-preview.log"
 locale_log="$state_dir/locale.log"
 preview_note=''
@@ -28,7 +28,7 @@ if [[ "${1:-}" == --first-run ]]; then
 	[[ -e "$marker" ]] && exit 0
 fi
 [[ -d "$repo" ]] || {
-	printf 'The portfolio checkout is not at %s; set HIPURBIA_REPO.\n' "$repo" >&2
+	printf 'The portfolio checkout is not at %s; set VIVAC_REPO.\n' "$repo" >&2
 	exit 1
 }
 
@@ -42,7 +42,7 @@ fi
 source "$repo/lib/kv.sh"
 # shellcheck source=lib/i18n.sh
 source "$repo/lib/i18n.sh"
-language="${HIPURBIA_LANG:-${LANG:-en}}"
+language="${VIVAC_LANG:-${LANG:-en}}"
 language="${language%%[._@]*}"
 i18n_load "$language" "${I18N_DIR:-$repo/i18n}" 2>/dev/null ||
 	i18n_load en "${I18N_DIR:-$repo/i18n}"

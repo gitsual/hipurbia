@@ -12,7 +12,7 @@ source "$repo_root/lib/kv.sh"
 # shellcheck source=lib/settings.sh
 source "$repo_root/lib/settings.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-settings.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-settings.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

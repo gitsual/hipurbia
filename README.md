@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="hipurbia" width="520">
+<img src="assets/logo.png" alt="vivac" width="456">
 
 <p>
 <em>An Arch Linux workstation you can rebuild from nothing.</em><br>
@@ -60,17 +60,17 @@ No mockups, no compositing, nothing hand-painted.</sub>
 <td valign="top">
 
 Nothing to build. The
-[releases page](https://github.com/gitsual/hipurbia/releases)
+[releases page](https://github.com/gitsual/vivac/releases)
 carries the same workstation this tree builds, already provisioned, as a disk
 you can boot.
 
 ```sh
-cat hipurbia.qcow2.part* >hipurbia.qcow2
+cat vivac.qcow2.part* >vivac.qcow2
 sha256sum -c SHA256SUMS
 ./scripts/run-vm-image.sh
 ```
 
-For **VirtualBox** or **VMware**, download `hipurbia.ova.part*` instead,
+For **VirtualBox** or **VMware**, download `vivac.ova.part*` instead,
 reassemble it the same way and import the appliance — no flags to get wrong.
 Accounts are `user`/`user` and `root`/`toor`, by convention rather than by
 secret: the image ships `sshd` installed and **disabled**, so a published
@@ -82,11 +82,11 @@ password is not a door standing open.
 <td valign="top">
 
 On a machine already running Arch. Nothing is deleted: a conflicting file moves
-to a timestamped backup under `$XDG_STATE_HOME/hipurbia/backups/`.
+to a timestamped backup under `$XDG_STATE_HOME/vivac/backups/`.
 
 ```sh
-git clone https://github.com/gitsual/hipurbia.git
-cd hipurbia
+git clone https://github.com/gitsual/vivac.git
+cd vivac
 ./scripts/bootstrap.sh --dry-run
 ./scripts/bootstrap.sh
 ```
@@ -144,7 +144,7 @@ the build — it is not quietly downgraded, because the claim is what is wrong.
 ### ⚡ 60-second tour
 
 ```bash
-git clone https://github.com/gitsual/hipurbia.git && cd hipurbia
+git clone https://github.com/gitsual/vivac.git && cd vivac
 ./scripts/bootstrap.sh --dry-run   # what it would install and link, touching nothing
 ./scripts/check.sh                 # the whole gate suite
 ./scripts/test-vm.sh --gui         # the real thing, in a QEMU/KVM Arch guest
@@ -301,14 +301,14 @@ The terminal and the editor are part of that, not exceptions to it.
 other themed file, and the terminals already open re-read it on `SIGUSR1` — the signal kitty
 sends itself — so the palette lands in the window you are looking at instead of the next one you
 open. Deploying does not undo any of this: `deploy.sh` restows the committed defaults and then
-reapplies the theme named in `~/.config/hipurbia/settings`, because restowing the default render
+reapplies the theme named in `~/.config/vivac/settings`, because restowing the default render
 over a live overlay used to undress the desktop.
 
 The editor was the last surface that ignored the theme, and it showed: eight captures of eight
 palettes with the same blue Neovim in the middle of each. NvChad ships a catalogue of base46
 themes and picking the nearest one would have been a resemblance, not a derivation — its hexes
 exist in no corpus here. So the theme is generated:
-`templates/nvim/.config/nvim/lua/themes/hipurbia.lua.in` maps base46's thirty names and sixteen
+`templates/nvim/.config/nvim/lua/themes/vivac.lua.in` maps base46's thirty names and sixteen
 bases onto palette tokens, several names sharing one token on purpose, because a palette carries
 one colour per meaning rather than one per name base46 happens to use. The editor sits on
 `TERMINAL_BG` rather than `COLOR_BG`: it lives inside the terminal, and the warm chrome is for
@@ -404,7 +404,7 @@ Deploy selected packages:
 ```
 
 Existing files are never deleted. Conflicts move to a timestamped backup under
-`${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia/backups/`. Stow runs with `--no-folding`, so
+`${XDG_STATE_HOME:-$HOME/.local/state}/vivac/backups/`. Stow runs with `--no-folding`, so
 local hardware overlays cannot write through a linked directory into the repository.
 
 Two things are not stowed because they differ per machine: the Waybar config and the Hyprland
@@ -443,7 +443,7 @@ The portable Hyprland baseline does not force a GPU. `render/hypr/generated/hard
 emits the NVIDIA Wayland environment only when the detected facts say NVIDIA is the sole GPU, and
 a software cursor on NVIDIA and virtual machines; every other machine gets an empty fragment. To
 change what was detected, write the corrected fact to
-`~/.config/hipurbia/hardware-facts.override` and re-run `scripts/render-config.sh --deploy`.
+`~/.config/vivac/hardware-facts.override` and re-run `scripts/render-config.sh --deploy`.
 
 The driver stack itself comes from `data/gpu-catalogue.tsv` through `scripts/gpu-setup.sh`, which
 is a dry run unless told otherwise:
@@ -506,7 +506,7 @@ that the module makes an outbound request every half hour either way.
 ### Language axes
 
 Locale, console keymap and Hyprland keyboard layout are three separate choices, and each has
-exactly one writer. They are read from `~/.config/hipurbia/settings` (see `settings.example`; a
+exactly one writer. They are read from `~/.config/vivac/settings` (see `settings.example`; a
 missing file means the source workstation's values):
 
 ```bash
@@ -526,7 +526,7 @@ nothing else, and `bootstrap.sh --ime` installs fcitx5 with Mozc.
 
 ## 🧭 First run
 
-The first session starts `hipurbia-welcome` and no later one does: it writes a marker, and
+The first session starts `vivac-welcome` and no later one does: it writes a marker, and
 `--first-run` is a no-op afterwards. Three questions and a ten-step tour, all reversible, all
 applied where you can see them.
 
@@ -552,7 +552,7 @@ the bar is for and where your IP address is, the volume, and `pacman` in both di
 installing Chromium and then removing it with `-Rns`, because installing is easy to try and
 undoing it is the part that actually teaches the package manager.
 
-Run `hipurbia-welcome` again whenever you want; it changes only what you confirm. To change the
+Run `vivac-welcome` again whenever you want; it changes only what you confirm. To change the
 theme without it: `scripts/apply-theme.sh --list`, then `scripts/apply-theme.sh --theme NAME`.
 
 ### Graphical login
@@ -642,7 +642,7 @@ scripts/               Bootstrap, deploy, render, audit and real-VM test tools
 
 <div align="center">
 
-<img src="assets/logo-mark.png" alt="hipurbia" width="56">
+<img src="assets/logo-mark.png" alt="vivac" width="56">
 
 <sub>Built because a colour scheme you cannot rebuild is a mood, not a configuration.</sub>
 

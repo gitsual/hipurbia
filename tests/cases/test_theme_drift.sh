@@ -9,7 +9,7 @@ set -Eeuo pipefail
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 gate="$repo_root/scripts/check-theme-drift.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-drift.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-drift.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 cp -r -- "$repo_root/templates" "$sandbox/templates"
 cp -r -- "$repo_root/dotfiles" "$sandbox/dotfiles"

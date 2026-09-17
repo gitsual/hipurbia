@@ -66,7 +66,7 @@ qemu-system-x86_64 \
 ssh_opts=(-i "$run/id_ed25519" -p "$port" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5)
 ready=false
 for _ in {1..90}; do
-	if ssh "${ssh_opts[@]}" "hipurbia@$host_address" true >/dev/null 2>&1; then ready=true; break; fi
+	if ssh "${ssh_opts[@]}" "vivac@$host_address" true >/dev/null 2>&1; then ready=true; break; fi
 	sleep 2
 done
 $ready || {
@@ -76,38 +76,38 @@ $ready || {
 
 # Validated keymap is intentionally expanded client-side.
 # shellcheck disable=SC2029
-ssh "${ssh_opts[@]}" "hipurbia@$host_address" "LC_ALL=C localectl list-keymaps | grep -Fxq -- '$console_keymap'"
+ssh "${ssh_opts[@]}" "vivac@$host_address" "LC_ALL=C localectl list-keymaps | grep -Fxq -- '$console_keymap'"
 # The validated keymap is intentionally expanded client-side.
 # shellcheck disable=SC2029
-ssh "${ssh_opts[@]}" "hipurbia@$host_address" "CONSOLE_KEYMAP='$console_keymap' bash -s" <<'GUEST'
+ssh "${ssh_opts[@]}" "vivac@$host_address" "CONSOLE_KEYMAP='$console_keymap' bash -s" <<'GUEST'
 set -Eeuo pipefail
-sudo mkdir -p /mnt/hipurbia
-mountpoint -q /mnt/hipurbia || sudo mount -L HIPURBIA -o ro /mnt/hipurbia
+sudo mkdir -p /mnt/vivac
+mountpoint -q /mnt/vivac || sudo mount -L VIVAC -o ro /mnt/vivac
 # Extract into an empty directory, never over the previous one: tar restores
 # what the disc carries but removes nothing, so a file deleted in the tree
 # survived in the guest -- and the gates, which check the tree rather than the
 # disc, then failed over an asset that no longer exists here.
-rm -rf -- "$HOME/hipurbia"
-mkdir -p "$HOME/hipurbia"
-tar -xzf /mnt/hipurbia/repository.tar.gz -C "$HOME/hipurbia"
-cd "$HOME/hipurbia"
+rm -rf -- "$HOME/vivac"
+mkdir -p "$HOME/vivac"
+tar -xzf /mnt/vivac/repository.tar.gz -C "$HOME/vivac"
+cd "$HOME/vivac"
 # A stopped VM can leave a stale pacman lock behind; only clear it when no pacman runs.
 if [ -e /var/lib/pacman/db.lck ] && ! pgrep -x pacman >/dev/null; then
   sudo rm -f /var/lib/pacman/db.lck
 fi
 # The console keymap is a setting; its one writer is apply-system.sh --keymap.
-mkdir -p "$HOME/.config/hipurbia"
-if ! grep -q '^keymap=' "$HOME/.config/hipurbia/settings" 2>/dev/null; then
-  printf 'keymap=%s\n' "$CONSOLE_KEYMAP" >>"$HOME/.config/hipurbia/settings"
+mkdir -p "$HOME/.config/vivac"
+if ! grep -q '^keymap=' "$HOME/.config/vivac/settings" 2>/dev/null; then
+  printf 'keymap=%s\n' "$CONSOLE_KEYMAP" >>"$HOME/.config/vivac/settings"
 fi
 ./scripts/bootstrap.sh --noconfirm --desktop-login --vm
 ./scripts/apply-system.sh --desktop-login --vm --keymap
 GUEST
 # Validated keymap is intentionally expanded client-side.
 # shellcheck disable=SC2029
-ssh "${ssh_opts[@]}" "hipurbia@$host_address" "grep -Fxq -- 'KEYMAP=$console_keymap' /etc/vconsole.conf"
+ssh "${ssh_opts[@]}" "vivac@$host_address" "grep -Fxq -- 'KEYMAP=$console_keymap' /etc/vconsole.conf"
 printf 'ssh_port=%s\nconsole_keymap=%s\n' "$port" "$console_keymap" >"$run/console-login.txt"
-ssh "${ssh_opts[@]}" "hipurbia@$host_address" 'sudo systemctl reboot' || true
+ssh "${ssh_opts[@]}" "vivac@$host_address" 'sudo systemctl reboot' || true
 
 printf 'Interactive tested VM is running; the desktop logs in by itself. Details: %s\n' "$run/console-login.txt"
 printf 'Stop it with: %s --stop\n' "$repo_root/scripts/open-tested-vm.sh"

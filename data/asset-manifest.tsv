@@ -1,8 +1,8 @@
 # path	sha256	type	dimensions
 assets/logo-mark.png	1d18879c15e29c94bace0cfc031ca0c4a3a715e9a3b59b7b892991c952b2fa42	image/png	512x512
-assets/logo-mark.svg	fd5e60a3307078388d6114840d49805a5d500a10637640ac4e18078c44d3b839	image/svg+xml	256x256
-assets/logo.png	d5c507d0891bfeeeeb882dd405bcd9938f27c3e7b8bcb2820e3a55172bd5488a	image/png	1440x560
-assets/logo.svg	8ae2055c93de72c8b82b12d8f28f20f9e6ccb3d6d061378030c08517f5fed468	image/svg+xml	720x280
+assets/logo-mark.svg	47dd66b162b5b50c5df349688b8568c6700a6d4f35c2e218c1d7748b74e39e57	image/svg+xml	256x256
+assets/logo.png	ea7e97af8e43b2705e549942e36e9f806fe819e5bbae2ec5e5f120fc4b453103	image/png	1264x560
+assets/logo.svg	22361af97d5de09c938a21c515e4770af7ecbb711c9ce363717f5ed6c7298955	image/svg+xml	632x280
 assets/screenshots/bad-romance.png	75b782916703589a41516d1ea87dd4cbeaa7412113a6a772e0597da50ea4e127	image/png	1920x1080
 assets/screenshots/carmen.png	9a7254593fac2a45e73888072bda63be4fe33bd55fc915dfb51b87dc8341f2d5	image/png	1920x1080
 assets/screenshots/cosmos.png	9dee5b276242775b27b3004b01bcb59b4a9ced6a0d07fc682ef95059dab4e73f	image/png	1920x1080
@@ -42,8 +42,8 @@ dotfiles/ricer/.config/nwg-bar/icons/log-out.svg	5c374f86a7aa6d55e472809d8401d7e
 dotfiles/ricer/.config/nwg-bar/icons/power-off.svg	f9522fbc197ec8a3fbc9c197bfeeb839f1a5e8307f8b5718f9db53c641a3686d	image/svg+xml	24x24
 dotfiles/ricer/.config/nwg-bar/icons/reboot.svg	4c02a7e36c8884fd36380eed7dad622c7d5e6bfd7237fb70ff6f08884d1dfe8d	image/svg+xml	24x24
 dotfiles/ricer/.config/nwg-bar/icons/suspend.svg	f83792888aaa59994790ed530bb7dafcda08e3a0f3f97774839c8a3faf4dec86	image/svg+xml	24x24
-templates/brand/logo-mark.svg.in	f497bbf55306a53d6bd61a752a5d142ebe749ddd56d039a86ea7d32dce943b6f	image/svg+xml	256x256
-templates/brand/logo.svg.in	e653ae208e37e17cdc88e500d4debdf0a814535f545bd78da73bdb2d2261c026	image/svg+xml	720x280
+templates/brand/logo-mark.svg.in	67f67edd649a29bb4eee5f660a47535736800a9df97e4bef45d80ec6fbe12be2	image/svg+xml	256x256
+templates/brand/logo.svg.in	fbd77144823183c6fece8c330fe2ba07471c7738685e15f3794de893d058dd26	image/svg+xml	632x280
 templates/ricer/.config/nwg-bar/icons/lock.svg.in	50e61b5206166766044d87e43173bcf3afe8b11053c6482cbf0ae7d5f9403851	image/svg+xml	24x24
 templates/ricer/.config/nwg-bar/icons/log-out.svg.in	4641734efc38ce1ed4e5a449c2065fecaea5a9f24542ab0dba1f8a1204088c0a	image/svg+xml	24x24
 templates/ricer/.config/nwg-bar/icons/power-off.svg.in	8ae898a86e133b15737f304ba44efdb9ee361e38baa8c7a10a2382d4251bede0	image/svg+xml	24x24

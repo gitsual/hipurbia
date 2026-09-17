@@ -17,7 +17,7 @@
 
 ## Generic graphical session
 
-The optional `desktop-login` profile installs greetd/tuigreet and a generic Hyprland session. It is opt-in so hipurbia does not replace an existing display manager unexpectedly. The VM profile adds QEMU/SPICE guest integration without forcing it onto physical hardware.
+The optional `desktop-login` profile installs greetd/tuigreet and a generic Hyprland session. It is opt-in so vivac does not replace an existing display manager unexpectedly. The VM profile adds QEMU/SPICE guest integration without forcing it onto physical hardware.
 
 ## Portable private-function layer
 

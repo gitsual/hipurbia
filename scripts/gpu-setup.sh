@@ -23,12 +23,12 @@ source "$repo_root/lib/gpu.sh"
 # shellcheck source=lib/i18n.sh
 source "$repo_root/lib/i18n.sh"
 
-facts_file="${FACTS_FILE:-${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia/hardware-facts}"
-facts_override="${FACTS_OVERRIDE:-${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/hardware-facts.override}"
-backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia/backups"
+facts_file="${FACTS_FILE:-${XDG_STATE_HOME:-$HOME/.local/state}/vivac/hardware-facts}"
+facts_override="${FACTS_OVERRIDE:-${XDG_CONFIG_HOME:-$HOME/.config}/vivac/hardware-facts.override}"
+backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/vivac/backups"
 fragment="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/generated/hardware.conf"
 
-language="${HIPURBIA_LANG:-${LANG:-en}}"
+language="${VIVAC_LANG:-${LANG:-en}}"
 language="${language%%[._@]*}"
 i18n_load "$language" "${I18N_DIR:-$repo_root/i18n}" 2>/dev/null || i18n_load en "${I18N_DIR:-$repo_root/i18n}"
 

@@ -71,13 +71,13 @@ actual="$(sha256sum "$base" | cut -d' ' -f1)"
 ssh-keygen -q -t ed25519 -N '' -f "$run/id_ed25519"
 public_key="$(<"$run/id_ed25519.pub")"
 cat >"$run/meta-data" <<'META'
-instance-id: hipurbia-vm
-local-hostname: hipurbia
+instance-id: vivac-vm
+local-hostname: vivac
 META
 cat >"$run/user-data" <<USERDATA
 #cloud-config
 users:
-  - name: hipurbia
+  - name: vivac
     groups: [wheel]
     shell: /bin/bash
     sudo: ALL=(ALL) NOPASSWD:ALL
@@ -142,7 +142,7 @@ trap cleanup EXIT
 ssh_opts=(-i "$run/id_ed25519" -p "$port" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5)
 ready=false
 for _ in {1..90}; do
-	if ssh "${ssh_opts[@]}" "hipurbia@$host_address" true >/dev/null 2>&1; then ready=true; break; fi
+	if ssh "${ssh_opts[@]}" "vivac@$host_address" true >/dev/null 2>&1; then ready=true; break; fi
 	sleep 2
 done
 $ready || {
@@ -152,7 +152,7 @@ $ready || {
 
 # The validated keymap is intentionally expanded client-side.
 # shellcheck disable=SC2029
-if ! ssh "${ssh_opts[@]}" "hipurbia@$host_address" "CONSOLE_KEYMAP='$console_keymap' bash -s" >"$run/guest-test.log" 2>&1 <"$repo_root/tests/guest-acceptance.sh"; then
+if ! ssh "${ssh_opts[@]}" "vivac@$host_address" "CONSOLE_KEYMAP='$console_keymap' bash -s" >"$run/guest-test.log" 2>&1 <"$repo_root/tests/guest-acceptance.sh"; then
 	python - "$run/guest-test.log" <<'PY'
 import sys
 from pathlib import Path
@@ -168,15 +168,15 @@ printf 'Arch VM acceptance: passed (KVM, %s MiB, %s vCPU, SSH port %s)\n' "$memo
 if $gui; then
 	# The console keymap was written by apply-system.sh --keymap during the
 	# acceptance run, from the settings file seeded above.
-	ssh "${ssh_opts[@]}" "hipurbia@$host_address" 'cd "$HOME/hipurbia" && ./scripts/apply-system.sh --desktop-login --vm'
+	ssh "${ssh_opts[@]}" "vivac@$host_address" 'cd "$HOME/vivac" && ./scripts/apply-system.sh --desktop-login --vm'
 	# Validated keymap is intentionally expanded client-side.
 	# shellcheck disable=SC2029
-	ssh "${ssh_opts[@]}" "hipurbia@$host_address" "grep -Fxq -- 'KEYMAP=$console_keymap' /etc/vconsole.conf"
+	ssh "${ssh_opts[@]}" "vivac@$host_address" "grep -Fxq -- 'KEYMAP=$console_keymap' /etc/vconsole.conf"
 	printf 'ssh_port=%s\nconsole_keymap=%s\n' "$port" "$console_keymap" >"$run/console-login.txt"
-	ssh "${ssh_opts[@]}" "hipurbia@$host_address" 'sudo systemctl reboot' || true
+	ssh "${ssh_opts[@]}" "vivac@$host_address" 'sudo systemctl reboot' || true
 	bash "$repo_root/scripts/vm-keyboard.sh"
 	printf 'Interactive VM kept running; the desktop logs in by itself. Details: %s\n' "$run/console-login.txt"
-	printf 'SSH: ssh -i %s -p %s hipurbia@%s\n' "$run/id_ed25519" "$port" "$host_address"
+	printf 'SSH: ssh -i %s -p %s vivac@%s\n' "$run/id_ed25519" "$port" "$host_address"
 elif $keep; then
 	printf 'VM artifacts kept at %s\n' "$run"
 fi

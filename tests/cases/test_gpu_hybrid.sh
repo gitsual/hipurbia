@@ -13,7 +13,7 @@ source "$repo_root/lib/kv.sh"
 # shellcheck source=lib/gpu.sh
 source "$repo_root/lib/gpu.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-hybrid.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-hybrid.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

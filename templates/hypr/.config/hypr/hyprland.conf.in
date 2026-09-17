@@ -93,9 +93,9 @@ bind = , F5, exec, $scripts/help-pane.sh --pane system
 # @help: hypr help.hypr.power
 bind = SUPER SHIFT, E, exec, $HOME/.config/rofi/power/powermenu.sh
 # @help: hypr help.hypr.power_bar
-bind = SUPER SHIFT, Q, exec, $HOME/.local/bin/hipurbia-power
+bind = SUPER SHIFT, Q, exec, $HOME/.local/bin/vivac-power
 # @help: hypr help.hypr.theme
-bind = SUPER SHIFT, T, exec, $HOME/.local/bin/hipurbia-theme
+bind = SUPER SHIFT, T, exec, $HOME/.local/bin/vivac-theme
 # @help: hypr help.hypr.clipboard
 bind = SUPER, V, exec, cliphist list | rofi -dmenu -i -p Clipboard | cliphist decode | wl-copy
 # @help: hypr help.hypr.reload
@@ -179,9 +179,9 @@ windowrule = animation slide, match:class ^(rofi)$
 windowrule = float on, match:class ^(nm-connection-editor)$
 # The wizard is the only thing on screen while it runs: floating, centred and
 # large enough to read without leaning in.
-windowrule = float on, match:class ^(hipurbia-welcome)$
-windowrule = center on, match:class ^(hipurbia-welcome)$
-windowrule = size 1100 700, match:class ^(hipurbia-welcome)$
+windowrule = float on, match:class ^(vivac-welcome)$
+windowrule = center on, match:class ^(vivac-welcome)$
+windowrule = size 1100 700, match:class ^(vivac-welcome)$
 
 exec-once = waybar
 exec-once = hypridle
@@ -196,4 +196,4 @@ exec-once = dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CUR
 # The first session, and only the first: the wizard writes a marker and
 # --first-run is a no-op afterwards. It is started last so the bar, the
 # wallpaper and the notification daemon are already up to be previewed.
-exec-once = $terminal --class hipurbia-welcome -e $HOME/.local/bin/hipurbia-welcome --first-run
+exec-once = $terminal --class vivac-welcome -e $HOME/.local/bin/vivac-welcome --first-run

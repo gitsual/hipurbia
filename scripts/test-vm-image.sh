@@ -14,7 +14,7 @@ set -Eeuo pipefail
 # the seal; if it fails, every download shares one identity.
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
-image="$repo_root/dist/hipurbia.qcow2"
+image="$repo_root/dist/vivac.qcow2"
 # The published credentials, as the README states them.
 image_user="${VM_IMAGE_USER:-user}"
 boot_timeout="${VM_IMAGE_BOOT_TIMEOUT:-180}"

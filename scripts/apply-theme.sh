@@ -33,8 +33,8 @@ source "$repo_root/lib/render.sh"
 # shellcheck source=lib/settings.sh
 source "$repo_root/lib/settings.sh"
 
-settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings}"
-state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia"
+settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/vivac/settings}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/vivac"
 manifest="$state_dir/theme-overlay"
 templates_dir="${TEMPLATES_DIR:-$repo_root/templates}"
 default_theme='bad-romance'
@@ -178,7 +178,7 @@ if $reload; then
 	fi
 	# Every reload below talks to another process, and a compositor whose IPC
 	# has wedged never answers: an unbounded `hyprctl reload` leaves this
-	# script blocked for the life of the session. hipurbia-welcome previews
+	# script blocked for the life of the session. vivac-welcome previews
 	# synchronously, so that block reaches the keyboard loop and the desktop
 	# stops answering keys -- the same symptom this script already caused once
 	# by other means. Bound anything that waits on another process.

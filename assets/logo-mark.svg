@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- The mark alone, square, for anywhere the wordmark does not fit: the same
      coin the banner carries, with nothing behind it. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="hipurbia">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="vivac">
   <defs>
     <radialGradient id="halo"><stop stop-color="#E1777D" stop-opacity=".30"/><stop offset="1" stop-color="#E1777D" stop-opacity="0"/></radialGradient>
     <linearGradient id="moon" x2=".7" y2="1"><stop stop-color="#E8D5AB"/><stop offset="1" stop-color="#E1777D"/></linearGradient>

@@ -7,7 +7,7 @@ set -Eeuo pipefail
 
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-baseline.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-baseline.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 # Work on a copy: the gate reads the tree next to the script, so the script is

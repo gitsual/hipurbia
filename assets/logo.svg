@@ -9,7 +9,7 @@
      field is transparent and the wordmark takes the accent rather than the
      foreground: accent is the one token in every palette that carries enough
      chroma to hold against both. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="720" height="280" role="img" aria-label="hipurbia">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 632 280" width="632" height="280" role="img" aria-label="vivac">
   <defs>
     <radialGradient id="halo"><stop stop-color="#E1777D" stop-opacity=".30"/><stop offset="1" stop-color="#E1777D" stop-opacity="0"/></radialGradient>
     <linearGradient id="moon" x2=".7" y2="1"><stop stop-color="#E8D5AB"/><stop offset="1" stop-color="#E1777D"/></linearGradient>
@@ -32,7 +32,7 @@
   <circle cx="120" cy="140" r="102" fill="none" stroke="#E1777D" stroke-width="1.5" opacity="0.35"/>
 
   <text x="264" y="162" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
-        font-size="86" font-weight="700" letter-spacing="-2" fill="#E1777D">hipurbia</text>
+        font-size="86" font-weight="700" letter-spacing="-2" fill="#E1777D">vivac</text>
   <text x="268" y="204" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
         font-size="20" letter-spacing="4" fill="#979367">Bad Romance · Nocturne</text>
 </svg>

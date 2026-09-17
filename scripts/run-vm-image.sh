@@ -12,7 +12,7 @@ set -Eeuo pipefail
 # nothing in the guest can fix it; the compositor already asks for software
 # cursors on virtual machines. The cure is to not take that path.
 #
-#   --image PATH   default dist/hipurbia.qcow2
+#   --image PATH   default dist/vivac.qcow2
 #   --memory MB    default 4096
 #   --cpus N       default 4
 #   --persist      write to the image instead of a throwaway overlay
@@ -22,7 +22,7 @@ set -Eeuo pipefail
 # explored and broken as often as you like.
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
-image="$repo_root/dist/hipurbia.qcow2"
+image="$repo_root/dist/vivac.qcow2"
 memory=4096
 cpus=4
 persist=false

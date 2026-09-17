@@ -12,7 +12,7 @@ source "$repo_root/lib/kv.sh"
 # shellcheck source=lib/settings.sh
 source "$repo_root/lib/settings.sh"
 
-settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings}"
+settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/vivac/settings}"
 theme='bad-romance'
 [[ -f "$settings_file" ]] && {
 	settings_load "$settings_file"
@@ -44,7 +44,7 @@ reset=$'\033[0m'
 row() { printf '  %s%-8s%s %s\n' "$(fg "${token[COLOR_FG_DIM]}")" "$1" "$reset" "$2"; }
 
 printf '\n  %s%s%s %s·%s %s%s%s %s—%s %s%s%s\n\n' \
-	"$(fg "${token[COLOR_ACCENT]}")" 'hipurbia' "$reset" \
+	"$(fg "${token[COLOR_ACCENT]}")" 'vivac' "$reset" \
 	"$(fg "${token[COLOR_BORDER_INACTIVE]}")" "$reset" \
 	"$(fg "${token[COLOR_FG]}")" "${title:-$theme}" "$reset" \
 	"$(fg "${token[COLOR_BORDER_INACTIVE]}")" "$reset" \

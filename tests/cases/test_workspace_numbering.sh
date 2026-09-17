@@ -8,7 +8,7 @@ set -Eeuo pipefail
 
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 template="$repo_root/templates/hypr/.config/hypr/hyprland.conf.in"
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-ws.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-ws.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

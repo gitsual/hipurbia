@@ -7,7 +7,7 @@ set -Eeuo pipefail
 # on PATH turn any attempt to install into a failure.
 
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-gpu-setup.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-gpu-setup.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {
@@ -21,7 +21,7 @@ for tool in sudo pacman; do
 done
 run() {
 	PATH="$sandbox/bin:$PATH" HOME="$sandbox/h" XDG_CONFIG_HOME="$sandbox/h/.config" \
-		XDG_STATE_HOME="$sandbox/h/.local/state" FACTS_OVERRIDE="$sandbox/none" HIPURBIA_LANG=en \
+		XDG_STATE_HOME="$sandbox/h/.local/state" FACTS_OVERRIDE="$sandbox/none" VIVAC_LANG=en \
 		bash "$repo_root/scripts/gpu-setup.sh" "$@"
 }
 golden() { printf '%s' "$repo_root/tests/golden/$1/hardware-facts"; }
@@ -72,7 +72,7 @@ grep -q '^virtio .*VM gate' <<<"$out" || fail '--list: virtio status wrong'
 grep -q '^intel_i915 .*untested on hardware' <<<"$out" || fail '--list: intel_i915 status wrong'
 
 # --- --restore-config puts back the newest backup of the fragment, and only that ------------------
-backups="$sandbox/h/.local/state/hipurbia/backups"
+backups="$sandbox/h/.local/state/vivac/backups"
 mkdir -p -- "$backups/20260101T000000Z/.config/hypr/generated" "$backups/20260102T000000Z/.config/hypr/generated" \
 	"$sandbox/h/.config/hypr/generated"
 printf 'old\n' >"$backups/20260101T000000Z/.config/hypr/generated/hardware.conf"

@@ -13,7 +13,7 @@ source "$repo_root/lib/kv.sh"
 # shellcheck source=/dev/null
 source "$repo_root/lib/facts.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-facts.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-facts.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

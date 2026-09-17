@@ -15,7 +15,7 @@ source "$repo_root/lib/facts.sh"
 # shellcheck source=/dev/null
 source "$repo_root/lib/selectors.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-selectors.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-selectors.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

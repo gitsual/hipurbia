@@ -26,14 +26,14 @@ grep -Fxq hypridle "$repo_root/packages/pacman.txt" || fail 'hypridle is not in 
 # shellcheck disable=SC2016  # the literal $HOME is what the template says
 grep -Fxq 'bind = SUPER SHIFT, E, exec, $HOME/.config/rofi/power/powermenu.sh' "$template" || fail 'the rofi power menu bind changed'
 # shellcheck disable=SC2016  # the literal $HOME is what the template says
-grep -Fxq 'bind = SUPER SHIFT, Q, exec, $HOME/.local/bin/hipurbia-power' "$template" || fail 'the graphical power menu is not bound'
+grep -Fxq 'bind = SUPER SHIFT, Q, exec, $HOME/.local/bin/vivac-power' "$template" || fail 'the graphical power menu is not bound'
 
 # Both menus are generated from the same table, in the session's language, and
 # neither decides what to run by reading a label back. The old rofi script
 # matched the selection against the English string it had printed, so it could
 # not be translated without silently doing nothing.
 rofi_menu="$repo_root/dotfiles/rofi/.config/rofi/power/powermenu.sh"
-generator="$repo_root/dotfiles/ricer/.local/bin/hipurbia-power"
+generator="$repo_root/dotfiles/ricer/.local/bin/vivac-power"
 [[ -x "$generator" ]] || fail 'the graphical power menu has no generator'
 for script in "$rofi_menu" "$generator"; do
 	grep -Fq 'i18n_load' "$script" || fail "$(basename -- "$script") does not read the translation tables"
@@ -60,18 +60,18 @@ done
 # recognise the image format, which is what nwg-bar did for all five.
 grep -Fq 'rsvg-convert' "$generator" || fail 'the power menu never rasterizes its icons'
 grep -Fq '.svg"}' "$generator" && fail 'the power menu hands GTK an SVG path, which gdk-pixbuf cannot open'
-grep -Fq 'hipurbia-power" --icons' "$rofi_menu" ||
+grep -Fq 'vivac-power" --icons' "$rofi_menu" ||
 	fail 'the keyboard menu rasterizes its own icons instead of sharing one rasterizer'
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-power.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-power.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
-HIPURBIA_REPO="$repo_root" HOME="$repo_root/dotfiles/ricer" XDG_RUNTIME_DIR="$sandbox" \
+VIVAC_REPO="$repo_root" HOME="$repo_root/dotfiles/ricer" XDG_RUNTIME_DIR="$sandbox" \
 	"$generator" --icons >/dev/null || fail 'the power menu cannot rasterize its icons'
 for icon in lock suspend log-out reboot power-off; do
-	[[ -s "$sandbox/hipurbia/icons/$icon.png" ]] || fail "rasterizing produced no $icon.png"
+	[[ -s "$sandbox/vivac/icons/$icon.png" ]] || fail "rasterizing produced no $icon.png"
 done
 
-labels="$(HIPURBIA_REPO="$repo_root" HOME="$repo_root" "$generator" --lang es --print)"
+labels="$(VIVAC_REPO="$repo_root" HOME="$repo_root" "$generator" --lang es --print)"
 python3 -c '
 import json, sys
 bar = json.loads(sys.stdin.read())

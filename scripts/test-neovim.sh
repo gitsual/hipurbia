@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-nvim.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-nvim.XXXXXX")"
 keep=false
 [[ "${KEEP_TEST_SANDBOX:-0}" == 1 ]] && keep=true
 cleanup() {

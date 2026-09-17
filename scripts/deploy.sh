@@ -47,7 +47,7 @@ for package in "${selected[@]}"; do
 done
 
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/hipurbia/backups/$stamp"
+backup_root="${XDG_STATE_HOME:-$HOME/.local/state}/vivac/backups/$stamp"
 
 for package in "${selected[@]}"; do
 	package_root="$repo_root/dotfiles/$package"
@@ -90,7 +90,7 @@ printf 'deployed: %s\n' "${selected[*]}"
 # Read with pipefail in force: sed exits non-zero when the settings file does
 # not exist yet, which is the ordinary case on a first deploy, and a pipeline
 # that fails there would take the whole deploy with it.
-settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings"
+settings_file="${XDG_CONFIG_HOME:-$HOME/.config}/vivac/settings"
 theme=''
 if [[ -r "$settings_file" ]]; then
 	theme="$(sed -nE 's/^theme=(.*)$/\1/p' "$settings_file" | tail -1)"

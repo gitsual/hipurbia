@@ -25,8 +25,8 @@ if [[ "$(hyprctl eval 'return true' 2>&1)" == ok ]]; then
 	# The rule handle lives in the config Lua state, so a second run updates the
 	# existing rule instead of stacking another one; a reload clears both.
 	hyprctl eval "
-if _G.hipurbia_vm_rule then _G.hipurbia_vm_rule:set_enabled(false) end
-_G.hipurbia_vm_rule = hl.window_rule({ name = 'hipurbia-vm-window', match = { class = '^(qemu.*)$' }, workspace = '$workspace' })
+if _G.vivac_vm_rule then _G.vivac_vm_rule:set_enabled(false) end
+_G.vivac_vm_rule = hl.window_rule({ name = 'vivac-vm-window', match = { class = '^(qemu.*)$' }, workspace = '$workspace' })
 hl.dispatch(hl.dsp.focus({ workspace = $workspace }))
 " >/dev/null
 else

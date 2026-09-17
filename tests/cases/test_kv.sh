@@ -10,7 +10,7 @@ repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd
 # shellcheck source=/dev/null
 source "$repo_root/lib/kv.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-kv.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-kv.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

@@ -7,7 +7,7 @@ set -Eeuo pipefail
 # selector installs exactly its manifest.
 
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-greeter.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-greeter.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 # shellcheck source=lib/kv.sh
 source "$repo_root/lib/kv.sh"

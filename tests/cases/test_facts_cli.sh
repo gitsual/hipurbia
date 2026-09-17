@@ -9,7 +9,7 @@ set -Eeuo pipefail
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 cli="$repo_root/scripts/hardware-facts.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-facts-cli.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-facts-cli.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

@@ -9,13 +9,13 @@
 set -Eeuo pipefail
 
 self="$(readlink -f -- "${BASH_SOURCE[0]}")"
-repo="${HIPURBIA_REPO:-$(cd -- "$(dirname -- "$self")/../../../.." && pwd -P)}"
+repo="${VIVAC_REPO:-$(cd -- "$(dirname -- "$self")/../../../.." && pwd -P)}"
 # shellcheck source=lib/kv.sh
 source "$repo/lib/kv.sh"
 # shellcheck source=lib/i18n.sh
 source "$repo/lib/i18n.sh"
 
-language="${HIPURBIA_LANG:-${LANG:-en}}"
+language="${VIVAC_LANG:-${LANG:-en}}"
 language="${language%%[._@]*}"
 i18n_load "$language" "${I18N_DIR:-$repo/i18n}" 2>/dev/null ||
 	i18n_load en "${I18N_DIR:-$repo/i18n}"
@@ -48,7 +48,7 @@ if [[ "${1:-}" == --print ]]; then
 fi
 
 current="$(sed -nE 's/^theme=(.*)$/\1/p' \
-	"${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings" 2>/dev/null | tail -1)"
+	"${XDG_CONFIG_HOME:-$HOME/.config}/vivac/settings" 2>/dev/null | tail -1)"
 selected=0
 for index in "${!names[@]}"; do
 	[[ "${names[$index]}" == "$current" ]] && selected="$index"

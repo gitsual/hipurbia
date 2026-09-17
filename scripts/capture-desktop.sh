@@ -45,7 +45,7 @@ ssh_opts=(-i "$run/id_ed25519" -p "$port" -o StrictHostKeyChecking=no
 # The theme name is expanded on this side deliberately: it comes from the
 # catalogue in data/, never from input, and the guest reads it as an assignment.
 # shellcheck disable=SC2029
-guest() { ssh "${ssh_opts[@]}" "hipurbia@$host_address" "$@"; }
+guest() { ssh "${ssh_opts[@]}" "vivac@$host_address" "$@"; }
 
 guest true >/dev/null 2>&1 || {
 	printf 'The tested VM is not answering on port %s\n' "$port" >&2
@@ -84,9 +84,9 @@ else
 	)
 fi
 
-# HIPURBIA_ONLY limits the run to the named jobs, comma separated, so a capture
+# VIVAC_ONLY limits the run to the named jobs, comma separated, so a capture
 # that has to be redone does not cost the fifteen that were already right.
-only="${HIPURBIA_ONLY:-}"
+only="${VIVAC_ONLY:-}"
 taken=0
 
 mkdir -p -- "$out_dir"
@@ -101,7 +101,7 @@ set -Eeuo pipefail
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export HYPRLAND_INSTANCE_SIGNATURE="$(find "$XDG_RUNTIME_DIR/hypr" -maxdepth 1 -mindepth 1 -type d -printf '%T@ %f\n' | sort -rn | head -1 | cut -d' ' -f2)"
 export WAYLAND_DISPLAY="$(find "$XDG_RUNTIME_DIR" -maxdepth 1 -name 'wayland-*' ! -name '*.lock' -printf '%f\n' | sort | head -1)"
-cd "$HOME/hipurbia"
+cd "$HOME/vivac"
 
 ./scripts/apply-theme.sh --theme "$THEME" >/dev/null
 
@@ -133,8 +133,8 @@ done
 # its argument on spaces and the quotes do not survive the trip, so a command
 # passed inline arrives as a bare shell.
 pane() {
-	local number="$1" body="$2" path="/tmp/hipurbia-pane-$1.sh"
-	printf '#!/usr/bin/env bash\nexport LANG=en_US.UTF-8\ncd "$HOME/hipurbia"\n%s\n' "$body" >"$path"
+	local number="$1" body="$2" path="/tmp/vivac-pane-$1.sh"
+	printf '#!/usr/bin/env bash\nexport LANG=en_US.UTF-8\ncd "$HOME/vivac"\n%s\n' "$body" >"$path"
 	chmod +x "$path"
 	hyprctl dispatch exec -- kitty --hold "$path" >/dev/null
 	sleep 4
@@ -160,7 +160,7 @@ pane 3 './scripts/palette-card.sh'
 # menu itself uses, so the list on screen cannot drift from the list in data/.
 hyprctl dispatch focuswindow "address:$(first_window)" >/dev/null
 sleep 1
-pane 1 './dotfiles/ricer/.local/bin/hipurbia-theme --print'
+pane 1 './dotfiles/ricer/.local/bin/vivac-theme --print'
 
 sleep 3
 
@@ -215,7 +215,7 @@ BINDPY
 # splits its argument on spaces, and these commands carry quoted arguments that
 # would not survive the trip.
 open_surface() {
-	local path=/tmp/hipurbia-surface.sh
+	local path=/tmp/vivac-surface.sh
 	printf '#!/usr/bin/env bash\nexport LANG=en_US.UTF-8\ncd "$HOME"\n%s\n' "$1" >"$path"
 	chmod +x "$path"
 	hyprctl dispatch exec -- "$path" >/dev/null
@@ -232,18 +232,18 @@ bind:*)
 		# does not exit, it stays alive owning the selection, and a copy left
 		# attached to this SSH channel keeps it open for as long as the
 		# selection lasts -- which is the rest of the session.
-		printf '%s' 'data/themes/northern-lights.conf' >/tmp/hipurbia-clip-1
-		setsid wl-copy </tmp/hipurbia-clip-1 >/dev/null 2>&1 &
+		printf '%s' 'data/themes/northern-lights.conf' >/tmp/vivac-clip-1
+		setsid wl-copy </tmp/vivac-clip-1 >/dev/null 2>&1 &
 		sleep 1
-		printf '%s' '#1F1A17' >/tmp/hipurbia-clip-2
-		setsid wl-copy </tmp/hipurbia-clip-2 >/dev/null 2>&1 &
+		printf '%s' '#1F1A17' >/tmp/vivac-clip-2
+		setsid wl-copy </tmp/vivac-clip-2 >/dev/null 2>&1 &
 		sleep 1
 	fi
 	open_surface "$(bind_command "$combo")"
 	sleep 4
 	;;
 run:welcome)
-	open_surface 'kitty --class hipurbia-welcome -e "$HOME/.local/bin/hipurbia-welcome"'
+	open_surface 'kitty --class vivac-welcome -e "$HOME/.local/bin/vivac-welcome"'
 	sleep 6
 	;;
 run:notification)
@@ -279,7 +279,7 @@ done
 GUEST
 	scp -q -i "$run/id_ed25519" -P "$port" -o StrictHostKeyChecking=no \
 		-o UserKnownHostsFile=/dev/null \
-		"hipurbia@$host_address:/tmp/capture.png" "$out_dir/$name.png"
+		"vivac@$host_address:/tmp/capture.png" "$out_dir/$name.png"
 	taken=$((taken + 1))
 done
 printf 'Captured %d images into %s\n' "$taken" "$out_dir"

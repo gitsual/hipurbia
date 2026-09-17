@@ -8,9 +8,9 @@
 # leaving seven themes with somebody else's background.
 set -Eeuo pipefail
 
-repo="${HIPURBIA_REPO:-$HOME/hipurbia}"
+repo="${VIVAC_REPO:-$HOME/vivac}"
 wallpapers="$HOME/.local/share/wallpapers"
-settings="${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings"
+settings="${XDG_CONFIG_HOME:-$HOME/.config}/vivac/settings"
 
 # Previewing the catalogue fires one of these per keypress. They used to run
 # unserialised -- each read the setting, rendered, and started swaybg on its
@@ -20,7 +20,7 @@ settings="${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings"
 # Take a lock, then read the setting: an instance that queued here was started
 # for a theme that has since been moved past, and re-reading makes every
 # waiter converge on the theme that is current now instead of fighting.
-lock="${XDG_RUNTIME_DIR:-/tmp}/hipurbia-wallpaper.lock"
+lock="${XDG_RUNTIME_DIR:-/tmp}/vivac-wallpaper.lock"
 exec 9>"$lock"
 flock 9
 

@@ -14,5 +14,5 @@ repository_iso() {
 	tar --exclude=.git --exclude=.vm-test --exclude=.vm-image --exclude=dist \
 		-czf "$run/repository.tar.gz" -C "$repo_root" .
 	xorriso -as mkisofs -quiet -output "$run/repository.iso" \
-		-volid HIPURBIA -joliet -rock "$run/repository.tar.gz"
+		-volid VIVAC -joliet -rock "$run/repository.tar.gz"
 }

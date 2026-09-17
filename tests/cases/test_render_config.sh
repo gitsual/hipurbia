@@ -9,7 +9,7 @@ repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd
 renderer="$repo_root/scripts/render-config.sh"
 facts="$repo_root/tests/golden/desktop-nvidia/hardware-facts"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-render-config.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-render-config.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 home="$sandbox/home"
 state="$sandbox/state"
@@ -26,7 +26,7 @@ hash_checkout() {
 		find dotfiles templates render data -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum
 	)
 }
-backups() { compgen -G "$state/hipurbia/backups/*/.config/$1" || true; }
+backups() { compgen -G "$state/vivac/backups/*/.config/$1" || true; }
 
 # A machine deployed before this unit still carries Stow's link to the Waybar
 # config that no longer exists in the repository: a dangling symlink.

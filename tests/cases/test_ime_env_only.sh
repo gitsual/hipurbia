@@ -6,7 +6,7 @@ set -Eeuo pipefail
 # validated, and the --ime selector adds exactly its manifest.
 
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-ime.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-ime.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 # shellcheck source=lib/kv.sh
 source "$repo_root/lib/kv.sh"

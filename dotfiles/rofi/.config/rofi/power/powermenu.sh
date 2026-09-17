@@ -9,13 +9,13 @@
 set -Eeuo pipefail
 
 self="$(readlink -f -- "${BASH_SOURCE[0]}")"
-repo_root="${HIPURBIA_REPO:-$(cd -- "$(dirname -- "$self")/../../../../.." && pwd -P)}"
+repo_root="${VIVAC_REPO:-$(cd -- "$(dirname -- "$self")/../../../../.." && pwd -P)}"
 # shellcheck source=lib/kv.sh
 source "$repo_root/lib/kv.sh"
 # shellcheck source=lib/i18n.sh
 source "$repo_root/lib/i18n.sh"
 
-language="${HIPURBIA_LANG:-${LANG:-en}}"
+language="${VIVAC_LANG:-${LANG:-en}}"
 language="${language%%[._@]*}"
 i18n_load "$language" "${I18N_DIR:-$repo_root/i18n}" 2>/dev/null ||
 	i18n_load en "${I18N_DIR:-$repo_root/i18n}"
@@ -23,7 +23,7 @@ i18n_load "$language" "${I18N_DIR:-$repo_root/i18n}" 2>/dev/null ||
 # The drawings, and the rasterizing, come from the graphical menu: librsvg no
 # longer ships a gdk-pixbuf loader, so rofi cannot open an .svg either, and one
 # rasterizer is better than two.
-icons="$("$HOME/.local/bin/hipurbia-power" --icons)"
+icons="$("$HOME/.local/bin/vivac-power" --icons)"
 keys=(power.lock power.suspend power.logout power.reboot power.poweroff)
 files=(lock suspend log-out reboot power-off)
 commands=(hyprlock 'systemctl suspend' 'hyprctl dispatch exit' 'systemctl reboot' 'systemctl poweroff')

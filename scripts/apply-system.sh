@@ -8,7 +8,7 @@ source "$repo_root/lib/kv.sh"
 source "$repo_root/lib/settings.sh"
 # shellcheck source=lib/render.sh
 source "$repo_root/lib/render.sh"
-settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/hipurbia/settings}"
+settings_file="${SETTINGS_FILE:-${XDG_CONFIG_HOME:-$HOME/.config}/vivac/settings}"
 dry_run=false
 locale_axis=false
 keymap_axis=false
@@ -33,7 +33,7 @@ XKB_DEFAULT_LAYOUT for its keyboard, each written only there.
 
 --locale writes /etc/locale.conf and generates the locale; --keymap writes
 /etc/vconsole.conf. Both read their value from the user settings file
-($XDG_CONFIG_HOME/hipurbia/settings, see settings.example) and are
+($XDG_CONFIG_HOME/vivac/settings, see settings.example) and are
 the only writers of those files in this repository.
 USAGE
 }
@@ -72,7 +72,7 @@ install_config() {
 		return
 	fi
 	if sudo test -e "$destination"; then
-		sudo cp -a -- "$destination" "$destination.hipurbia-backup.$(date -u +%Y%m%dT%H%M%SZ)"
+		sudo cp -a -- "$destination" "$destination.vivac-backup.$(date -u +%Y%m%dT%H%M%SZ)"
 	fi
 	sudo install -Dm644 -- "$source" "$destination"
 }

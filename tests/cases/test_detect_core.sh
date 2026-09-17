@@ -12,7 +12,7 @@ for detector in chassis power input net thermal; do
 	source "$repo_root/lib/detect/$detector.sh"
 done
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-detect.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-detect.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 
 fail() {

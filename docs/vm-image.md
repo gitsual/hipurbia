@@ -1,20 +1,20 @@
 # The downloadable image
 
 A release carries the same workstation this repository builds, already
-provisioned, as a disk you can boot: `hipurbia.qcow2` for
-QEMU/libvirt and `hipurbia.ova` for VirtualBox and VMware.
+provisioned, as a disk you can boot: `vivac.qcow2` for
+QEMU/libvirt and `vivac.ova` for VirtualBox and VMware.
 
 ## Downloading
 
-Every artifact lives on the [releases page](https://github.com/gitsual/hipurbia/releases).
+Every artifact lives on the [releases page](https://github.com/gitsual/vivac/releases).
 A release carries, for each of the two formats, its numbered parts and the
 `SHA256SUMS` that covers them:
 
 | You run | Download | Then |
 |---|---|---|
-| QEMU, libvirt, virt-manager, GNOME Boxes | `hipurbia.qcow2.part*` | Reassemble, verify, boot |
-| VirtualBox | `hipurbia.ova.part*` | Reassemble, verify, **File → Import Appliance** |
-| VMware Workstation or Fusion | `hipurbia.ova.part*` | Reassemble, verify, **File → Open** |
+| QEMU, libvirt, virt-manager, GNOME Boxes | `vivac.qcow2.part*` | Reassemble, verify, boot |
+| VirtualBox | `vivac.ova.part*` | Reassemble, verify, **File → Import Appliance** |
+| VMware Workstation or Fusion | `vivac.ova.part*` | Reassemble, verify, **File → Open** |
 
 The reassembled disk is about 4.6 GiB and wants 8 GiB of RAM and 4 cores to
 feel like the machine it was captured from; it will boot on half of that.
@@ -26,7 +26,7 @@ Download every part of the one you want, put them in the same directory and
 concatenate them in order:
 
 ```sh
-cat hipurbia.qcow2.part* >hipurbia.qcow2
+cat vivac.qcow2.part* >vivac.qcow2
 sha256sum -c SHA256SUMS
 ```
 
@@ -51,7 +51,7 @@ rendered whenever the facts report virtualisation). `--gl` opts back in.
 
 ### VirtualBox
 
-**File → Import Appliance**, pick `hipurbia.ova`, and take the defaults. The
+**File → Import Appliance**, pick `vivac.ova`, and take the defaults. The
 OVA declares 4 CPUs and 8 GiB; lower them on the import screen if the host
 cannot spare it. Nothing else has to be configured, and no Guest Additions are
 needed — the guest already asks for a software cursor on virtual machines, so
@@ -59,19 +59,19 @@ the pointer behaves without them.
 
 ### VMware Workstation or Fusion
 
-**File → Open**, pick `hipurbia.ova`, accept the conversion when it offers to
+**File → Open**, pick `vivac.ova`, accept the conversion when it offers to
 relax the OVF specification check. It is the same disk; VMware is stricter
 about the descriptor than VirtualBox and says so.
 
 ### Any other hypervisor
 
-`hipurbia.qcow2` is a flat qcow2 with no backing file, so it can be converted
+`vivac.qcow2` is a flat qcow2 with no backing file, so it can be converted
 to whatever the host wants without dragging a chain behind it:
 
 ```sh
-qemu-img convert -O vmdk hipurbia.qcow2 hipurbia.vmdk
-qemu-img convert -O vdi  hipurbia.qcow2 hipurbia.vdi
-qemu-img convert -O raw  hipurbia.qcow2 hipurbia.raw
+qemu-img convert -O vmdk vivac.qcow2 vivac.vmdk
+qemu-img convert -O vdi  vivac.qcow2 vivac.vdi
+qemu-img convert -O raw  vivac.qcow2 vivac.raw
 ```
 
 ## First boot
@@ -135,7 +135,7 @@ that already has `paru` or `yay` keeps using it.
 
 The image ships `en_US.UTF-8`, a `us` console keymap and a `us` compositor
 layout, with fcitx5 installed. All three are settings, not builds: edit
-`~/.config/hipurbia/settings` and run
+`~/.config/vivac/settings` and run
 
 ```sh
 ./scripts/apply-system.sh --locale --keymap

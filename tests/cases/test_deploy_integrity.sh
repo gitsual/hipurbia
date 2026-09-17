@@ -7,7 +7,7 @@ set -Eeuo pipefail
 
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-integrity-test.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-integrity-test.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 copy="$sandbox/repo"
 mkdir -p -- "$copy"

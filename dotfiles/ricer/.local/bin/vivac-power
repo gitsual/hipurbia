@@ -26,13 +26,13 @@
 set -Eeuo pipefail
 
 self="$(readlink -f -- "${BASH_SOURCE[0]}")"
-repo_root="${HIPURBIA_REPO:-$(cd -- "$(dirname -- "$self")/../../../.." && pwd -P)}"
+repo_root="${VIVAC_REPO:-$(cd -- "$(dirname -- "$self")/../../../.." && pwd -P)}"
 # shellcheck source=lib/kv.sh
 source "$repo_root/lib/kv.sh"
 # shellcheck source=lib/i18n.sh
 source "$repo_root/lib/i18n.sh"
 
-language="${HIPURBIA_LANG:-${LANG:-en}}"
+language="${VIVAC_LANG:-${LANG:-en}}"
 print_only=false
 icons_only=false
 while (($#)); do
@@ -59,7 +59,7 @@ i18n_load "$language" "${I18N_DIR:-$repo_root/i18n}" 2>/dev/null ||
 	i18n_load en "${I18N_DIR:-$repo_root/i18n}"
 
 sources="$HOME/.config/nwg-bar/icons"
-runtime="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/hipurbia"
+runtime="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/vivac"
 icons="$runtime/icons"
 
 # label key, icon file, command. The command is a literal here and never comes

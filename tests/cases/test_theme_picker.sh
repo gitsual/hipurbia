@@ -6,7 +6,7 @@ set -Eeuo pipefail
 # reaching the one script that applies a palette everywhere.
 
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
-picker="$repo_root/dotfiles/ricer/.local/bin/hipurbia-theme"
+picker="$repo_root/dotfiles/ricer/.local/bin/vivac-theme"
 template="$repo_root/templates/hypr/.config/hypr/hyprland.conf.in"
 bar="$repo_root/render/waybar/config.in"
 
@@ -17,18 +17,18 @@ fail() {
 [[ -x "$picker" ]] || fail 'the theme picker is missing or not executable'
 
 # shellcheck disable=SC2016  # the literal $HOME is what the template says
-grep -Fxq 'bind = SUPER SHIFT, T, exec, $HOME/.local/bin/hipurbia-theme' "$template" ||
+grep -Fxq 'bind = SUPER SHIFT, T, exec, $HOME/.local/bin/vivac-theme' "$template" ||
 	fail 'the theme picker has no key'
 grep -Fq 'SUPER+SHIFT+T	hypr	exec' "$repo_root/data/help-registry.tsv" ||
 	fail 'the theme picker is not in the help registry, so the help pane never mentions it'
 grep -Fq 'custom/theme' "$bar" || fail 'the bar has no theme button'
-grep -Fq 'hipurbia-theme' "$bar" || fail 'the bar theme button reaches nothing'
+grep -Fq 'vivac-theme' "$bar" || fail 'the bar theme button reaches nothing'
 grep -Fq '#custom-theme' "$repo_root/templates/waybar/.config/waybar/style.css.in" ||
 	fail 'the bar theme button carries no palette of its own'
 
 # The catalogue is read, never copied: the picker offers exactly what the
 # wizard offers, which is exactly what ships.
-mapfile -t offered < <(HIPURBIA_REPO="$repo_root" "$picker" --print)
+mapfile -t offered < <(VIVAC_REPO="$repo_root" "$picker" --print)
 count=$(($(find "$repo_root/data/themes" -name '*.conf' -type f | wc -l) + 1))
 ((${#offered[@]} == count)) ||
 	fail "the picker offers ${#offered[@]} themes and the catalogue holds $count"

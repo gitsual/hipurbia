@@ -37,7 +37,7 @@ grep -Fq 'subformat=streamOptimized' "$packager" || fail 'the OVA disk is not st
 # shellcheck disable=SC2016  # literal script text again
 grep -Fq 'format=$image_format' "$accepter" || fail 'the accepter hardcodes a disk format'
 
-grep -Fq 'cat hipurbia.qcow2.part*' "$doc" || fail 'the page does not show how to reassemble'
+grep -Fq 'cat vivac.qcow2.part*' "$doc" || fail 'the page does not show how to reassemble'
 grep -Fq 'sha256sum -c SHA256SUMS' "$doc" || fail 'the page does not show how to verify'
 # Credentials that are published have to be published in full, and the reason
 # they are safe has to be published with them: the page states both accounts

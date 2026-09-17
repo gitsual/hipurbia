@@ -8,7 +8,7 @@ set -Eeuo pipefail
 repo_root="${REPO_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)}"
 renderer="$repo_root/scripts/render-config.sh"
 
-sandbox="$(mktemp -d "${TMPDIR:-/tmp}/hipurbia-escape.XXXXXX")"
+sandbox="$(mktemp -d "${TMPDIR:-/tmp}/vivac-escape.XXXXXX")"
 trap 'rm -rf -- "$sandbox"' EXIT
 home="$sandbox/home"
 mkdir -p -- "$home/.config"

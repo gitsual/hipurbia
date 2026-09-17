@@ -7,10 +7,10 @@ local M = {}
 
 M.base46 = {
 	-- Not one of the themes base46 ships: this one is rendered from the
-	-- desktop palette into lua/themes/hipurbia.lua, so the editor changes
+	-- desktop palette into lua/themes/vivac.lua, so the editor changes
 	-- colour with everything else instead of staying the one surface that
 	-- ignored the theme.
-	theme = "hipurbia",
+	theme = "vivac",
 
 	-- hl_override = {
 	-- 	Comment = { italic = true },
