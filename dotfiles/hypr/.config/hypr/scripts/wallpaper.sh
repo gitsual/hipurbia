@@ -29,7 +29,26 @@ theme=warm-night
 [[ -n "$theme" ]] || theme=warm-night
 
 image="$wallpapers/$theme.png"
-if [[ ! -f "$image" && -x "$repo/scripts/make-wallpaper.sh" ]]; then
+# A drawing used to be kept forever, because the condition was "the file is
+# missing". So a palette that was retuned, or an ornament that was redrawn,
+# never reached a desktop that had worn that theme once: it kept wearing an
+# image the templates no longer produce, with nothing on screen to say so.
+# Redraw when anything it is drawn from is newer than the drawing itself.
+#
+# The default is exempt: it is deployed as a stow symlink into the checkout,
+# and regenerating it would write through that link into the repository. A
+# committed render is check-theme-drift.sh's business, not this script's.
+theme_file="$repo/data/themes/$theme.conf"
+[[ "$theme" == warm-night ]] && theme_file="$repo/data/theme.conf"
+stale=false
+if [[ ! -f "$image" ]]; then
+	stale=true
+elif [[ ! -L "$image" ]] &&
+	[[ -n "$(find "$repo/scripts/make-wallpaper.sh" "$theme_file" \
+		"$repo/templates/wallpaper" -newer "$image" -print -quit 2>/dev/null)" ]]; then
+	stale=true
+fi
+if $stale && [[ -x "$repo/scripts/make-wallpaper.sh" ]]; then
 	"$repo/scripts/make-wallpaper.sh" --theme "$theme" --out "$wallpapers" >/dev/null 2>&1 || true
 fi
 # A theme with no drawing of its own is still a usable desktop; a missing file
