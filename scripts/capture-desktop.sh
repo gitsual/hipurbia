@@ -80,15 +80,7 @@ else
 		'surface-clipboard|ember-forge|bind:SUPER,V'
 		'surface-welcome|emerald-night|run:welcome'
 		'surface-notification|gilded-dusk|run:notification'
-		# The lock screen is deliberately absent. Under this VM hyprlock v0.9.6
-		# draws a black field whatever `background { color }` says: substituting
-		# the deployed colour with pure red produced a capture with no red in it
-		# and the same number of distinct colours as before. Its widgets do wear
-		# the palette, so the failure is the background alone, and it is not the
-		# screen being asleep -- dpmsStatus reads 1 on both sides of the capture.
-		# Whether a real GPU behaves the same is untested, and a gallery entry
-		# that may be a VM artefact is worse than no entry: restore this line
-		# once the lock has been seen wearing a palette on hardware.
+		'surface-lock|moss-stone|bind:SUPER,L'
 	)
 fi
 

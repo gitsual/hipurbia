@@ -273,12 +273,12 @@ screenshot cannot show something the key no longer does.
   <tr>
     <td align="center"><a href="assets/screenshots/surface-welcome.png"><img src="assets/screenshots/surface-welcome.png" alt="Welcome wizard"></a></td>
     <td align="center"><a href="assets/screenshots/surface-notification.png"><img src="assets/screenshots/surface-notification.png" alt="Notification"></a></td>
-    <td></td>
+    <td align="center"><a href="assets/screenshots/surface-lock.png"><img src="assets/screenshots/surface-lock.png" alt="Lock screen"></a></td>
   </tr>
   <tr>
     <td align="center"><b>Welcome</b><br><sub>first login · a terminal wizard on purpose: a desktop driven from the keyboard should not open by handing you a mouse</sub></td>
     <td align="center"><b>Notification</b><br><sub><code>Super+Shift+S</code> · dunst, naming the file the screenshot script actually wrote</sub></td>
-    <td></td>
+    <td align="center"><b>Lock screen</b><br><sub><code>Super+L</code> · hyprlock, rendered from <code>hyprlock.conf</code> in the palette of the session it locked</sub></td>
   </tr>
 </table>
 

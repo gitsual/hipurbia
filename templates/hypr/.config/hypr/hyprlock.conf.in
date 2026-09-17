@@ -1,5 +1,15 @@
-general { hide_cursor = true }
-background { monitor =; color = rgb(@COLOR_BG@) }
+# Hyprlang has no inline block: a block opened and closed on one line is
+# parsed as nothing, and the settings inside it are dropped in silence. The
+# lock screen spent its life drawing a black field instead of the palette,
+# and showing the cursor it was asked to hide, because these two blocks were
+# written that way. Keep every block open across lines.
+general {
+    hide_cursor = true
+}
+background {
+    monitor =
+    color = rgb(@COLOR_BG@)
+}
 input-field {
     monitor =
     size = 300, 52

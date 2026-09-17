@@ -47,8 +47,14 @@ animations {
     animation = workspaces, 1, 6, overshot, slidevert
 }
 
-dwindle { preserve_split = true }
-master { new_on_top = true }
+# Written across lines because Hyprlang has no inline block: on one line both
+# of these parsed as nothing and hyprctl getoption answered 0 for each.
+dwindle {
+    preserve_split = true
+}
+master {
+    new_on_top = true
+}
 
 # @help: hypr help.hypr.terminal
 bind = SUPER, Return, exec, $terminal
