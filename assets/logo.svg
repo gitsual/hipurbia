@@ -1,42 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- The banner, rendered from the palette like every other themed surface.
-     The mark is the half-filled circle the status bar already uses for the
-     theme button: the project's one symbol is the control that changes it. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320" role="img" aria-label="hipurbia">
+     The mark is the wallpaper shrunk into a coin: the same moon, halo, stars
+     and two ridges that templates/wallpaper/base.svg.in draws at 3840px, in
+     the circle the status bar already uses for the theme button.
+
+     There is no background rectangle. The banner is read on the README, and
+     GitHub paints that page white or black depending on the reader, so the
+     field is transparent and the wordmark takes the accent rather than the
+     foreground: accent is the one token in every palette that carries enough
+     chroma to hold against both. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="720" height="280" role="img" aria-label="hipurbia">
   <defs>
-    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#1C2B27"/>
-      <stop offset="1" stop-color="#090E0D"/>
-    </linearGradient>
-    <clipPath id="left-half"><rect x="0" y="0" width="120" height="240"/></clipPath>
+    <radialGradient id="halo"><stop stop-color="#E1777D" stop-opacity=".30"/><stop offset="1" stop-color="#E1777D" stop-opacity="0"/></radialGradient>
+    <linearGradient id="moon" x2=".7" y2="1"><stop stop-color="#E8D5AB"/><stop offset="1" stop-color="#E1777D"/></linearGradient>
+    <linearGradient id="sky" x2="1" y2="1"><stop stop-color="#140D14"/><stop offset=".55" stop-color="#2D1F2D"/><stop offset="1" stop-color="#5A4855"/></linearGradient>
+    <linearGradient id="ridge" x2=".5" y2="1"><stop stop-color="#463842"/><stop offset="1" stop-color="#2E252C"/></linearGradient>
+    <linearGradient id="front" x2="0" y2="1"><stop stop-color="#2E252C"/><stop offset="1" stop-color="#140D14"/></linearGradient>
+    <clipPath id="coin"><circle cx="120" cy="140" r="82"/></clipPath>
   </defs>
 
-  <rect width="1200" height="320" fill="url(#field)"/>
-  <rect x="0" y="0" width="1200" height="2" fill="#E8C66A" opacity="0.55"/>
-
-  <g transform="translate(120 160)">
-    <g transform="translate(-120 -120)">
-      <circle cx="120" cy="120" r="66" fill="#E8C66A" clip-path="url(#left-half)"/>
-      <circle cx="120" cy="120" r="66" fill="none" stroke="#E8C66A" stroke-width="7"/>
-      <circle cx="120" cy="120" r="94" fill="none" stroke="#E8C66A" stroke-width="2" opacity="0.30"/>
-    </g>
+  <g clip-path="url(#coin)">
+    <circle cx="120" cy="140" r="82" fill="url(#sky)"/>
+    <ellipse cx="150" cy="116" rx="74" ry="62" fill="url(#halo)"/>
+    <g fill="#E8D5AB" opacity=".45"><circle cx="78" cy="94" r="1.7"/><circle cx="104" cy="78" r="2"/><circle cx="186" cy="100" r="1.7"/><circle cx="66" cy="130" r="1.4"/></g>
+    <circle cx="150" cy="116" r="26" fill="url(#moon)"/>
+    <path d="M38 176 76 152 106 172 150 128 184 166 202 154v68H38Z" fill="url(#ridge)"/>
+    <path d="m150 128 34 38-26-11-8 5z" fill="#E1777D" opacity=".25"/>
+    <path d="M38 200 82 184 124 204 170 178 202 196v26H38Z" fill="url(#front)"/>
   </g>
+  <circle cx="120" cy="140" r="82" fill="none" stroke="#E1777D" stroke-width="4"/>
+  <circle cx="120" cy="140" r="102" fill="none" stroke="#E1777D" stroke-width="1.5" opacity="0.35"/>
 
-  <text x="268" y="150" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
-        font-size="86" font-weight="700" letter-spacing="-2" fill="#D9E2DD">hipurbia</text>
-  <text x="272" y="200" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
-        font-size="25" letter-spacing="1" fill="#8A9A93">the colour scheme is a build artifact</text>
-  <text x="272" y="240" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
-        font-size="21" letter-spacing="3" fill="#E8C66A">Cosmos · Technique</text>
-
-  <g transform="translate(272 268)">
-    <rect x="0"   y="0" width="52" height="14" rx="3" fill="#0E1513" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
-    <rect x="60"  y="0" width="52" height="14" rx="3" fill="#2C3F39" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
-    <rect x="120" y="0" width="52" height="14" rx="3" fill="#D9E2DD" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
-    <rect x="180" y="0" width="52" height="14" rx="3" fill="#E8C66A" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
-    <rect x="240" y="0" width="52" height="14" rx="3" fill="#A8904A" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
-    <rect x="300" y="0" width="52" height="14" rx="3" fill="#5FB3A1" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
-    <rect x="360" y="0" width="52" height="14" rx="3" fill="#6E93C8" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
-    <rect x="420" y="0" width="52" height="14" rx="3" fill="#C5654E" stroke="#8A9A93" stroke-width="1" stroke-opacity="0.35"/>
-  </g>
+  <text x="264" y="162" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
+        font-size="86" font-weight="700" letter-spacing="-2" fill="#E1777D">hipurbia</text>
+  <text x="268" y="204" font-family="JetBrains Mono, JetBrainsMono Nerd Font, ui-monospace, monospace"
+        font-size="20" letter-spacing="4" fill="#979367">Bad Romance · Nocturne</text>
 </svg>

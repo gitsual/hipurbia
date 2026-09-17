@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="hipurbia" width="760">
+<img src="assets/logo.png" alt="hipurbia" width="520">
 
 <p>
 <em>An Arch Linux workstation you can rebuild from nothing.</em><br>
@@ -169,7 +169,7 @@ captured inside the VM. Same commit, same deploy, same palette file.
     <td width="50%" align="center"><a href="assets/screenshots/bad-romance.png"><img src="assets/screenshots/bad-romance.png" alt="Bad Romance desktop"></a></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Bad Romance</b> · <sub>Nocturne · <code>data/themes/bad-romance.conf</code> · no ornament — the base composition alone</sub></td>
+    <td colspan="2" align="center"><b>Bad Romance</b> · <sub>Nocturne · <code>data/theme.conf</code> · no ornament — the base composition alone</sub></td>
   </tr>
   <tr>
     <td width="50%" align="center"><a href="assets/wallpapers/metropolis.png"><img src="assets/wallpapers/metropolis.png" alt="Metropolis wallpaper"></a></td>
@@ -339,10 +339,12 @@ the top of this page are not a curated selection, they are the whole catalogue:
 ```
 
 `scripts/make-logo.sh` renders `templates/brand/logo.svg.in` from a theme file into
-`assets/logo.svg` and rasterizes it, so the wordmark, the swatch row under it and the mark itself
-are that palette and not a memory of it. The mark is the half-filled circle the status bar
-already uses for its theme button: the project's one symbol is the control that changes
-everything else, which felt like the honest choice.
+`assets/logo.svg` and rasterizes it, so the wordmark, the line under it and the mark itself
+are that palette and not a memory of it. The mark is the wallpaper shrunk into a coin — the
+same moon, halo, stars and two ridges `templates/wallpaper/base.svg.in` draws at 3840px — so
+the project's one symbol is the thing the palette actually produces. The banner carries no
+background: it is read on this page, which GitHub paints white or black depending on who is
+reading, so the field is transparent and the wordmark takes the accent.
 
 ---
 

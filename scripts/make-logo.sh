@@ -16,7 +16,7 @@ source "$repo_root/lib/kv.sh"
 # shellcheck source=lib/render.sh
 source "$repo_root/lib/render.sh"
 
-theme='cosmos'
+theme='bad-romance'
 out_dir="$repo_root/assets"
 raster=true
 
@@ -98,7 +98,7 @@ fi
 
 # name:width:height — the banner is rendered at twice its viewBox so it stays
 # sharp on a HiDPI reader, and the mark at the size a favicon is scaled from.
-for spec in 'logo:2400:640' 'logo-mark:512:512'; do
+for spec in 'logo:1440:560' 'logo-mark:512:512'; do
 	name="${spec%%:*}"
 	rest="${spec#*:}"
 	width="${rest%%:*}"
