@@ -60,7 +60,7 @@ fi
 # rendered banner and the recorded tour — are the only binaries this repository
 # ships on purpose; every byte of them is still pinned by
 # data/asset-manifest.tsv, the film included.
-if find . \( -path ./.git -o -path ./.vm-test -o -path ./.vm-image -o -path ./dist -o -path ./.audit -o -path './tests/fixtures/*/sysroot/sys' \) -prune -o -type f ! -path './dotfiles/hypr/.local/share/wallpapers/bad-romance.png' ! -path './assets/*.png' ! -path './assets/*.mp4' -print0 | xargs -0 file | grep -Ev 'text|empty|SVG|JSON|Python script|shell script' >/dev/null; then
+if find . \( -path ./.git -o -path ./.vm-test -o -path ./.vm-image -o -path ./dist -o -path ./.audit -o -path './tests/fixtures/*/sysroot/sys' \) -prune -o -type f ! -path './dotfiles/hypr/.local/share/wallpapers/bad-romance.png' ! -path './assets/*.png' ! -path './assets/*.mp4' ! -path './assets/*.gif' -print0 | xargs -0 file | grep -Ev 'text|empty|SVG|JSON|Python script|shell script' >/dev/null; then
 	printf '%s\n' 'unexpected binary file found' >&2
 	exit 1
 fi

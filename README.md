@@ -66,6 +66,26 @@ command that binding runs.
 
 ---
 
+## 🔁 Act by act
+
+The same recording, cut piece by piece. Every frame below is a real
+capture from `assets/demo.mp4`, so nothing here shows a behaviour the film does not.
+
+|  |  |
+| :--: | :--: |
+| <a href="assets/gifs/tour-palette.gif"><img src="assets/gifs/tour-palette.gif" alt="One file, the whole theme" width="100%"></a> | <a href="assets/gifs/tour-tiling.gif"><img src="assets/gifs/tour-tiling.gif" alt="Tiling that stays out of the way" width="100%"></a> |
+| <b>One file, the whole theme</b><br><sub>Twenty-odd lines of colour is the entire look. Everything downstream is generated from them.</sub> | <b>Tiling that stays out of the way</b><br><sub>A new window splits the one it lands on. Move, swap, resize and fullscreen are all one chord.</sub> |
+| <a href="assets/gifs/tour-workspaces.gif"><img src="assets/gifs/tour-workspaces.gif" alt="Ten workspaces, named" width="100%"></a> | <a href="assets/gifs/tour-editor.gif"><img src="assets/gifs/tour-editor.gif" alt="The editor, already themed" width="100%"></a> |
+| <b>Ten workspaces, named</b><br><sub>Each one remembers what it holds, and the bar says which are alive.</sub> | <b>The editor, already themed</b><br><sub>Neovim opens with the same palette the shell is wearing, from the same generated file.</sub> |
+| <a href="assets/gifs/tour-browser.gif"><img src="assets/gifs/tour-browser.gif" alt="The browser is a window like any other" width="100%"></a> | <a href="assets/gifs/tour-help.gif"><img src="assets/gifs/tour-help.gif" alt="Every binding, read from the config" width="100%"></a> |
+| <b>The browser is a window like any other</b><br><sub>It tiles beside the terminal, takes the same keys, and gets shot by the same tool.</sub> | <b>Every binding, read from the config</b><br><sub>F1 through F5 print the real keymap, parsed out of the deployed configuration.</sub> |
+| <a href="assets/gifs/tour-launchers.gif"><img src="assets/gifs/tour-launchers.gif" alt="Three launchers, one palette" width="100%"></a> | <a href="assets/gifs/tour-screenshot.gif"><img src="assets/gifs/tour-screenshot.gif" alt="A shot that says where it went" width="100%"></a> |
+| <b>Three launchers, one palette</b><br><sub>rofi, wofi and dmenu are all dressed by the same twenty lines.</sub> | <b>A shot that says where it went</b><br><sub>Region, window or screen; the notification carries the path.</sub> |
+| <a href="assets/gifs/tour-themes.gif"><img src="assets/gifs/tour-themes.gif" alt="The eight, swapped live" width="100%"></a> | <a href="assets/gifs/tour-session.gif"><img src="assets/gifs/tour-session.gif" alt="Locking and leaving" width="100%"></a> |
+| <b>The eight, swapped live</b><br><sub>One picker rewrites the palette file and every surface follows without a logout.</sub> | <b>Locking and leaving</b><br><sub>hyprlock wears the theme too, and the session asks before it ends.</sub> |
+
+---
+
 ## 📥 Three ways in
 
 <table>

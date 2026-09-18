@@ -62,6 +62,12 @@ raw = path.read_bytes()
 if raw[:8] == b"\x89PNG\r\n\x1a\n":
     width, height = struct.unpack(">II", raw[16:24])
     print(f"{width}x{height}")
+elif raw[:6] in (b"GIF87a", b"GIF89a"):
+    # The logical screen descriptor follows the six-byte magic: width and
+    # height as little-endian 16-bit numbers, which is the frame size every
+    # GIF in assets/ is encoded at.
+    width, height = struct.unpack_from("<HH", raw, 6)
+    print(f"{width}x{height}")
 elif b"<svg" in raw[:4096]:
     head = raw[:4096].decode("utf-8", "replace")
     match = re.search(r'viewBox="\s*[\d.+-]+\s+[\d.+-]+\s+([\d.]+)\s+([\d.]+)', head)

@@ -66,4 +66,18 @@ if run_gate >/dev/null 2>&1; then
 	fail 'scenario 4: gate accepted a tampered video'
 fi
 
-printf 'asset manifest gate: 4 scenarios rejected as expected\n'
+# Scenario 5 — an animated GIF is an asset too, and its frame size lives in a
+# six-byte header rather than in a PNG chunk or an MP4 track box. A prober that
+# only knew those two shapes would pin the bytes but report the size as n/a.
+cp -- "$repo_root/assets/gifs/tour-palette.gif" "$sandbox/assets/loop.gif"
+run_gate --update >/dev/null
+grep -q $'assets/loop.gif\t' "$manifest" || fail 'scenario 5: the animation was never discovered'
+frame="$(awk -F'\t' '$1 == "assets/loop.gif" { print $4 }' "$manifest")"
+[[ "$frame" == *x* && "$frame" != unknown && "$frame" != n/a ]] ||
+	fail "scenario 5: the animation's frame size was not measured (got '$frame')"
+printf 'tampered\n' >>"$sandbox/assets/loop.gif"
+if run_gate >/dev/null 2>&1; then
+	fail 'scenario 5: gate accepted a tampered animation'
+fi
+
+printf 'asset manifest gate: 5 scenarios rejected as expected\n'
