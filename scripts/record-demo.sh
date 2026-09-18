@@ -370,7 +370,7 @@ sleep 4
 # it half the screen and then carrying it away.
 clear_desktop
 say "The browser starts the way the launcher starts it: from its own desktop entry"
-browser_url=https://github.com/gitsual/hipurbia
+browser_url=https://github.com/gitsual/vivac
 spawn "$(desktop_exec firefox) $browser_url"
 wait_for_class firefox 30
 sleep 5
@@ -518,7 +518,7 @@ sleep 2
 
 say "Eight palettes, one source. Forty-six gates. One command to deploy"
 sleep 5
-say "github.com/gitsual/hipurbia"
+say "github.com/gitsual/vivac"
 sleep 5
 
 # ============================================================= cut =========

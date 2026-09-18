@@ -61,7 +61,7 @@ No mockups, no compositing, nothing hand-painted.</sub>
 <td valign="top">
 
 Nothing to build. The
-[releases page](https://github.com/gitsual/hipurbia/releases)
+[releases page](https://github.com/gitsual/vivac/releases)
 carries the same workstation this tree builds, already provisioned, as a disk
 you can boot.
 
@@ -86,8 +86,8 @@ On a machine already running Arch. Nothing is deleted: a conflicting file moves
 to a timestamped backup under `$XDG_STATE_HOME/vivac/backups/`.
 
 ```sh
-git clone https://github.com/gitsual/hipurbia.git
-cd hipurbia
+git clone https://github.com/gitsual/vivac.git
+cd vivac
 ./scripts/bootstrap.sh --dry-run
 ./scripts/bootstrap.sh
 ```
@@ -145,7 +145,7 @@ the build — it is not quietly downgraded, because the claim is what is wrong.
 ### ⚡ 60-second tour
 
 ```bash
-git clone https://github.com/gitsual/hipurbia.git && cd hipurbia
+git clone https://github.com/gitsual/vivac.git && cd vivac
 ./scripts/bootstrap.sh --dry-run   # what it would install and link, touching nothing
 ./scripts/check.sh                 # the whole gate suite
 ./scripts/test-vm.sh --gui         # the real thing, in a QEMU/KVM Arch guest
