@@ -6,7 +6,7 @@ QEMU/libvirt and `vivac.ova` for VirtualBox and VMware.
 
 ## Downloading
 
-Every artifact lives on the [releases page](https://github.com/gitsual/vivac/releases).
+Every artifact lives on the [releases page](https://github.com/gitsual/hipurbia/releases).
 A release carries, for each of the two formats, its numbered parts and the
 `SHA256SUMS` that covers them:
 
