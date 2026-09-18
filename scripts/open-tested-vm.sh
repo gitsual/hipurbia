@@ -83,6 +83,19 @@ ssh "${ssh_opts[@]}" "vivac@$host_address" "CONSOLE_KEYMAP='$console_keymap' bas
 set -Eeuo pipefail
 sudo mkdir -p /mnt/vivac
 mountpoint -q /mnt/vivac || sudo mount -L VIVAC -o ro /mnt/vivac
+# The desktop this script deployed the last time round is running, and stow
+# left ~/.config/hypr pointing into the tree that is about to be replaced.
+# Hyprland writes a default configuration back the moment its own disappears,
+# so it refilled the directory while the removal was still walking it and the
+# removal failed on a directory that was never empty -- leaving the guest
+# running Hyprland's defaults rather than this project's. The session is asked
+# to stop first; the reboot at the end of this script brings it back on the
+# tree that replaces it.
+sudo systemctl stop greetd.service 2>/dev/null || true
+for _ in $(seq 15); do
+  pgrep -x Hyprland >/dev/null || break
+  sleep 1
+done
 # Extract into an empty directory, never over the previous one: tar restores
 # what the disc carries but removes nothing, so a file deleted in the tree
 # survived in the guest -- and the gates, which check the tree rather than the
