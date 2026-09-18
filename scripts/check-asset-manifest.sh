@@ -45,7 +45,7 @@ discover() {
 		-type f -print0 |
 		while IFS= read -r -d '' file; do
 			case "$(file -b --mime-type -- "$file")" in
-			image/* | application/pdf | font/* | application/octet-stream)
+			image/* | video/mp4 | application/pdf | font/* | application/octet-stream)
 				printf '%s\n' "${file#"$asset_root"/}"
 				;;
 			esac
@@ -79,6 +79,45 @@ elif b"<svg" in raw[:4096]:
         return str(int(number)) if number.is_integer() else str(number)
 
     print(f"{tidy(width)}x{tidy(height)}")
+elif raw[4:8] == b"ftyp":
+    # MP4 keeps the frame size in each track header, as two 16.16 fixed-point
+    # numbers at the end of the box. The file is walked rather than handed to
+    # ffprobe so this gate keeps depending on nothing but python: an audio
+    # track reports 0x0, so the first track reporting a real size wins.
+    def boxes(start, end):
+        at = start
+        while at + 8 <= end:
+            size = struct.unpack_from(">I", raw, at)[0]
+            kind = raw[at + 4:at + 8]
+            body = at + 8
+            if size == 1:
+                size = struct.unpack_from(">Q", raw, body)[0]
+                body += 8
+            if size == 0:
+                size = end - at
+            if size < 8:
+                break
+            yield kind, body, at + size
+            at += size
+
+    frame = "unknown"
+    for kind, body, stop in boxes(0, len(raw)):
+        if kind != b"moov":
+            continue
+        for track_kind, track, track_end in boxes(body, stop):
+            if track_kind != b"trak":
+                continue
+            for header_kind, header, _ in boxes(track, track_end):
+                if header_kind != b"tkhd":
+                    continue
+                # 76 bytes of timing, layer and matrix sit in front of the size
+                # in a version 0 header, 88 in a version 1 one whose time
+                # fields are 64 bits wide.
+                at = header + (88 if raw[header] == 1 else 76)
+                width, height = struct.unpack_from(">II", raw, at)
+                if width >> 16 and height >> 16:
+                    frame = f"{width >> 16}x{height >> 16}"
+    print(frame)
 else:
     print("n/a")
 PY

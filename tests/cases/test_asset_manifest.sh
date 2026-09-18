@@ -52,4 +52,18 @@ if run_gate >/dev/null 2>&1; then
 	fail 'scenario 3: gate accepted a manifest entry with no file behind it'
 fi
 
-printf 'asset manifest gate: 3 scenarios rejected as expected\n'
+# Scenario 4 — a video is an asset too. `file` reports it as video/mp4 rather
+# than image/*, so a gate that only knew about images would walk straight past
+# the recorded tour and leave its bytes unpinned.
+cp -- "$repo_root/assets/demo.mp4" "$sandbox/assets/film.mp4"
+run_gate --update >/dev/null
+grep -q $'assets/film.mp4\t' "$manifest" || fail 'scenario 4: the video was never discovered'
+frame="$(awk -F'\t' '$1 == "assets/film.mp4" { print $4 }' "$manifest")"
+[[ "$frame" == *x* && "$frame" != unknown ]] ||
+	fail "scenario 4: the video's frame size was not measured (got '$frame')"
+printf 'tampered\n' >>"$sandbox/assets/film.mp4"
+if run_gate >/dev/null 2>&1; then
+	fail 'scenario 4: gate accepted a tampered video'
+fi
+
+printf 'asset manifest gate: 4 scenarios rejected as expected\n'

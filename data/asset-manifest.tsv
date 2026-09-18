@@ -1,4 +1,5 @@
 # path	sha256	type	dimensions
+assets/demo.mp4	3aba90117d871ff65c0e235f85553cc68ecc75c84a04388a5364c2c364fca41b	video/mp4	1920x1080
 assets/logo-mark.png	1d18879c15e29c94bace0cfc031ca0c4a3a715e9a3b59b7b892991c952b2fa42	image/png	512x512
 assets/logo-mark.svg	47dd66b162b5b50c5df349688b8568c6700a6d4f35c2e218c1d7748b74e39e57	image/svg+xml	256x256
 assets/logo.png	bd369b1c551a93c34ece1c55f49809c866be630e1f7eab20f9bce6f20c1c1297	image/png	1300x560

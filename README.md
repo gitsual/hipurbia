@@ -12,7 +12,7 @@ This is an Arch Linux workstation you can rebuild from nothing.</em><br>
   <img alt="Arch Linux" src="https://img.shields.io/badge/Arch%20Linux-0E1513?style=for-the-badge&logo=archlinux&logoColor=E8C66A">
   <img alt="Hyprland" src="https://img.shields.io/badge/Hyprland-0E1513?style=for-the-badge&logo=wayland&logoColor=55A185">
   <img alt="8 palettes" src="https://img.shields.io/badge/8%20palettes-one%20source-0E1513?style=for-the-badge&labelColor=0E1513&color=E1777D">
-  <img alt="46 gates" src="https://img.shields.io/badge/46%20gates-author--run-0E1513?style=for-the-badge&labelColor=0E1513&color=AAA875">
+  <img alt="47 gates" src="https://img.shields.io/badge/47%20gates-author--run-0E1513?style=for-the-badge&labelColor=0E1513&color=AAA875">
   <img alt="MIT" src="https://img.shields.io/badge/license-MIT-0E1513?style=for-the-badge&labelColor=0E1513&color=6CA4B1">
 </p>
 
@@ -38,7 +38,7 @@ This is an Arch Linux workstation you can rebuild from nothing.</em><br>
 
 <br>
 
-<sub>Two kinds of image on this page, and no third kind. The wallpapers and the banner are
+<sub>Two kinds of image on this page, and no third kind — and one film, recorded the same way. The wallpapers and the banner are
 <b>rendered</b> — <code>scripts/make-wallpaper.sh --all</code> and <code>scripts/make-logo.sh</code> turn
 <code>data/themes/*.conf</code> into SVG and then into pixels, so the artwork is a build artifact like
 everything else here. Every desktop below is a <b>real <code>grim</code> capture</b> taken inside the
@@ -46,6 +46,19 @@ QEMU/KVM guest that <code>scripts/test-vm.sh</code> builds from this tree — sa
 No mockups, no compositing, nothing hand-painted.</sub>
 
 </div>
+
+---
+
+## 🎬 The film
+
+[**▶ The whole desktop, in one take — 4:54, 1920×1080**](assets/demo.mp4)
+
+Nine acts and no cuts: the one palette file, the window manager, the editor, the browser,
+the help panes, the launchers and the clipboard, the screenshot tool, the eight palettes
+swapped live, and the session locking itself. Subtitled on screen, so it reads without sound. It was recorded by `scripts/record-demo.sh` with `wf-recorder` inside
+the same QEMU/KVM guest every capture on this page comes from: every key it presses is a key
+the deployed configuration binds, and every window that opens was opened by running the exact
+command that binding runs.
 
 ---
 
@@ -140,7 +153,7 @@ the build — it is not quietly downgraded, because the claim is what is wrong.
 - **🧭 A first run that teaches.** Three questions and a ten-step tour that waits for you to actually press the key.
 - **🖥️ No GPU assumed.** Hardware facts are detected, rendered into `$XDG_CONFIG_HOME`, and never written into the checkout.
 - **🔐 Sanitized on purpose.** No credentials, device IDs, UUIDs, hostnames or private paths — enforced by a scanner over the staged objects and the Git history, not by memory.
-- **✅ 46 gates before anything ships.** Shell, Python, JSON, Lua, systemd units, manifests, asset checksums, privacy patterns, a two-pass deployment regression and a real Arch VM.
+- **✅ 47 gates before anything ships.** Shell, Python, JSON, Lua, systemd units, manifests, asset checksums, privacy patterns, a two-pass deployment regression and a real Arch VM.
 
 ### ⚡ 60-second tour
 
