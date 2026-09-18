@@ -51,7 +51,11 @@ No mockups, no compositing, nothing hand-painted.</sub>
 
 ## 🎬 The film
 
-[**▶ The whole desktop, in one take — 4:54, 1920×1080**](assets/demo.mp4)
+<p align="center">
+  <a href="assets/demo.mp4"><img src="assets/screenshots/demo-poster.png" alt="Play the recorded tour: the whole desktop in one take" width="100%"></a>
+</p>
+
+<p align="center"><a href="assets/demo.mp4"><b>▶ The whole desktop, in one take — 4:54, 1920×1080</b></a></p>
 
 Nine acts and no cuts: the one palette file, the window manager, the editor, the browser,
 the help panes, the launchers and the clipboard, the screenshot tool, the eight palettes
