@@ -169,6 +169,24 @@ if $gui; then
 	# The console keymap was written by apply-system.sh --keymap during the
 	# acceptance run, from the settings file seeded above.
 	ssh "${ssh_opts[@]}" "vivac@$host_address" 'cd "$HOME/vivac" && ./scripts/apply-system.sh --desktop-login --vm'
+	# Enabling greetd starts a graphical session for the same user this script
+	# logs in as. For a moment after that, a fresh SSH login for that user is
+	# closed from the other side while logind brings the session up, and the
+	# very next command here is what walks into it. Waited out with the same
+	# bounded loop the boot uses, never retried blindly: a guest that has
+	# really gone away still fails the run.
+	settled=false
+	for _ in {1..30}; do
+		if ssh "${ssh_opts[@]}" "vivac@$host_address" true >/dev/null 2>&1; then
+			settled=true
+			break
+		fi
+		sleep 2
+	done
+	$settled || {
+		printf 'The guest stopped answering after the desktop login was enabled\n' >&2
+		exit 1
+	}
 	# Validated keymap is intentionally expanded client-side.
 	# shellcheck disable=SC2029
 	ssh "${ssh_opts[@]}" "vivac@$host_address" "grep -Fxq -- 'KEYMAP=$console_keymap' /etc/vconsole.conf"

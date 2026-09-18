@@ -13,14 +13,16 @@ fail() {
 	exit 1
 }
 
-# capture-desktop.sh is excluded for the same reason as the rest: it does not
-# deploy anything. It exports a language into the throwaway pane scripts it
-# runs inside the VM, so the desktop on the README is in English whatever the
-# session locale is -- a process environment, not a system axis.
+# capture-desktop.sh and record-demo.sh are excluded for the same reason as the
+# rest: they do not deploy anything. They export a language into the throwaway
+# pane scripts they run inside the VM, so the desktop the README shows -- in a
+# still or in the film -- is in English whatever the session locale is: a
+# process environment, not a system axis.
 writers() {
 	find scripts lib render templates dotfiles system -type f \
 		! -name 'test-*.sh' ! -name 'open-tested-vm.sh' ! -name 'vm-*.sh' \
-		! -name 'seal-vm-image.sh' ! -name 'capture-desktop.sh' -print0 |
+		! -name 'seal-vm-image.sh' ! -name 'capture-desktop.sh' \
+		! -name 'record-demo.sh' -print0 |
 		xargs -0 grep -lE -- "$1" | LC_ALL=C sort || true
 }
 
