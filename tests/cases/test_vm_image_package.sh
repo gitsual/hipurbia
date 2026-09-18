@@ -38,7 +38,11 @@ grep -Fq 'subformat=streamOptimized' "$packager" || fail 'the OVA disk is not st
 grep -Fq 'format=$image_format' "$accepter" || fail 'the accepter hardcodes a disk format'
 
 grep -Fq 'cat vivac.qcow2.part*' "$doc" || fail 'the page does not show how to reassemble'
-grep -Fq 'sha256sum -c SHA256SUMS' "$doc" || fail 'the page does not show how to verify'
+# --ignore-missing is not cosmetic: SHA256SUMS lists both formats and a reader
+# downloads one, so the bare command reports the other format's four absent
+# entries as failures and exits non-zero on a download that is perfectly good.
+grep -Fq 'sha256sum --ignore-missing -c SHA256SUMS' "$doc" ||
+	fail 'the page does not show how to verify a partial download'
 # Credentials that are published have to be published in full, and the reason
 # they are safe has to be published with them: the page states both accounts
 # and that the image does not listen.

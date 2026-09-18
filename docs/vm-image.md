@@ -27,11 +27,13 @@ concatenate them in order:
 
 ```sh
 cat vivac.qcow2.part* >vivac.qcow2
-sha256sum -c SHA256SUMS
+sha256sum --ignore-missing -c SHA256SUMS
 ```
 
 `SHA256SUMS` covers both the parts and the reassembled whole, so a bad
-download is caught before it is ever booted.
+download is caught before it is ever booted. It lists both formats, and you
+will have downloaded one of them: `--ignore-missing` is what keeps the other
+format's four absent entries from being reported as failures.
 
 ## Running it
 

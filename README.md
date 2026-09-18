@@ -80,7 +80,7 @@ you can boot.
 
 ```sh
 cat vivac.qcow2.part* >vivac.qcow2
-sha256sum -c SHA256SUMS
+sha256sum --ignore-missing -c SHA256SUMS
 ./scripts/run-vm-image.sh
 ```
 
